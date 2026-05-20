@@ -284,28 +284,37 @@ const LandingPage: React.FC = () => {
       <SectionWrapper id="pricing" className="scroll-mt-20 py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10 w-full">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10 md:mb-16">Bảng Giá Dịch Vụ</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 md:mb-24">
-          {/* Tier 1 - Highlighted */}
-          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#00FFA3] rounded-xl p-6 md:p-8 transform md:scale-105 shadow-[0_0_30px_rgba(0,255,163,0.3)] relative z-10 flex flex-col">
-            <div className="absolute top-0 right-0 bg-[#00FFA3] text-black text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Popular</div>
-            <h3 className="text-lg md:text-xl font-semibold text-white mb-1">{t('pricing.tier1').split('(')[0]}</h3>
-            <p className="text-[#00FFA3] text-xs md:text-sm font-medium mb-3">Dành cho người muốn kiểm tra sức khỏe hệ thống</p>
-            <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">1.500.000 VNĐ<span className="text-xs md:text-sm text-gray-400 font-normal">/tháng</span></div>
+          {/* Tier 1 */}
+          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
+            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-1">{t('pricing.tier1').split('(')[0]}</h3>
+            <p className="text-gray-400 text-xs md:text-sm font-medium mb-3">Dành cho người muốn kiểm tra sức khỏe hệ thống</p>
+            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">2.500.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Basic Walk-Forward</span></li>
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Monthly PDF Report</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">2 báo cáo/tháng</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Basic Walk-Forward Analysis</span></li>
             </ul>
-            <button type="button" onClick={() => handleSelectPackage('Gói Trải Nghiệm')} className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Bắt đầu ngay</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Trải Nghiệm')} className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Bắt đầu ngay</button>
           </div>
           
-          {/* Tier 2 */}
-          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3 md:mb-4">{t('pricing.tier2').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">4.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
+          {/* Tier 2 - Highlighted */}
+          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#00FFA3] rounded-xl p-6 md:p-8 transform md:scale-105 shadow-[0_0_30px_rgba(0,255,163,0.3)] relative z-10 flex flex-col">
+            <div className="absolute top-0 right-0 bg-[#00FFA3] text-black text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Recommended</div>
+            <h3 className="text-lg md:text-xl font-semibold text-white mb-1">{t('pricing.tier2').split('(')[0]}</h3>
+            <p className="text-[#00FFA3] text-xs md:text-sm font-medium mb-3">Đồng hành cùng chuyên gia tối ưu</p>
+            <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">5.000.000 VNĐ<span className="text-xs md:text-sm text-gray-400 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Advanced Walk-Forward</span></li>
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Weekly Re-optimization</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Báo cáo hàng tuần</span></li>
+              <li className="flex items-start">
+                <CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" />
+                <span className="relative group cursor-help border-b border-dashed border-[#00FFA3]/50 pb-0.5 text-xs md:text-sm text-gray-300">
+                  Advanced WFO + Stress Testing
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 bg-gray-900 text-white text-xs p-3 rounded-md border border-gray-700 shadow-xl z-50 text-center pointer-events-none">
+                    Bao gồm Stress Testing và mô phỏng Monte Carlo để kiểm chứng độ bền chiến lược
+                  </div>
+                </span>
+              </li>
             </ul>
-            <button type="button" onClick={() => handleSelectPackage('Gói Nâng Cao')} className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Khởi tạo hệ thống</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Nâng Cao')} className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Đồng hành cùng chuyên gia</button>
           </div>
 
           {/* Tier 3 */}
