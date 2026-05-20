@@ -206,13 +206,19 @@ const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {[
-              { icon: <FileCog size={56} color="#F59E0B" className="drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] md:w-16 md:h-16" />, title: "Bước 1: Kiểm toán", subtitle: "Nhập liệu & Form Intake" },
+              { 
+                icon: <FileCog size={56} color="#F59E0B" className="drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] md:w-16 md:h-16" />, 
+                title: "Bước 1: Kiểm toán", 
+                subtitle: "Nhập liệu & Form Intake",
+                onClick: () => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })
+              },
               { icon: <Cpu size={56} color="#00FFA3" className="drop-shadow-[0_0_15px_rgba(0,255,163,0.5)] md:w-16 md:h-16" />, title: "Bước 2: Ép xung dữ liệu", subtitle: "WFO Optimization" },
               { icon: <FileBarChart size={56} color="#E2E8F0" className="drop-shadow-[0_0_15px_rgba(226,232,240,0.5)] md:w-16 md:h-16" />, title: "Bước 3: Nhận bàn giao", subtitle: "Báo cáo & Cấu hình" }
             ].map((step, idx) => (
               <div 
                 key={idx}
-                className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-8 md:p-10 hover:border-[#00FFA3]/50 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center shadow-lg"
+                onClick={step.onClick}
+                className={`bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-8 md:p-10 hover:border-[#00FFA3]/50 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center shadow-lg ${step.onClick ? 'cursor-pointer' : ''}`}
               >
                 <div className="mb-6 md:mb-8 mt-4">{step.icon}</div>
                 <h3 className="text-lg md:text-xl font-bold text-white mb-2">{step.title}</h3>
