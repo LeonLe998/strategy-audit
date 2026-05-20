@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Settings2, Info, CheckCircle, AlertCircle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Settings2, Info, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface IntakeWizardProps {
@@ -38,9 +38,14 @@ const SelectField = ({ label, options, value, onChange, tooltip = '', disabled =
       <span>{label}</span>
       {tooltip && <Tooltip text={tooltip} />}
     </label>
-    <select disabled={disabled} value={value} onChange={onChange} className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] appearance-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
-      {options.map((opt:string) => <option key={opt} value={opt}>{opt}</option>)}
-    </select>
+    <div className="relative">
+      <select disabled={disabled} value={value} onChange={onChange} className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] appearance-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        {options.map((opt:string) => <option key={opt} value={opt}>{opt}</option>)}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+        <ChevronDown className="w-5 h-5" />
+      </div>
+    </div>
   </div>
 );
 
