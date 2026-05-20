@@ -61,6 +61,8 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
     // Step 2
     q6: '', 
     q7: '', 
+    q7_2: '', // Money Management
+    q7_3: '', // Trade Management
     q8: 'XAUUSD', 
     q9: 'H1', 
     q10: '', 
@@ -74,7 +76,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
     q17: '', 
     q18: '', 
     // Step 4
-    q19: '', 
+    q19: selectedPackage || 'Gói Trải Nghiệm', 
     q20: 'Tiếng Việt', 
     q21: 'Không', 
     vip1: 'Không', 
@@ -223,15 +225,43 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
                 
                 <div className="mb-4">
                   <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
-                    <span>7. Mô tả ngắn quy tắc vào lệnh (2-3 câu)</span>
-                    <Tooltip text="Ví dụ: Khi giá phá đỉnh pivot trong xu hướng EMA20 tăng, vào BUY stop trên đỉnh pivot, SL dưới đáy gần nhất, TP1 1.5R chốt 50%, TP2 3R." />
+                    <span>7. Mô tả ngắn quy tắc vào lệnh (Entry Rules)</span>
+                    <Tooltip text="Ví dụ: Khi giá phá đỉnh pivot trong xu hướng EMA20 tăng, vào BUY stop trên đỉnh pivot." />
                   </label>
                   <textarea 
-                    rows={4}
+                    rows={6}
                     value={formData.q7} 
                     onChange={(e) => updateForm('q7', e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] focus:border-transparent transition-all"
-                    placeholder="Khi RSI vượt 70 thì Bán..."
+                    placeholder="Mô tả logic vào lệnh của bạn..."
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
+                    <span>7.2. Quy tắc quản trị vốn (Money Management)</span>
+                    <Tooltip text="Ví dụ: Fixed risk 1% per trade, Martingale x2 khi thua, hoặc Anti-martingale." />
+                  </label>
+                  <textarea 
+                    rows={3}
+                    value={formData.q7_2} 
+                    onChange={(e) => updateForm('q7_2', e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] focus:border-transparent transition-all"
+                    placeholder="Mô tả cách bạn đi lệnh, nhồi lệnh hoặc quản lý lot size..."
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
+                    <span>7.3. Quy tắc quản lý lệnh (Trade Management)</span>
+                    <Tooltip text="Ví dụ: Break-even khi đạt 1R, Trailing stop theo đỉnh/đáy gần nhất, hoặc đóng 50% khối lượng." />
+                  </label>
+                  <textarea 
+                    rows={3}
+                    value={formData.q7_3} 
+                    onChange={(e) => updateForm('q7_3', e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] focus:border-transparent transition-all"
+                    placeholder="Mô tả cách bạn dời SL, chốt lời từng phần..."
                   />
                 </div>
 
@@ -280,8 +310,15 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
                   </div>
                 )}
 
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-4 flex justify-between items-center">
+                  <span className="text-gray-300 font-medium">Gói đã chọn:</span>
+                  <span className="bg-[#00FFA3]/20 text-[#00FFA3] px-3 py-1 rounded-full text-sm font-bold border border-[#00FFA3]/30">
+                    {formData.q19}
+                  </span>
+                </div>
+
                 <SelectField 
-                  label="19. Tier dịch vụ" 
+                  label="19. Đổi gói dịch vụ (Tùy chọn)" 
                   options={['Gói Trải Nghiệm', 'Gói Nâng Cao', 'Gói Chuyên Nghiệp', 'Đặc Quyền']} 
                   value={formData.q19} 
                   onChange={(e:any) => updateForm('q19', e.target.value)} 
