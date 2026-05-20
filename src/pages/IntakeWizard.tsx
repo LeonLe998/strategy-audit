@@ -6,6 +6,44 @@ interface IntakeWizardProps {
   selectedPackage?: string | null;
 }
 
+// UI Components
+const Tooltip = ({ text }: { text: string }) => (
+  <div className="group relative inline-block ml-2 cursor-pointer mt-1">
+    <Info className="w-4 h-4 text-gray-400 hover:text-[#00FFA3] transition-colors" />
+    <div className="opacity-0 w-64 bg-gray-900 text-gray-200 text-xs rounded-md py-2 px-3 absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none group-hover:opacity-100 transition-opacity shadow-lg border border-gray-700">
+      <span className="font-bold text-[#00FFA3] mb-1 block">Tại sao cần hỏi câu này?</span>
+      {text}
+      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+    </div>
+  </div>
+);
+
+const InputField = ({ label, id, type = 'text', tooltip = '', ...props }: any) => (
+  <div className="mb-4">
+    <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
+      <span>{label}</span>
+      {tooltip && <Tooltip text={tooltip} />}
+    </label>
+    <input
+      type={type}
+      className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] focus:border-transparent transition-all"
+      {...props}
+    />
+  </div>
+);
+
+const SelectField = ({ label, options, value, onChange, tooltip = '', disabled = false }: any) => (
+  <div className="mb-4">
+    <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
+      <span>{label}</span>
+      {tooltip && <Tooltip text={tooltip} />}
+    </label>
+    <select disabled={disabled} value={value} onChange={onChange} className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] appearance-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+      {options.map((opt:string) => <option key={opt} value={opt}>{opt}</option>)}
+    </select>
+  </div>
+);
+
 const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,44 +149,6 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
 
   const isVIP = formData.q19 === 'Đặc Quyền' || formData.q19 === 'Gói Chuyên Nghiệp';
   const isSuperVIP = formData.q19 === 'Đặc Quyền';
-
-  // UI Components
-  const Tooltip = ({ text }: { text: string }) => (
-    <div className="group relative inline-block ml-2 cursor-pointer mt-1">
-      <Info className="w-4 h-4 text-gray-400 hover:text-[#00FFA3] transition-colors" />
-      <div className="opacity-0 w-64 bg-gray-900 text-gray-200 text-xs rounded-md py-2 px-3 absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none group-hover:opacity-100 transition-opacity shadow-lg border border-gray-700">
-        <span className="font-bold text-[#00FFA3] mb-1 block">Tại sao cần hỏi câu này?</span>
-        {text}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-      </div>
-    </div>
-  );
-
-  const InputField = ({ label, id, type = 'text', tooltip = '', ...props }: any) => (
-    <div className="mb-4">
-      <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
-        <span>{label}</span>
-        {tooltip && <Tooltip text={tooltip} />}
-      </label>
-      <input
-        type={type}
-        className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] focus:border-transparent transition-all"
-        {...props}
-      />
-    </div>
-  );
-
-  const SelectField = ({ label, options, value, onChange, tooltip = '', disabled = false }: any) => (
-    <div className="mb-4">
-      <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
-        <span>{label}</span>
-        {tooltip && <Tooltip text={tooltip} />}
-      </label>
-      <select disabled={disabled} value={value} onChange={onChange} className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] appearance-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
-        {options.map((opt:string) => <option key={opt} value={opt}>{opt}</option>)}
-      </select>
-    </div>
-  );
 
   if (isSuccess) {
     return (
