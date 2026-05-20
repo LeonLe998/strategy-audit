@@ -250,7 +250,7 @@ const LandingPage: React.FC = () => {
             <div className="w-16 h-16 rounded-full bg-[#F59E0B]/20 border-2 border-[#F59E0B] flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(245,158,11,0.5)]">
               <FileCog className="text-[#F59E0B] w-8 h-8" />
             </div>
-            <h4 className="text-[#F59E0B] font-bold text-lg">Quant Audit</h4>
+            <h4 className="text-[#F59E0B] font-bold text-lg">Strategy Audit</h4>
             <p className="text-gray-400 text-sm mt-2">(Minh bạch, toán học hóa)</p>
           </div>
 
