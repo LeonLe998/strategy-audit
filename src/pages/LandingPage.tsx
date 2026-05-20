@@ -110,29 +110,29 @@ const LandingPage: React.FC = () => {
 
   const renderHeroTitle = () => {
     if (i18n.language === 'en') {
-      const parts = t('hero.title').split('ULTIMATE WEAPON');
+      const parts = t('hero.title').split('SYSTEM OPTIMIZATION');
       return (
         <span className="text-white">
           {parts[0]}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">ULTIMATE WEAPON</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">SYSTEM OPTIMIZATION</span>
           {parts[1] || ''}
         </span>
       );
     } else if (i18n.language === 'zh') {
-      const parts = t('hero.title').split('终极武器');
+      const parts = t('hero.title').split('系统优化');
       return (
         <span className="text-white">
           {parts[0]}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">终极武器</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">系统优化</span>
           {parts[1] || ''}
         </span>
       );
     } else {
-      const parts = t('hero.title').split('VŨ KHÍ BẬC NHẤT');
+      const parts = t('hero.title').split('TỐI ƯU HỆ THỐNG');
       return (
         <span className="text-white">
           {parts[0]}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">VŨ KHÍ BẬC NHẤT</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">TỐI ƯU HỆ THỐNG</span>
           {parts[1] || ''}
         </span>
       );
@@ -249,46 +249,47 @@ const LandingPage: React.FC = () => {
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#00FFA3] rounded-xl p-6 md:p-8 transform md:scale-105 shadow-[0_0_30px_rgba(0,255,163,0.3)] relative z-10 flex flex-col">
             <div className="absolute top-0 right-0 bg-[#00FFA3] text-black text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Popular</div>
             <h3 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">{t('pricing.tier1').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">1.5M<span className="text-xs md:text-sm text-gray-400 font-normal"> đ/tháng</span></div>
+            <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">1.500.000 VNĐ<span className="text-xs md:text-sm text-gray-400 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Basic Walk-Forward</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Monthly PDF Report</span></li>
             </ul>
-            <button className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Chọn Gói Này</button>
+            <button className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Bắt đầu ngay</button>
           </div>
           
           {/* Tier 2 */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
             <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3 md:mb-4">{t('pricing.tier2').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">$150<span className="text-xs md:text-sm text-gray-500 font-normal"> /tháng</span></div>
+            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">4.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Advanced Walk-Forward</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Weekly Re-optimization</span></li>
             </ul>
-            <button className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Chọn Gói Này</button>
+            <button className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Khởi tạo hệ thống</button>
           </div>
 
           {/* Tier 3 */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
             <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3 md:mb-4">{t('pricing.tier3').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">Từ 500k<span className="text-xs md:text-sm text-gray-500 font-normal"> /lần</span></div>
+            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">9.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Custom Scripting</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">One-off Analysis</span></li>
             </ul>
-            <button className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Liên Hệ</button>
+            <button className="w-full bg-[#F59E0B]/20 text-[#F59E0B] font-semibold py-3 rounded-lg hover:bg-[#F59E0B]/30 border border-[#F59E0B]/50 shadow-[0_0_15px_rgba(245,158,11,0.5)] animate-pulse transition-all text-sm md:text-base">Trở thành đối tác</button>
           </div>
 
           {/* Tier 4 */}
-          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#F59E0B] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-12 h-12 md:w-16 md:h-16 bg-[#F59E0B]/10 rounded-bl-full"></div>
-            <h3 className="text-lg md:text-xl font-semibold text-[#F59E0B] mb-3 md:mb-4">{t('pricing.tier4').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-[#F59E0B] mb-4 md:mb-6">$1500<span className="text-xs md:text-sm text-gray-500 font-normal"> /lifetime</span></div>
+          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#D4AF37]/60 rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+            <div className="absolute top-0 right-0 bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-black text-[10px] md:text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Limited Access</div>
+            <h3 className="text-lg md:text-xl font-semibold text-[#D4AF37] mb-3 md:mb-4">{t('pricing.tier4').split('(')[0]}</h3>
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37] mb-4 md:mb-6">96.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/năm</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#F59E0B] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">1-on-1 Consultation</span></li>
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#F59E0B] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Proprietary Alpha</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Cố vấn ưu tiên</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Phân tích rủi ro định chế</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Hỗ trợ chiến lược 1-1</span></li>
             </ul>
-            <button className="w-full bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B] font-semibold py-3 rounded-lg hover:bg-[#F59E0B]/20 transition-colors text-sm md:text-base">Đăng Ký Khóa Học</button>
+            <button className="w-full bg-transparent text-[#D4AF37] border border-[#D4AF37] font-semibold py-3 rounded-lg hover:bg-[#D4AF37]/10 transition-colors text-sm md:text-base">Yêu cầu tư vấn đặc quyền</button>
           </div>
         </div>
 
