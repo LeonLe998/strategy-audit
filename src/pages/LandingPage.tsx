@@ -178,7 +178,7 @@ const LandingPage: React.FC = () => {
               onClick={() => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-block bg-[#00FFA3] text-black font-bold text-base md:text-lg py-3 md:py-4 px-8 md:px-10 rounded-lg shadow-[0_0_30px_rgba(0,255,163,0.6)] transform hover:scale-105 hover:bg-green-400 transition-all duration-300 text-center w-full sm:w-auto"
             >
-              KIỂM TOÁN CHIẾN LƯỢC NGAY
+              BẮT ĐẦU KIỂM TOÁN TÀI KHOẢN CỦA BẠN
             </button>
           </div>
         </div>
@@ -197,8 +197,8 @@ const LandingPage: React.FC = () => {
       <SectionWrapper id="workflow" className="scroll-mt-20 py-12 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
-            <h3 className="text-xs md:text-sm uppercase text-gray-500 tracking-wider font-bold mb-2 md:mb-3">OPERATIONAL WORKFLOW</h3>
-            <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Quy trình vận hành: Người mới nhìn cũng hiểu cách hoạt động</h2>
+            <h3 className="text-xs md:text-sm uppercase text-gray-500 tracking-wider font-bold mb-2 md:mb-3">USER JOURNEY</h3>
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Hành trình tối ưu hóa chiến lược</h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
               Mọi ý tưởng giao dịch cảm tính của bạn sẽ được chuyển đổi thành các quy tắc toán học minh bạch và chạy tự động thông qua 3 bước chuẩn hóa.
             </p>
@@ -206,26 +206,57 @@ const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {[
-              { icon: <FileCog size={56} color="#F59E0B" className="drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] md:w-16 md:h-16" />, title: t('sop.step1') },
-              { icon: <Cpu size={56} color="#00FFA3" className="drop-shadow-[0_0_15px_rgba(0,255,163,0.5)] md:w-16 md:h-16" />, title: t('sop.step2') },
-              { icon: <FileBarChart size={56} color="#E2E8F0" className="drop-shadow-[0_0_15px_rgba(226,232,240,0.5)] md:w-16 md:h-16" />, title: t('sop.step3') }
+              { icon: <FileCog size={56} color="#F59E0B" className="drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] md:w-16 md:h-16" />, title: "Bước 1: Kiểm toán", subtitle: "Nhập liệu & Form Intake" },
+              { icon: <Cpu size={56} color="#00FFA3" className="drop-shadow-[0_0_15px_rgba(0,255,163,0.5)] md:w-16 md:h-16" />, title: "Bước 2: Ép xung dữ liệu", subtitle: "WFO Optimization" },
+              { icon: <FileBarChart size={56} color="#E2E8F0" className="drop-shadow-[0_0_15px_rgba(226,232,240,0.5)] md:w-16 md:h-16" />, title: "Bước 3: Nhận bàn giao", subtitle: "Báo cáo & Cấu hình" }
             ].map((step, idx) => (
               <div 
                 key={idx}
                 className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-8 md:p-10 hover:border-[#00FFA3]/50 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center shadow-lg"
               >
-                <div className="absolute top-4 left-4 bg-white/5 border border-white/10 rounded-md px-2 py-1 text-[10px] font-bold text-gray-400 tracking-wider">SOP</div>
                 <div className="mb-6 md:mb-8 mt-4">{step.icon}</div>
-                <h3 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3">{step.title}</h3>
+                <h3 className="text-lg md:text-xl font-bold text-white mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-400">{step.subtitle}</p>
               </div>
             ))}
           </div>
         </div>
       </SectionWrapper>
 
-      {/* Social Proof (Before & After) */}
+      {/* Social Proof (Before & After Visual Story) */}
       <SectionWrapper id="cases" className="py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto relative z-10 w-full">
-        <h2 className="text-2xl md:text-4xl font-bold text-center text-white mb-10 md:mb-16">Bằng Chứng Thực Tế (Case Study)</h2>
+        <h2 className="text-2xl md:text-4xl font-bold text-center text-white mb-10 md:mb-16">Trước & Sau Kiểm Toán</h2>
+        
+        {/* Visual Timeline */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-16 relative">
+          {/* Connecting Line (Desktop only) */}
+          <div className="hidden md:block absolute top-1/2 left-[10%] right-[10%] h-1 bg-gradient-to-r from-[#FF3366] via-gray-600 to-[#00FFA3] -translate-y-1/2 z-0"></div>
+          
+          <div className="flex flex-col items-center text-center relative z-10 bg-[#0B0E14] px-4 py-6 md:p-4 mb-8 md:mb-0 w-full md:w-1/3">
+            <div className="w-16 h-16 rounded-full bg-[#FF3366]/20 border-2 border-[#FF3366] flex items-center justify-center mb-4">
+              <span className="text-2xl">🤔</span>
+            </div>
+            <h4 className="text-[#FF3366] font-bold text-lg">Chiến lược cũ</h4>
+            <p className="text-gray-400 text-sm mt-2">(Mơ hồ, cảm tính, dễ cháy)</p>
+          </div>
+          
+          <div className="flex flex-col items-center text-center relative z-10 bg-[#0B0E14] px-4 py-6 md:p-4 mb-8 md:mb-0 w-full md:w-1/3">
+            <div className="w-16 h-16 rounded-full bg-[#F59E0B]/20 border-2 border-[#F59E0B] flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+              <FileCog className="text-[#F59E0B] w-8 h-8" />
+            </div>
+            <h4 className="text-[#F59E0B] font-bold text-lg">Quant Audit</h4>
+            <p className="text-gray-400 text-sm mt-2">(Minh bạch, toán học hóa)</p>
+          </div>
+
+          <div className="flex flex-col items-center text-center relative z-10 bg-[#0B0E14] px-4 py-6 md:p-4 w-full md:w-1/3">
+            <div className="w-16 h-16 rounded-full bg-[#00FFA3]/20 border-2 border-[#00FFA3] flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(0,255,163,0.5)]">
+              <span className="text-2xl">🚀</span>
+            </div>
+            <h4 className="text-[#00FFA3] font-bold text-lg">Hệ thống tối ưu</h4>
+            <p className="text-gray-400 text-sm mt-2">(Lợi nhuận bền vững)</p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Before */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#FF3366]/30 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center relative overflow-hidden group hover:border-[#FF3366] transition-all">
@@ -256,7 +287,8 @@ const LandingPage: React.FC = () => {
           {/* Tier 1 - Highlighted */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#00FFA3] rounded-xl p-6 md:p-8 transform md:scale-105 shadow-[0_0_30px_rgba(0,255,163,0.3)] relative z-10 flex flex-col">
             <div className="absolute top-0 right-0 bg-[#00FFA3] text-black text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Popular</div>
-            <h3 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">{t('pricing.tier1').split('(')[0]}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-white mb-1">{t('pricing.tier1').split('(')[0]}</h3>
+            <p className="text-[#00FFA3] text-xs md:text-sm font-medium mb-3">Dành cho người muốn kiểm tra sức khỏe hệ thống</p>
             <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">1.500.000 VNĐ<span className="text-xs md:text-sm text-gray-400 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Basic Walk-Forward</span></li>
@@ -278,7 +310,8 @@ const LandingPage: React.FC = () => {
 
           {/* Tier 3 */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3 md:mb-4">{t('pricing.tier3').split('(')[0]}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-1">{t('pricing.tier3').split('(')[0]}</h3>
+            <p className="text-[#F59E0B] text-xs md:text-sm font-medium mb-3">Dành cho người muốn chinh phục Prop Firm</p>
             <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">9.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Custom Scripting</span></li>
