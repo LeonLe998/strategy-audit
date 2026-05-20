@@ -98,9 +98,19 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
 
   const validateStep1 = () => {
     if (!formData.q1.trim()) return "Vui lòng nhập Họ tên.";
+    if (formData.q1.trim().length < 2) return "Họ tên quá ngắn.";
+
     if (!formData.q2.trim()) return "Vui lòng nhập Email.";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.q2.trim())) return "Email không đúng định dạng (vd: name@domain.com).";
+
     if (!formData.q2_2.trim()) return "Vui lòng nhập Số điện thoại.";
+    const phoneRegex = /^[0-9\-\+\s]{8,15}$/;
+    if (!phoneRegex.test(formData.q2_2.trim())) return "Số điện thoại không hợp lệ (chỉ nhập từ 8-15 số, cho phép dấu +).";
+
     if (!formData.q4.trim()) return "Vui lòng nhập kích thước tài khoản.";
+    if (isNaN(Number(formData.q4)) || Number(formData.q4) <= 0) return "Kích thước tài khoản phải là một số lớn hơn 0.";
+
     if (!formData.q5.trim()) return "Vui lòng nhập mục tiêu kiểm toán.";
     return "";
   };
