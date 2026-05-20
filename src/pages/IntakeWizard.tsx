@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Settings2, Info, CheckCircle } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Settings2, Info, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface IntakeWizardProps {
@@ -10,28 +10,39 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [formData, setFormData] = useState({
-    q1: '', // Họ và tên
-    q2: '', // Email / Telegram
-    q3: 'Đang/sắp chinh phục prop firm', // Nhóm khách hàng
-    q4: '', // Số vốn
-    q5: '', // Mục tiêu lợi nhuận
-    q6: '', // Cặp tiền
-    q7: '', // Logic vào lệnh (textarea)
-    q8: '', // Timeframe
-    q9: '', // RR
-    q10: '', // Drawdown tối đa (%)
-    q11: 'Manual', // Loại hệ thống
-    q12: 'Không', // Martingale/Grid
-    q13: 'Có', // News Trading
-    q14: '', // Tên quỹ Prop Firm
-    q15: '', // Target Profit (%)
-    q16: '', // Max Daily Drawdown (%)
-    q17: '', // Max Overall Drawdown (%)
-    q18: '', // Minimum Trading Days
-    q19: '', // Gói kiểm toán
-    q20: '' // Lịch tư vấn
+    // Step 1
+    q1: '', 
+    q2: '', 
+    q2_2: '', 
+    q3: 'Đang/sắp chinh phục prop firm', 
+    q4: '', 
+    q5: '', 
+    // Step 2
+    q6: '', 
+    q7: '', 
+    q8: 'XAUUSD', 
+    q9: 'H1', 
+    q10: '', 
+    q11: 'R-multiple', 
+    q12: 'Không', 
+    q13: '90 ngày', 
+    // Step 3
+    q14: 'FTMO', 
+    q15: '', 
+    q16: '', 
+    q17: '', 
+    q18: '', 
+    // Step 4
+    q19: '', 
+    q20: 'Tiếng Việt', 
+    q21: 'Không', 
+    vip1: 'Không', 
+    vip2: 'Không', 
+    vip3: 'Không', 
+    vip4: 'Không' 
   });
 
   useEffect(() => {
@@ -42,9 +53,27 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
 
   const updateForm = (key: string, value: string | number) => {
     setFormData(prev => ({ ...prev, [key]: value }));
+    if (errorMsg) setErrorMsg('');
+  };
+
+  const validateStep1 = () => {
+    if (!formData.q1.trim()) return "Vui lòng nhập Họ tên.";
+    if (!formData.q2.trim()) return "Vui lòng nhập Email.";
+    if (!formData.q2_2.trim()) return "Vui lòng nhập Số điện thoại.";
+    if (!formData.q4.trim()) return "Vui lòng nhập kích thước tài khoản.";
+    if (!formData.q5.trim()) return "Vui lòng nhập mục tiêu kiểm toán.";
+    return "";
   };
 
   const handleNext = () => {
+    if (step === 1) {
+      const err = validateStep1();
+      if (err) {
+        setErrorMsg(err);
+        return;
+      }
+    }
+    
     if (step === 2 && formData.q3 !== 'Đang/sắp chinh phục prop firm') {
       setStep(4);
     } else {
@@ -53,6 +82,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   };
 
   const handlePrev = () => {
+    setErrorMsg('');
     if (step === 4 && formData.q3 !== 'Đang/sắp chinh phục prop firm') {
       setStep(2);
     } else {
@@ -74,10 +104,13 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
       case 1: return "Bước 1/4: Thông tin khách hàng";
       case 2: return "Bước 2/4: Hệ thống giao dịch";
       case 3: return "Bước 3/4: Yêu cầu Prop Firm";
-      case 4: return "Bước 4/4: Xác nhận Bàn giao";
+      case 4: return "Bước 4/4: Deliverable & Nâng cao";
       default: return "";
     }
   };
+
+  const isVIP = formData.q19 === 'Đặc Quyền' || formData.q19 === 'Gói Chuyên Nghiệp';
+  const isSuperVIP = formData.q19 === 'Đặc Quyền';
 
   // UI Components
   const Tooltip = ({ text }: { text: string }) => (
@@ -102,6 +135,18 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
         className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] focus:border-transparent transition-all"
         {...props}
       />
+    </div>
+  );
+
+  const SelectField = ({ label, options, value, onChange, tooltip = '', disabled = false }: any) => (
+    <div className="mb-4">
+      <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
+        <span>{label}</span>
+        {tooltip && <Tooltip text={tooltip} />}
+      </label>
+      <select disabled={disabled} value={value} onChange={onChange} className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] appearance-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+        {options.map((opt:string) => <option key={opt} value={opt}>{opt}</option>)}
+      </select>
     </div>
   );
 
@@ -137,38 +182,49 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
           </div>
         </div>
 
+        {errorMsg && (
+          <div className="mb-6 p-4 bg-[#FF3366]/10 border border-[#FF3366]/50 rounded-lg flex items-center text-[#FF3366] text-sm">
+            <AlertCircle className="w-5 h-5 mr-2 shrink-0" />
+            {errorMsg}
+          </div>
+        )}
+
         <div className="min-h-[300px]">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
-                <InputField label="Q1. Họ và tên" value={formData.q1} onChange={(e:any) => updateForm('q1', e.target.value)} placeholder="Nguyễn Văn A" />
-                <InputField label="Q2. Email / Telegram liên hệ" value={formData.q2} onChange={(e:any) => updateForm('q2', e.target.value)} placeholder="Email hoặc @username" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InputField label="1. Họ tên / Tên đại diện" value={formData.q1} onChange={(e:any) => updateForm('q1', e.target.value)} placeholder="Tên sẽ hiện trên cover báo cáo" />
+                  <InputField label="2. Email" type="email" value={formData.q2} onChange={(e:any) => updateForm('q2', e.target.value)} placeholder="Để gửi báo cáo + nhắc re-audit" />
+                </div>
+                
+                <InputField label="2.2. Số điện thoại" type="tel" value={formData.q2_2} onChange={(e:any) => updateForm('q2_2', e.target.value)} placeholder="Để tiện liên hệ" />
                 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Q3. Nhóm khách hàng của bạn là gì?</label>
-                  <div className="space-y-2">
-                    {['Cá nhân trade quỹ tự có', 'Quỹ đầu tư / Tổ chức', 'Đang/sắp chinh phục prop firm'].map(opt => (
+                  <label className="block text-sm font-medium text-gray-300 mb-2">3. Anh/chị thuộc nhóm nào?</label>
+                  <div className="space-y-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {['Retail trader cá nhân', 'Đang/sắp chinh phục prop firm', 'IB / Affiliate broker', 'Người bán signal / khóa học', 'Khác'].map(opt => (
                       <label key={opt} className="flex items-center space-x-3 text-gray-300 cursor-pointer p-2 rounded-lg hover:bg-gray-800 transition-colors">
                         <input type="radio" name="q3" value={opt} checked={formData.q3 === opt} onChange={(e) => updateForm('q3', e.target.value)} className="text-[#00FFA3] focus:ring-[#00FFA3] bg-gray-800 border-gray-600" />
-                        <span>{opt}</span>
+                        <span className="text-sm">{opt}</span>
                       </label>
                     ))}
                   </div>
                 </div>
 
-                <InputField type="number" label="Q4. Số vốn dự kiến trade (USD)" value={formData.q4} onChange={(e:any) => updateForm('q4', e.target.value)} placeholder="Ví dụ: 10000" />
-                <InputField type="number" label="Q5. Mục tiêu lợi nhuận hàng tháng (%)" value={formData.q5} onChange={(e:any) => updateForm('q5', e.target.value)} placeholder="Ví dụ: 5" />
+                <InputField type="number" label="4. Đang giao dịch tài khoản kích thước nào? (USD)" value={formData.q4} onChange={(e:any) => updateForm('q4', e.target.value)} placeholder="Ví dụ: 100000" />
+                <InputField label="5. Mục tiêu cuối cùng của việc audit này là gì?" value={formData.q5} onChange={(e:any) => updateForm('q5', e.target.value)} placeholder="1 câu ngắn gọn" />
               </motion.div>
             )}
 
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
-                <InputField label="Q6. Cặp tiền / Sản phẩm giao dịch chính" value={formData.q6} onChange={(e:any) => updateForm('q6', e.target.value)} placeholder="Ví dụ: XAUUSD, EURUSD" />
+                <InputField label="6. Tên hệ thống / chiến lược" value={formData.q6} onChange={(e:any) => updateForm('q6', e.target.value)} placeholder="Tên sẽ hiện trên báo cáo" />
                 
                 <div className="mb-4">
                   <label className="text-sm font-medium text-gray-300 mb-1 flex items-start md:items-center">
-                    <span>Q7. Mô tả logic vào lệnh / thoát lệnh cơ bản</span>
-                    <Tooltip text="Để kiểm toán WFO, chúng tôi cần biết chính xác hệ thống của bạn dựa trên quy tắc nào (chỉ báo, price action, v.v) để lượng hóa nó thành mã code." />
+                    <span>7. Mô tả ngắn quy tắc vào lệnh (2-3 câu)</span>
+                    <Tooltip text="Ví dụ: Khi giá phá đỉnh pivot trong xu hướng EMA20 tăng, vào BUY stop trên đỉnh pivot, SL dưới đáy gần nhất, TP1 1.5R chốt 50%, TP2 3R." />
                   </label>
                   <textarea 
                     rows={4}
@@ -179,37 +235,19 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
                   />
                 </div>
 
-                <InputField label="Q8. Khung thời gian (Timeframe) sử dụng chính" value={formData.q8} onChange={(e:any) => updateForm('q8', e.target.value)} placeholder="H1, M15..." />
-                <InputField label="Q9. Tỷ lệ Risk:Reward (RR) trung bình" value={formData.q9} onChange={(e:any) => updateForm('q9', e.target.value)} placeholder="1:2" />
-                
-                <InputField 
-                  type="number" 
-                  label="Q10. Drawdown tối đa cho phép (%)" 
-                  value={formData.q10} 
-                  onChange={(e:any) => updateForm('q10', e.target.value)} 
-                  tooltip="Max Drawdown là ngưỡng rủi ro tuyệt đối. Nếu vượt ngưỡng này, hệ thống sẽ bị coi là 'vỡ trận' (Risk of Ruin)."
-                  placeholder="Ví dụ: 10" 
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <SelectField label="8. Symbol giao dịch chính" options={['XAUUSD', 'EURUSD', 'BTCUSD', 'Khác']} value={formData.q8} onChange={(e:any) => updateForm('q8', e.target.value)} />
+                  <SelectField label="9. Khung thời gian" options={['M1', 'M5', 'M15', 'H1', 'H4', 'D1']} value={formData.q9} onChange={(e:any) => updateForm('q9', e.target.value)} />
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Q11. Loại hệ thống</label>
-                    <select value={formData.q11} onChange={(e) => updateForm('q11', e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3]">
-                      <option>Manual</option><option>Semi-Auto</option><option>100% EA</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Q12. Martingale/Grid?</label>
-                    <select value={formData.q12} onChange={(e) => updateForm('q12', e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3]">
-                      <option>Không</option><option>Có</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-1">Q13. Trade News?</label>
-                    <select value={formData.q13} onChange={(e) => updateForm('q13', e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3]">
-                      <option>Không</option><option>Có</option>
-                    </select>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InputField type="number" label="10. Mức rủi ro mỗi lệnh (% tài khoản)" value={formData.q10} onChange={(e:any) => updateForm('q10', e.target.value)} placeholder="Ví dụ: 1" />
+                  <SelectField label="11. Stop-loss / Take-profit dùng?" options={['R-multiple', 'Điểm cụ thể', 'Trailing Stop']} value={formData.q11} onChange={(e:any) => updateForm('q11', e.target.value)} />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InputField label="12. Có rule cắt lỗ ngày không?" value={formData.q12} onChange={(e:any) => updateForm('q12', e.target.value)} placeholder="Vd: lỗ 2%/ngày là dừng" />
+                  <SelectField label="13. Khoảng dữ liệu muốn audit" options={['90 ngày', '180 ngày', '365 ngày']} value={formData.q13} onChange={(e:any) => updateForm('q13', e.target.value)} />
                 </div>
               </motion.div>
             )}
@@ -217,27 +255,24 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
             {step === 3 && (
               <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 rounded-lg p-4 mb-4 text-sm text-[#F59E0B]">
-                  <strong>Lưu ý:</strong> Bạn đang chọn tối ưu hệ thống để thi quỹ (Prop Firm). Vui lòng cung cấp chính xác các thông số luật quỹ để chúng tôi ép xung WFO phù hợp.
+                  <strong>Lưu ý Prop Firm:</strong> Hãy cung cấp chính xác các thông số luật quỹ để chúng tôi ép xung WFO phù hợp.
                 </div>
-                <InputField label="Q14. Tên quỹ Prop Firm bạn đang nhắm tới" value={formData.q14} onChange={(e:any) => updateForm('q14', e.target.value)} placeholder="FTMO, MFF, The Funded Trader..." />
-                <InputField type="number" label="Q15. Target Profit Phase 1 (%)" value={formData.q15} onChange={(e:any) => updateForm('q15', e.target.value)} placeholder="8" />
-                <InputField 
-                  type="number" 
-                  label="Q16. Max Daily Drawdown (%)" 
-                  value={formData.q16} 
-                  onChange={(e:any) => updateForm('q16', e.target.value)} 
-                  tooltip="Đa số quỹ sẽ loại tài khoản nếu Equity (bao gồm cả lệnh đang chạy) âm quá ngưỡng này trong 1 ngày."
-                  placeholder="5" 
-                />
-                <InputField type="number" label="Q17. Max Overall Drawdown (%)" value={formData.q17} onChange={(e:any) => updateForm('q17', e.target.value)} placeholder="10" />
-                <InputField type="number" label="Q18. Số ngày giao dịch tối thiểu (Minimum Trading Days)" value={formData.q18} onChange={(e:any) => updateForm('q18', e.target.value)} placeholder="0" />
+                
+                <SelectField label="14. Prop firm nào?" options={['Hola Prime', 'FTMO', 'MyForexFunds (MFF)', 'FundedNext', 'Khác']} value={formData.q14} onChange={(e:any) => updateForm('q14', e.target.value)} />
+                <InputField type="number" label="15. Kích thước challenge (USD)" value={formData.q15} onChange={(e:any) => updateForm('q15', e.target.value)} placeholder="Ví dụ: 100000" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InputField type="number" label="16. Daily DD limit (%)" value={formData.q16} onChange={(e:any) => updateForm('q16', e.target.value)} placeholder="Ví dụ: 5" tooltip="Max Daily Drawdown quỹ cho phép" />
+                  <InputField type="number" label="17. Overall DD limit (%)" value={formData.q17} onChange={(e:any) => updateForm('q17', e.target.value)} placeholder="Ví dụ: 10" />
+                </div>
+                <InputField type="number" label="18. Profit target (%)" value={formData.q18} onChange={(e:any) => updateForm('q18', e.target.value)} placeholder="Ví dụ: 8" />
               </motion.div>
             )}
 
             {step === 4 && (
               <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 
-                {(formData.q19 === 'Gói Chuyên Nghiệp' || formData.q19 === 'Đặc Quyền') && (
+                {isVIP && (
                   <div className="bg-[#00FFA3]/10 border border-[#00FFA3]/50 rounded-lg p-4 mb-6 animate-pulse">
                     <p className="text-[#00FFA3] font-bold text-sm text-center">
                       🌟 Khách hàng VIP: Chúng tôi sẽ ưu tiên xử lý báo cáo của bạn trong vòng 12h!
@@ -245,37 +280,28 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
                   </div>
                 )}
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Q19. Gói kiểm toán bạn đăng ký</label>
-                  <select 
-                    value={formData.q19} 
-                    onChange={(e) => updateForm('q19', e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] appearance-none"
-                  >
-                    <option value="">-- Chọn gói dịch vụ --</option>
-                    <option value="Gói Trải Nghiệm">Gói Trải Nghiệm</option>
-                    <option value="Gói Nâng Cao">Gói Nâng Cao</option>
-                    <option value="Gói Chuyên Nghiệp">Gói Chuyên Nghiệp</option>
-                    <option value="Đặc Quyền">Đặc Quyền (VIP)</option>
-                  </select>
+                <SelectField 
+                  label="19. Tier dịch vụ" 
+                  options={['Gói Trải Nghiệm', 'Gói Nâng Cao', 'Gói Chuyên Nghiệp', 'Đặc Quyền']} 
+                  value={formData.q19} 
+                  onChange={(e:any) => updateForm('q19', e.target.value)} 
+                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <SelectField label="20. Ngôn ngữ báo cáo" options={['Tiếng Việt', 'English', '中文', 'Song ngữ']} value={formData.q20} onChange={(e:any) => updateForm('q20', e.target.value)} />
+                  <SelectField label="21. Co-branding (Logo IB/Công ty)?" options={['Không', 'Có']} value={formData.q21} onChange={(e:any) => updateForm('q21', e.target.value)} disabled={!isSuperVIP} tooltip="Chỉ dành cho VIP Đặc Quyền" />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Q20. Đặt lịch tư vấn chiến lược 1-1 (Chỉ dành cho gói Đặc Quyền)
-                  </label>
-                  <input
-                    type="datetime-local"
-                    disabled={formData.q19 !== 'Đặc Quyền'}
-                    value={formData.q20}
-                    onChange={(e) => updateForm('q20', e.target.value)}
-                    className={`w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFA3] ${formData.q19 !== 'Đặc Quyền' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  />
-                  {formData.q19 !== 'Đặc Quyền' && (
-                    <p className="text-xs text-gray-500 mt-1">Tính năng này đã bị khóa vì gói bạn chọn không phải là Đặc Quyền.</p>
-                  )}
-                </div>
-
+                {/* Câu hỏi nâng cao (Chỉ dành cho VIP) */}
+                {isSuperVIP && (
+                  <div className="mt-8 p-6 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl space-y-4">
+                    <h3 className="text-[#D4AF37] font-bold mb-4">Câu hỏi nâng cao (Dành riêng cho Đặc Quyền)</h3>
+                    <SelectField label="22. Audit nhiều variant cùng lúc? (Vd thay đổi EMA 20->34)" options={['Không', 'Có']} value={formData.vip1} onChange={(e:any) => updateForm('vip1', e.target.value)} />
+                    <SelectField label="23. Test trên nhiều symbol cùng cấu hình?" options={['Không', 'Có']} value={formData.vip2} onChange={(e:any) => updateForm('vip2', e.target.value)} />
+                    <SelectField label="24. Thêm Monte Carlo regime-split (bull/bear/sideways)?" options={['Không', 'Có']} value={formData.vip3} onChange={(e:any) => updateForm('vip3', e.target.value)} />
+                    <SelectField label="25. Nhận file Pine Script / Python skeleton?" options={['Không', 'Có']} value={formData.vip4} onChange={(e:any) => updateForm('vip4', e.target.value)} />
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
