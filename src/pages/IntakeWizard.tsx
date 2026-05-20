@@ -91,6 +91,17 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
     }
   }, [selectedPackage]);
 
+  useEffect(() => {
+    if (errorMsg) {
+      const element = document.getElementById('intake-form-top');
+      if (element) {
+        // Cuộn lên top của form (cách một khoảng so với viền trên)
+        const y = element.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+  }, [errorMsg]);
+
   const updateForm = (key: string, value: string | number) => {
     setFormData(prev => ({ ...prev, [key]: value }));
     if (errorMsg) setErrorMsg('');
@@ -184,7 +195,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
           <div className="h-full bg-[#00FFA3] transition-all duration-500 shadow-[0_0_10px_#00FFA3]" style={{ width: `${(step / 4) * 100}%` }}></div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-gray-800">
+        <div id="intake-form-top" className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-gray-800">
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-white flex items-center">
               <Settings2 className="mr-2 h-6 w-6 text-[#00FFA3]" />
