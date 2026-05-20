@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { CheckCircle2, FileCog, Cpu, FileBarChart, TriangleAlert } from 'lucide-react';
+import IntakeWizard from './IntakeWizard';
 
 const HolographicDashboard = () => {
   return (
@@ -107,6 +108,12 @@ const SectionWrapper: React.FC<{ children: React.ReactNode, id?: string, classNa
 
 const LandingPage: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+
+  const handleSelectPackage = (pkgName: string) => {
+    setSelectedPackage(pkgName);
+    document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const renderHeroTitle = () => {
     if (i18n.language === 'en') {
@@ -157,7 +164,7 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* Hero Section */}
-      <SectionWrapper className="relative pt-16 md:pt-24 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
+      <SectionWrapper id="home" className="scroll-mt-20 relative pt-16 md:pt-24 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
         <div className="flex flex-col text-left">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 md:mb-6 leading-tight">
             {renderHeroTitle()}
@@ -166,12 +173,13 @@ const LandingPage: React.FC = () => {
             {t('hero.subtitle')}
           </p>
           <div>
-            <a 
-              href="#pricing"
+            <button 
+              type="button"
+              onClick={() => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-block bg-[#00FFA3] text-black font-bold text-base md:text-lg py-3 md:py-4 px-8 md:px-10 rounded-lg shadow-[0_0_30px_rgba(0,255,163,0.6)] transform hover:scale-105 hover:bg-green-400 transition-all duration-300 text-center w-full sm:w-auto"
             >
               KIỂM TOÁN CHIẾN LƯỢC NGAY
-            </a>
+            </button>
           </div>
         </div>
 
@@ -186,7 +194,7 @@ const LandingPage: React.FC = () => {
       </SectionWrapper>
 
       {/* SOP Section */}
-      <SectionWrapper id="sop" className="py-12 md:py-24 relative z-10">
+      <SectionWrapper id="workflow" className="scroll-mt-20 py-12 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
             <h3 className="text-xs md:text-sm uppercase text-gray-500 tracking-wider font-bold mb-2 md:mb-3">OPERATIONAL WORKFLOW</h3>
@@ -242,7 +250,7 @@ const LandingPage: React.FC = () => {
       </SectionWrapper>
 
       {/* Pricing Section */}
-      <SectionWrapper id="pricing" className="py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10 w-full">
+      <SectionWrapper id="pricing" className="scroll-mt-20 py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10 w-full">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10 md:mb-16">Bảng Giá Dịch Vụ</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 md:mb-24">
           {/* Tier 1 - Highlighted */}
@@ -254,7 +262,7 @@ const LandingPage: React.FC = () => {
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Basic Walk-Forward</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Monthly PDF Report</span></li>
             </ul>
-            <button className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Bắt đầu ngay</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Trải Nghiệm')} className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Bắt đầu ngay</button>
           </div>
           
           {/* Tier 2 */}
@@ -265,7 +273,7 @@ const LandingPage: React.FC = () => {
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Advanced Walk-Forward</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Weekly Re-optimization</span></li>
             </ul>
-            <button className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Khởi tạo hệ thống</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Nâng Cao')} className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Khởi tạo hệ thống</button>
           </div>
 
           {/* Tier 3 */}
@@ -276,7 +284,7 @@ const LandingPage: React.FC = () => {
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Custom Scripting</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">One-off Analysis</span></li>
             </ul>
-            <button className="w-full bg-[#F59E0B]/20 text-[#F59E0B] font-semibold py-3 rounded-lg hover:bg-[#F59E0B]/30 border border-[#F59E0B]/50 shadow-[0_0_15px_rgba(245,158,11,0.5)] animate-pulse transition-all text-sm md:text-base">Trở thành đối tác</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Chuyên Nghiệp')} className="w-full bg-[#F59E0B]/20 text-[#F59E0B] font-semibold py-3 rounded-lg hover:bg-[#F59E0B]/30 border border-[#F59E0B]/50 shadow-[0_0_15px_rgba(245,158,11,0.5)] animate-pulse transition-all text-sm md:text-base">Trở thành đối tác</button>
           </div>
 
           {/* Tier 4 */}
@@ -289,7 +297,7 @@ const LandingPage: React.FC = () => {
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Phân tích rủi ro định chế</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Hỗ trợ chiến lược 1-1</span></li>
             </ul>
-            <button className="w-full bg-transparent text-[#D4AF37] border border-[#D4AF37] font-semibold py-3 rounded-lg hover:bg-[#D4AF37]/10 transition-colors text-sm md:text-base">Yêu cầu tư vấn đặc quyền</button>
+            <button type="button" onClick={() => handleSelectPackage('Đặc Quyền')} className="w-full bg-transparent text-[#D4AF37] border border-[#D4AF37] font-semibold py-3 rounded-lg hover:bg-[#D4AF37]/10 transition-colors text-sm md:text-base">Yêu cầu tư vấn đặc quyền</button>
           </div>
         </div>
 
@@ -310,6 +318,11 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </SectionWrapper>
+
+      {/* Audit Intake Form Section */}
+      <SectionWrapper id="audit-form" className="scroll-mt-20 relative z-10 w-full">
+        <IntakeWizard selectedPackage={selectedPackage} />
       </SectionWrapper>
 
     </div>

@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ChevronLeft, Settings2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const IntakeWizard: React.FC = () => {
+interface IntakeWizardProps {
+  selectedPackage?: string | null;
+}
+
+const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -15,6 +19,13 @@ const IntakeWizard: React.FC = () => {
   const [indicator, setIndicator] = useState('EMA 34');
   const [risk, setRisk] = useState(1);
   const [drawdown, setDrawdown] = useState(5);
+  const [pkg, setPkg] = useState(selectedPackage || '');
+
+  React.useEffect(() => {
+    if (selectedPackage) {
+      setPkg(selectedPackage);
+    }
+  }, [selectedPackage]);
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
@@ -62,8 +73,29 @@ const IntakeWizard: React.FC = () => {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
+                {selectedPackage && (
+                  <div className="bg-[#00FFA3]/10 border border-[#00FFA3]/30 rounded-lg p-4 mb-6">
+                    <p className="text-[#00FFA3] font-medium text-sm text-center">
+                      Bạn đã chọn: <span className="font-bold">{selectedPackage}</span> - Vui lòng điền thông tin để hoàn tất.
+                    </p>
+                  </div>
+                )}
                 <h3 className="text-xl text-white font-semibold mb-4">{t('wizard.step1')}</h3>
                 <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Gói đăng ký</label>
+                    <select 
+                      value={pkg} 
+                      onChange={(e) => setPkg(e.target.value)}
+                      className="w-full bg-background border border-surface rounded-lg p-3 text-white focus:border-alpha focus:ring-1 focus:ring-alpha outline-none appearance-none"
+                    >
+                      <option value="">-- Chọn gói dịch vụ --</option>
+                      <option value="Gói Trải Nghiệm">Gói Trải Nghiệm (1.500.000 VNĐ/tháng)</option>
+                      <option value="Gói Nâng Cao">Gói Nâng Cao (4.000.000 VNĐ/tháng)</option>
+                      <option value="Gói Chuyên Nghiệp">Gói Chuyên Nghiệp (9.000.000 VNĐ/tháng)</option>
+                      <option value="Đặc Quyền">Đặc Quyền (96.000.000 VNĐ/năm)</option>
+                    </select>
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">{t('wizard.pair')}</label>
                     <select 
