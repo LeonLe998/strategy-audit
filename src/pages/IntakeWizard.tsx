@@ -160,7 +160,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
             <CheckCircle className="w-20 h-20 text-[#00FFA3]" />
           </motion.div>
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Dữ liệu đã được tiếp nhận!</h2>
-          <p className="text-gray-300 md:text-lg">Đội ngũ chuyên gia Quant sẽ phân tích và phản hồi báo cáo sơ bộ cho bạn trong 24-48 giờ tới.</p>
+          <p className="text-gray-300 md:text-lg">Đội ngũ Strategy Audit sẽ phân tích và phản hồi báo cáo sơ bộ cho bạn trong 24-48 giờ tới.</p>
         </div>
       </div>
     );
