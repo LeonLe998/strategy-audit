@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-white font-bold text-lg mb-4">Cộng đồng</h3>
             <div className="flex flex-col space-y-3 text-sm text-gray-400">
-              <a href="#" className="flex items-center space-x-2 hover:text-white transition-colors group">
+              <a href="https://zalo.me/0566665511" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:text-white transition-colors group">
                 <MessageCircle className="h-4 w-4 text-blue-400 group-hover:text-blue-300" />
                 <span>Zalo Official Group</span>
               </a>
