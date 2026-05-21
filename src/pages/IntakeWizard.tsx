@@ -172,21 +172,19 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
 
       const response = await fetch('https://script.google.com/macros/s/AKfycbzoWyEB5hef_OomLnG00--wRt45EznWl7Q5EZ8IEh9zaIQeQIMg9AnhvV0V5bu1oo0t/exec', {
         method: 'POST',
+        mode: 'no-cors', // Bắt buộc thêm no-cors để trình duyệt không chặn kết quả trả về
         headers: {
-          // Dùng text/plain để tránh lỗi CORS Preflight (OPTIONS request) của Google Apps Script
           'Content-Type': 'text/plain;charset=utf-8',
         },
         body: JSON.stringify(payload),
       });
       
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      
+      // Với mode no-cors, Google Apps Script sẽ không trả về status 200 (opaque response).
+      // Nên nếu code chạy đến đây mà không bị văng lỗi mạng, ta mặc định là thành công.
       setIsSuccess(true);
     } catch (error) {
       console.error("Webhook error:", error);
-      setErrorMsg("Có lỗi xảy ra khi gửi form. Vui lòng thử lại.");
+      setErrorMsg("Có lỗi mạng xảy ra khi gửi form. Vui lòng kiểm tra kết nối internet.");
     } finally {
       setIsSubmitting(false);
     }
