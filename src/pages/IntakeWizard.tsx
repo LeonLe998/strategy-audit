@@ -159,22 +159,19 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch('https://hook.eu2.make.com/tcig3yt8g8bjpbmw19suo7o98nw5y96j', {
+      await fetch('https://script.google.com/macros/s/AKfycbzoWyEB5hef_OomLnG00--wRt45EznWl7Q5EZ8IEh9zaIQeQIMg9AnhvV0V5bu1oo0t/exec', {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'text/plain;charset=utf-8',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Gửi toàn bộ 27 câu hỏi
       });
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
       
       setIsSuccess(true);
     } catch (error) {
       console.error("Webhook error:", error);
-      setErrorMsg("Có lỗi xảy ra khi gửi form. Vui lòng thử lại.");
+      setErrorMsg("Có lỗi mạng xảy ra khi gửi form. Vui lòng kiểm tra kết nối internet.");
     } finally {
       setIsSubmitting(false);
     }
