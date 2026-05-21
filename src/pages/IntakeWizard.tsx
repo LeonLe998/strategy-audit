@@ -158,11 +158,26 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate webhook
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log("Webhook payload:", JSON.stringify(formData, null, 2));
-    setIsSubmitting(false);
-    setIsSuccess(true);
+    try {
+      const response = await fetch('https://hook.eu2.make.com/igotwofmoccnjkuou9l085qxb36huf0n', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("Webhook error:", error);
+      setErrorMsg("Có lỗi xảy ra khi gửi form. Vui lòng thử lại.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getStepTitle = () => {
