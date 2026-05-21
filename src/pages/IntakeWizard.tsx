@@ -159,28 +159,15 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Chuyển đổi dữ liệu từ dạng q1, q2 sang định dạng mà Google Apps Script mong muốn
-      const payload = {
-        name: formData.q1,
-        email: formData.q2,
-        phone: formData.q2_2,
-        package: formData.q19,
-        strategyName: formData.q6,
-        // Gửi kèm toàn bộ data gốc phòng trường hợp anh cần lưu thêm cột
-        fullData: JSON.stringify(formData)
-      };
-
       const response = await fetch('https://script.google.com/macros/s/AKfycbzoWyEB5hef_OomLnG00--wRt45EznWl7Q5EZ8IEh9zaIQeQIMg9AnhvV0V5bu1oo0t/exec', {
         method: 'POST',
-        mode: 'no-cors', // Bắt buộc thêm no-cors để trình duyệt không chặn kết quả trả về
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'text/plain;charset=utf-8',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(formData), // Gửi toàn bộ 27 câu hỏi
       });
       
-      // Với mode no-cors, Google Apps Script sẽ không trả về status 200 (opaque response).
-      // Nên nếu code chạy đến đây mà không bị văng lỗi mạng, ta mặc định là thành công.
       setIsSuccess(true);
     } catch (error) {
       console.error("Webhook error:", error);
