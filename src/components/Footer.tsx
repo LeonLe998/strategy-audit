@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             <div className="flex flex-col space-y-3 text-sm text-gray-400">
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-[#F59E0B]" />
-                <span>Hotline/Zalo: [Số điện thoại của anh]</span>
+                <span>Hotline/Zalo: 05.6666.5511</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-[#F59E0B]" />
@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
                 <MessageCircle className="h-4 w-4 text-blue-400 group-hover:text-blue-300" />
                 <span>Zalo Official Group</span>
               </a>
-              <a href="https://zalo.me/[Số_điện_thoại_của_anh]" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:text-white transition-colors group">
+              <a href="https://zalo.me/0566665511" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 hover:text-white transition-colors group">
                 <MessageCircle className="h-4 w-4 text-blue-500 group-hover:text-blue-400" />
                 <span>Zalo Admin</span>
               </a>
