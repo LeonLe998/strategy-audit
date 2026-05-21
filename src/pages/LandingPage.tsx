@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { CheckCircle2, FileCog, Cpu, FileBarChart, TriangleAlert } from 'lucide-react';
+import IntakeWizard from './IntakeWizard';
 
 const HolographicDashboard = () => {
   return (
@@ -107,32 +108,38 @@ const SectionWrapper: React.FC<{ children: React.ReactNode, id?: string, classNa
 
 const LandingPage: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+
+  const handleSelectPackage = (pkgName: string) => {
+    setSelectedPackage(pkgName);
+    document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const renderHeroTitle = () => {
     if (i18n.language === 'en') {
-      const parts = t('hero.title').split('ULTIMATE WEAPON');
+      const parts = t('hero.title').split('SYSTEM OPTIMIZATION');
       return (
         <span className="text-white">
           {parts[0]}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">ULTIMATE WEAPON</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">SYSTEM OPTIMIZATION</span>
           {parts[1] || ''}
         </span>
       );
     } else if (i18n.language === 'zh') {
-      const parts = t('hero.title').split('终极武器');
+      const parts = t('hero.title').split('系统优化');
       return (
         <span className="text-white">
           {parts[0]}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">终极武器</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">系统优化</span>
           {parts[1] || ''}
         </span>
       );
     } else {
-      const parts = t('hero.title').split('VŨ KHÍ BẬC NHẤT');
+      const parts = t('hero.title').split('TỐI ƯU HỆ THỐNG');
       return (
         <span className="text-white">
           {parts[0]}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">VŨ KHÍ BẬC NHẤT</span>
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00FFA3] to-[#F59E0B] drop-shadow-[0_0_8px_rgba(0,255,163,0.5)]">TỐI ƯU HỆ THỐNG</span>
           {parts[1] || ''}
         </span>
       );
@@ -157,7 +164,7 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* Hero Section */}
-      <SectionWrapper className="relative pt-16 md:pt-24 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
+      <SectionWrapper id="home" className="scroll-mt-20 relative pt-16 md:pt-24 pb-12 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
         <div className="flex flex-col text-left">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 md:mb-6 leading-tight">
             {renderHeroTitle()}
@@ -166,12 +173,13 @@ const LandingPage: React.FC = () => {
             {t('hero.subtitle')}
           </p>
           <div>
-            <a 
-              href="#pricing"
+            <button 
+              type="button"
+              onClick={() => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-block bg-[#00FFA3] text-black font-bold text-base md:text-lg py-3 md:py-4 px-8 md:px-10 rounded-lg shadow-[0_0_30px_rgba(0,255,163,0.6)] transform hover:scale-105 hover:bg-green-400 transition-all duration-300 text-center w-full sm:w-auto"
             >
-              KIỂM TOÁN CHIẾN LƯỢC NGAY
-            </a>
+              BẮT ĐẦU KIỂM TOÁN TÀI KHOẢN CỦA BẠN
+            </button>
           </div>
         </div>
 
@@ -186,11 +194,11 @@ const LandingPage: React.FC = () => {
       </SectionWrapper>
 
       {/* SOP Section */}
-      <SectionWrapper id="sop" className="py-12 md:py-24 relative z-10">
+      <SectionWrapper id="workflow" className="scroll-mt-20 py-12 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-16">
-            <h3 className="text-xs md:text-sm uppercase text-gray-500 tracking-wider font-bold mb-2 md:mb-3">OPERATIONAL WORKFLOW</h3>
-            <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Quy trình vận hành: Người mới nhìn cũng hiểu cách hoạt động</h2>
+            <h3 className="text-xs md:text-sm uppercase text-gray-500 tracking-wider font-bold mb-2 md:mb-3">USER JOURNEY</h3>
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Hành trình tối ưu hóa chiến lược</h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
               Mọi ý tưởng giao dịch cảm tính của bạn sẽ được chuyển đổi thành các quy tắc toán học minh bạch và chạy tự động thông qua 3 bước chuẩn hóa.
             </p>
@@ -198,26 +206,63 @@ const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {[
-              { icon: <FileCog size={56} color="#F59E0B" className="drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] md:w-16 md:h-16" />, title: t('sop.step1') },
-              { icon: <Cpu size={56} color="#00FFA3" className="drop-shadow-[0_0_15px_rgba(0,255,163,0.5)] md:w-16 md:h-16" />, title: t('sop.step2') },
-              { icon: <FileBarChart size={56} color="#E2E8F0" className="drop-shadow-[0_0_15px_rgba(226,232,240,0.5)] md:w-16 md:h-16" />, title: t('sop.step3') }
+              { 
+                icon: <FileCog size={56} color="#F59E0B" className="drop-shadow-[0_0_15px_rgba(245,158,11,0.5)] md:w-16 md:h-16" />, 
+                title: "Bước 1: Kiểm toán", 
+                subtitle: "Nhập liệu & Form Intake",
+                onClick: () => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })
+              },
+              { icon: <Cpu size={56} color="#00FFA3" className="drop-shadow-[0_0_15px_rgba(0,255,163,0.5)] md:w-16 md:h-16" />, title: "Bước 2: Ép xung dữ liệu", subtitle: "WFO Optimization" },
+              { icon: <FileBarChart size={56} color="#E2E8F0" className="drop-shadow-[0_0_15px_rgba(226,232,240,0.5)] md:w-16 md:h-16" />, title: "Bước 3: Nhận bàn giao", subtitle: "Báo cáo & Cấu hình" }
             ].map((step, idx) => (
               <div 
                 key={idx}
-                className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-8 md:p-10 hover:border-[#00FFA3]/50 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center shadow-lg"
+                onClick={step.onClick}
+                className={`bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-8 md:p-10 hover:border-[#00FFA3]/50 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center shadow-lg ${step.onClick ? 'cursor-pointer' : ''}`}
               >
-                <div className="absolute top-4 left-4 bg-white/5 border border-white/10 rounded-md px-2 py-1 text-[10px] font-bold text-gray-400 tracking-wider">SOP</div>
                 <div className="mb-6 md:mb-8 mt-4">{step.icon}</div>
-                <h3 className="text-lg md:text-xl font-bold text-white mb-2 md:mb-3">{step.title}</h3>
+                <h3 className="text-lg md:text-xl font-bold text-white mb-2">{step.title}</h3>
+                <p className="text-sm text-gray-400">{step.subtitle}</p>
               </div>
             ))}
           </div>
         </div>
       </SectionWrapper>
 
-      {/* Social Proof (Before & After) */}
+      {/* Social Proof (Before & After Visual Story) */}
       <SectionWrapper id="cases" className="py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto relative z-10 w-full">
-        <h2 className="text-2xl md:text-4xl font-bold text-center text-white mb-10 md:mb-16">Bằng Chứng Thực Tế (Case Study)</h2>
+        <h2 className="text-2xl md:text-4xl font-bold text-center text-white mb-10 md:mb-16">Trước & Sau Kiểm Toán</h2>
+        
+        {/* Visual Timeline */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-16 relative">
+          {/* Connecting Line (Desktop only) */}
+          <div className="hidden md:block absolute top-1/2 left-[10%] right-[10%] h-1 bg-gradient-to-r from-[#FF3366] via-gray-600 to-[#00FFA3] -translate-y-1/2 z-0"></div>
+          
+          <div className="flex flex-col items-center text-center relative z-10 bg-[#0B0E14] px-4 py-6 md:p-4 mb-8 md:mb-0 w-full md:w-1/3">
+            <div className="w-16 h-16 rounded-full bg-[#FF3366]/20 border-2 border-[#FF3366] flex items-center justify-center mb-4">
+              <span className="text-2xl">🤔</span>
+            </div>
+            <h4 className="text-[#FF3366] font-bold text-lg">Chiến lược cũ</h4>
+            <p className="text-gray-400 text-sm mt-2">(Mơ hồ, cảm tính, dễ cháy)</p>
+          </div>
+          
+          <div className="flex flex-col items-center text-center relative z-10 bg-[#0B0E14] px-4 py-6 md:p-4 mb-8 md:mb-0 w-full md:w-1/3">
+            <div className="w-16 h-16 rounded-full bg-[#F59E0B]/20 border-2 border-[#F59E0B] flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(245,158,11,0.5)]">
+              <FileCog className="text-[#F59E0B] w-8 h-8" />
+            </div>
+            <h4 className="text-[#F59E0B] font-bold text-lg">Strategy Audit</h4>
+            <p className="text-gray-400 text-sm mt-2">(Minh bạch, toán học hóa)</p>
+          </div>
+
+          <div className="flex flex-col items-center text-center relative z-10 bg-[#0B0E14] px-4 py-6 md:p-4 w-full md:w-1/3">
+            <div className="w-16 h-16 rounded-full bg-[#00FFA3]/20 border-2 border-[#00FFA3] flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(0,255,163,0.5)]">
+              <span className="text-2xl">🚀</span>
+            </div>
+            <h4 className="text-[#00FFA3] font-bold text-lg">Hệ thống tối ưu</h4>
+            <p className="text-gray-400 text-sm mt-2">(Lợi nhuận bền vững)</p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Before */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#FF3366]/30 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center relative overflow-hidden group hover:border-[#FF3366] transition-all">
@@ -242,53 +287,65 @@ const LandingPage: React.FC = () => {
       </SectionWrapper>
 
       {/* Pricing Section */}
-      <SectionWrapper id="pricing" className="py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10 w-full">
+      <SectionWrapper id="pricing" className="scroll-mt-20 py-12 md:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10 w-full">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10 md:mb-16">Bảng Giá Dịch Vụ</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 md:mb-24">
-          {/* Tier 1 - Highlighted */}
-          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#00FFA3] rounded-xl p-6 md:p-8 transform md:scale-105 shadow-[0_0_30px_rgba(0,255,163,0.3)] relative z-10 flex flex-col">
-            <div className="absolute top-0 right-0 bg-[#00FFA3] text-black text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Popular</div>
-            <h3 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4">{t('pricing.tier1').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">1.5M<span className="text-xs md:text-sm text-gray-400 font-normal"> đ/tháng</span></div>
+          {/* Tier 1 */}
+          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
+            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-1">{t('pricing.tier1').split('(')[0]}</h3>
+            <p className="text-gray-400 text-xs md:text-sm font-medium mb-3">Dành cho người muốn kiểm tra sức khỏe hệ thống</p>
+            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">2.500.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Basic Walk-Forward</span></li>
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Monthly PDF Report</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">2 báo cáo/tháng</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Basic Walk-Forward Analysis</span></li>
             </ul>
-            <button className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Chọn Gói Này</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Trải Nghiệm')} className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Bắt đầu ngay</button>
           </div>
           
-          {/* Tier 2 */}
-          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3 md:mb-4">{t('pricing.tier2').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">$150<span className="text-xs md:text-sm text-gray-500 font-normal"> /tháng</span></div>
+          {/* Tier 2 - Highlighted */}
+          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#00FFA3] rounded-xl p-6 md:p-8 transform md:scale-105 shadow-[0_0_30px_rgba(0,255,163,0.3)] relative z-10 flex flex-col">
+            <div className="absolute top-0 right-0 bg-[#00FFA3] text-black text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Recommended</div>
+            <h3 className="text-lg md:text-xl font-semibold text-white mb-1">{t('pricing.tier2').split('(')[0]}</h3>
+            <p className="text-[#00FFA3] text-xs md:text-sm font-medium mb-3">Đồng hành cùng chuyên gia tối ưu</p>
+            <div className="text-2xl md:text-3xl font-bold text-[#00FFA3] mb-4 md:mb-6">5.000.000 VNĐ<span className="text-xs md:text-sm text-gray-400 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Advanced Walk-Forward</span></li>
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Weekly Re-optimization</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300">Báo cáo hàng tuần</span></li>
+              <li className="flex items-start">
+                <CheckCircle2 className="h-5 w-5 text-[#00FFA3] mr-2 shrink-0" />
+                <span className="relative group cursor-help border-b border-dashed border-[#00FFA3]/50 pb-0.5 text-xs md:text-sm text-gray-300">
+                  Advanced WFO + Stress Testing
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 bg-gray-900 text-white text-xs p-3 rounded-md border border-gray-700 shadow-xl z-50 text-center pointer-events-none">
+                    Bao gồm Stress Testing và mô phỏng Monte Carlo để kiểm chứng độ bền chiến lược
+                  </div>
+                </span>
+              </li>
             </ul>
-            <button className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Chọn Gói Này</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Nâng Cao')} className="w-full bg-[#00FFA3] text-black font-bold py-3 rounded-lg hover:bg-green-400 shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all text-sm md:text-base">Đồng hành cùng chuyên gia</button>
           </div>
 
           {/* Tier 3 */}
           <div className="bg-[#131722]/80 backdrop-blur-md border border-[#2A2E39] rounded-xl p-6 md:p-8 flex flex-col">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-3 md:mb-4">{t('pricing.tier3').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">Từ 500k<span className="text-xs md:text-sm text-gray-500 font-normal"> /lần</span></div>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-300 mb-1">{t('pricing.tier3').split('(')[0]}</h3>
+            <p className="text-[#F59E0B] text-xs md:text-sm font-medium mb-3">Dành cho người muốn chinh phục Prop Firm</p>
+            <div className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">9.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/tháng</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Custom Scripting</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-gray-500 mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">One-off Analysis</span></li>
             </ul>
-            <button className="w-full bg-white/10 text-white font-semibold py-3 rounded-lg hover:bg-white/20 transition-colors text-sm md:text-base">Liên Hệ</button>
+            <button type="button" onClick={() => handleSelectPackage('Gói Chuyên Nghiệp')} className="w-full bg-[#F59E0B]/20 text-[#F59E0B] font-semibold py-3 rounded-lg hover:bg-[#F59E0B]/30 border border-[#F59E0B]/50 shadow-[0_0_15px_rgba(245,158,11,0.5)] animate-pulse transition-all text-sm md:text-base">Trở thành đối tác</button>
           </div>
 
           {/* Tier 4 */}
-          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#F59E0B] rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-12 h-12 md:w-16 md:h-16 bg-[#F59E0B]/10 rounded-bl-full"></div>
-            <h3 className="text-lg md:text-xl font-semibold text-[#F59E0B] mb-3 md:mb-4">{t('pricing.tier4').split('(')[0]}</h3>
-            <div className="text-2xl md:text-3xl font-bold text-[#F59E0B] mb-4 md:mb-6">$1500<span className="text-xs md:text-sm text-gray-500 font-normal"> /lifetime</span></div>
+          <div className="bg-[#131722]/80 backdrop-blur-md border border-[#D4AF37]/60 rounded-xl p-6 md:p-8 flex flex-col relative overflow-hidden shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+            <div className="absolute top-0 right-0 bg-gradient-to-r from-[#D4AF37] to-[#F59E0B] text-black text-[10px] md:text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">Limited Access</div>
+            <h3 className="text-lg md:text-xl font-semibold text-[#D4AF37] mb-3 md:mb-4">{t('pricing.tier4').split('(')[0]}</h3>
+            <div className="text-2xl md:text-3xl font-bold text-[#D4AF37] mb-4 md:mb-6">96.000.000 VNĐ<span className="text-xs md:text-sm text-gray-500 font-normal">/năm</span></div>
             <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#F59E0B] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">1-on-1 Consultation</span></li>
-              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#F59E0B] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-400">Proprietary Alpha</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Cố vấn ưu tiên</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Phân tích rủi ro định chế</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Hỗ trợ chiến lược 1-1</span></li>
             </ul>
-            <button className="w-full bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B] font-semibold py-3 rounded-lg hover:bg-[#F59E0B]/20 transition-colors text-sm md:text-base">Đăng Ký Khóa Học</button>
+            <button type="button" onClick={() => handleSelectPackage('Đặc Quyền')} className="w-full bg-transparent text-[#D4AF37] border border-[#D4AF37] font-semibold py-3 rounded-lg hover:bg-[#D4AF37]/10 transition-colors text-sm md:text-base">Yêu cầu tư vấn đặc quyền</button>
           </div>
         </div>
 
@@ -309,6 +366,11 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </SectionWrapper>
+
+      {/* Audit Intake Form Section */}
+      <SectionWrapper id="audit-form" className="scroll-mt-20 relative z-10 w-full">
+        <IntakeWizard selectedPackage={selectedPackage} />
       </SectionWrapper>
 
     </div>

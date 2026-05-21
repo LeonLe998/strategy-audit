@@ -14,14 +14,14 @@ const resources = {
       },
       "sop": {
         "step1": "1. Nhập liệu điều kiện vào lệnh",
-        "step2": "2. Chạy WFO Trên Hệ Thống Định Lượng",
+        "step2": "2.Chạy WFO Kiểm Định Hệ Thống",
         "step3": "3. Trả Báo Cáo PDF"
       },
       "pricing": {
-        "tier1": "Trải Nghiệm (1.500.000đ/tháng)",
-        "tier2": "Nâng Cao (150$/tháng)",
-        "tier3": "Tùy Biến (Từ 500k)",
-        "tier4": "Masterclass (1500$)"
+        "tier1": "Gói Trải Nghiệm",
+        "tier2": "Gói Nâng Cao",
+        "tier3": "Gói Chuyên Nghiệp",
+        "tier4": "Đặc Quyền"
       },
       "cta": {
         "headline": "Đừng để tài khoản quỹ bốc hơi vì cảm tính thêm một ngày nào nữa.",

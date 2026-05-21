@@ -26,10 +26,9 @@ const Navbar: React.FC = () => {
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-300">
-            <a href="#risk" className="hover:text-white transition-colors">Tính Rủi Ro</a>
-            <a href="#sop" className="hover:text-white transition-colors">Quy Trình</a>
-            <a href="#cases" className="hover:text-white transition-colors">Case Study</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Bảng Giá</a>
+            <button type="button" onClick={() => document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-white transition-colors">Trang chủ</button>
+            <button type="button" onClick={() => document.getElementById('workflow')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-white transition-colors">Dịch vụ</button>
+            <button type="button" onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-white transition-colors">Bảng Giá</button>
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
@@ -40,9 +39,9 @@ const Navbar: React.FC = () => {
               <span>|</span>
               <button onClick={() => changeLanguage('zh')} className={`hover:text-white transition-colors ${i18n.language === 'zh' ? 'text-white' : ''}`}>ZH</button>
             </div>
-            <a href="#pricing" className="bg-[#00FFA3] text-black font-bold py-2 px-6 rounded-md hover:bg-green-400 transition-all shadow-[0_0_15px_rgba(0,255,163,0.3)] hover:shadow-[0_0_25px_rgba(0,255,163,0.6)]">
+            <button type="button" onClick={() => document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' })} className="bg-[#00FFA3] text-black font-bold py-2 px-6 rounded-md hover:bg-green-400 transition-all shadow-[0_0_15px_rgba(0,255,163,0.3)] hover:shadow-[0_0_25px_rgba(0,255,163,0.6)]">
               Bắt đầu
-            </a>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -57,10 +56,9 @@ const Navbar: React.FC = () => {
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
         <div className="md:hidden bg-[#0B0E14] border-b border-white/5 px-4 pt-2 pb-4 space-y-1 shadow-2xl">
-          <a href="#risk" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Tính Rủi Ro</a>
-          <a href="#sop" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Quy Trình</a>
-          <a href="#cases" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Case Study</a>
-          <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Bảng Giá</a>
+          <button type="button" onClick={() => { document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Trang chủ</button>
+          <button type="button" onClick={() => { document.getElementById('workflow')?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Dịch vụ</button>
+          <button type="button" onClick={() => { document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Bảng Giá</button>
           
           <div className="pt-4 pb-2 border-t border-white/5">
             <div className="flex space-x-4 px-3 mb-4 text-gray-400">
@@ -68,9 +66,9 @@ const Navbar: React.FC = () => {
               <button onClick={() => changeLanguage('en')} className={i18n.language === 'en' ? 'text-white font-bold' : ''}>EN</button>
               <button onClick={() => changeLanguage('zh')} className={i18n.language === 'zh' ? 'text-white font-bold' : ''}>ZH</button>
             </div>
-            <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="block w-full text-center bg-[#00FFA3] text-black font-bold py-3 rounded-md shadow-[0_0_15px_rgba(0,255,163,0.3)]">
+            <button type="button" onClick={() => { document.getElementById('audit-form')?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="block w-full text-center bg-[#00FFA3] text-black font-bold py-3 rounded-md shadow-[0_0_15px_rgba(0,255,163,0.3)]">
               Bắt đầu
-            </a>
+            </button>
           </div>
         </div>
       )}
