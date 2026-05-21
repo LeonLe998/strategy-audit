@@ -159,7 +159,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch('https://hook.eu2.make.com/igotwofmoccnjkuou9l085qxb36huf0n', {
+      const response = await fetch('https://hook.eu2.make.com/qg4i7sghj2q1cono2qms6d2thgr8pn3h', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
