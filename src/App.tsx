@@ -6,6 +6,7 @@ import FloatingZalo from './components/FloatingZalo';
 import LandingPage from './pages/LandingPage';
 import IntakeWizard from './pages/IntakeWizard';
 import ClientDashboard from './pages/ClientDashboard';
+import LibraryPage from './pages/LibraryPage';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <main className="flex-grow flex flex-col">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/library" element={<LibraryPage />} />
             <Route path="/intake" element={<IntakeWizard />} />
             <Route path="/dashboard" element={<ClientDashboard />} />
           </Routes>

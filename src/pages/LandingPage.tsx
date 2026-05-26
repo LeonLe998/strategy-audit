@@ -148,7 +148,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <div 
-      className="flex flex-col min-h-screen relative bg-fixed bg-cover bg-center overflow-x-hidden"
+      className="flex flex-col min-h-screen relative bg-fixed bg-cover bg-center"
       style={{ backgroundImage: "url('https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop')" }}
     >
       {/* Dark Overlay for readability */}
@@ -346,6 +346,19 @@ const LandingPage: React.FC = () => {
               <li className="flex items-start"><CheckCircle2 className="h-5 w-5 text-[#D4AF37] mr-2 shrink-0" /><span className="text-xs md:text-sm text-gray-300 font-medium">Hỗ trợ chiến lược 1-1</span></li>
             </ul>
             <button type="button" onClick={() => handleSelectPackage('Đặc Quyền')} className="w-full bg-transparent text-[#D4AF37] border border-[#D4AF37] font-semibold py-3 rounded-lg hover:bg-[#D4AF37]/10 transition-colors text-sm md:text-base">Yêu cầu tư vấn đặc quyền</button>
+          </div>
+        </div>
+
+        {/* Free Resources Banner */}
+        <div className="mb-16 md:mb-24 flex justify-center w-full relative z-10">
+          <div className="w-full max-w-4xl bg-gradient-to-r from-[#131722] to-[#00FFA3]/10 border border-[#00FFA3]/30 rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center justify-between shadow-[0_0_30px_rgba(0,255,163,0.1)]">
+            <div className="mb-6 md:mb-0 md:mr-8 text-center md:text-left">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">Thư Viện Tài Liệu Miễn Phí</h3>
+              <p className="text-gray-400 text-sm md:text-base">Truy cập thư viện tài liệu định lượng, sách trắng (Whitepapers) và nhận các báo cáo phân tích độc quyền từ chuyên gia Strategy Audit hoàn toàn miễn phí.</p>
+            </div>
+            <a href="/library" className="shrink-0 bg-[#0B0E14] border-2 border-[#00FFA3] text-[#00FFA3] font-bold py-3 px-8 rounded-lg hover:bg-[#00FFA3] hover:text-black shadow-[0_0_15px_rgba(0,255,163,0.3)] transition-all">
+              Vào Thư Viện
+            </a>
           </div>
         </div>
 
