@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, CheckCircle2, XCircle, FileText, Lock, Unlock, ArrowRight, X, Loader2 } from 'lucide-react';
+import { ShieldAlert, XCircle, FileText, Lock, Unlock, ArrowRight, X, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import PDFTemplate from '../components/PDFTemplate';
@@ -39,9 +39,10 @@ const LibraryPage: React.FC = () => {
   const generatePDF = (docTitle: string) => {
     setIsGenerating(true);
     const element = document.getElementById('pdf-template-container');
+    if (!element) return;
     
     // Setup html2pdf options
-    const opt = {
+    const opt: any = {
       margin:       0,
       filename:     `Strategy_Audit_${docTitle.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
