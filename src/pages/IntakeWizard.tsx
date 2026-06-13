@@ -81,7 +81,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
     q17: '', 
     q18: '', 
     // Step 4
-    q19: selectedPackage || 'Gói Trải Nghiệm', 
+    q19: selectedPackage || 'Standard Audit', 
     q20: 'Tiếng Việt', 
     q21: 'Không', 
     vip1: 'Không', 
@@ -357,7 +357,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
 
                 <SelectField 
                   label="19. Đổi gói dịch vụ (Tùy chọn)" 
-                  options={['Gói Trải Nghiệm', 'Gói Nâng Cao', 'Gói Chuyên Nghiệp', 'Đặc Quyền']} 
+                  options={['Standard Audit', 'Deep Optimization', 'Stress Test Elite', 'Gói Explorer', 'Gói Pro Trader', 'Gói Prop Firm Hunter', 'Đặc Quyền']} 
                   value={formData.q19} 
                   onChange={(e:any) => updateForm('q19', e.target.value)} 
                 />
