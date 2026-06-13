@@ -23,6 +23,10 @@ interface VaultProps {
   setActiveTab: (tab: string) => void;
 }
 
+// Lead Thư viện POST về CÙNG Apps Script với form Intake, kèm source:'library_vault'.
+// doPost nhận diện source này -> ghi sang tab riêng "Leads_ThuVien" rồi thoát sớm (không sinh YAML quant).
+const VAULT_LEADS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxmgHECJwBIDzREA03oUMrabWIWhmNVhJ5-YVoXhT3ofaeGcVpjk6twZNiR3q5qJ4eAYA/exec';
+
 export default function Vault({}: VaultProps) {
   // Lock system states
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
@@ -81,7 +85,7 @@ export default function Vault({}: VaultProps) {
     }
   ];
 
-  const handleUnlock = (e: React.FormEvent) => {
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -101,11 +105,29 @@ export default function Vault({}: VaultProps) {
     }
 
     setIsLoading(true);
-    // Simulate premium backend generation latency
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsUnlocked(true);
-    }, 1500);
+
+    // Gửi lead về Google Sheet (fire-and-forget: lỗi mạng không chặn mở khóa)
+    if (VAULT_LEADS_WEBHOOK && !VAULT_LEADS_WEBHOOK.startsWith('__')) {
+      try {
+        await fetch(VAULT_LEADS_WEBHOOK, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            source: 'library_vault',
+            name: name.trim(),
+            phone: phone.trim(),
+            email: email.trim(),
+            submitted_at: new Date().toISOString(),
+          }),
+        });
+      } catch (err) {
+        console.error('Vault lead webhook error:', err);
+      }
+    }
+
+    setIsLoading(false);
+    setIsUnlocked(true);
   };
 
   const openDocument = (id: string) => {
