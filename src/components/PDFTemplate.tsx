@@ -252,7 +252,7 @@ const PDFTemplate: React.FC<PDFTemplateProps> = ({ id = 'pdf-content', documentT
       {/* FOOTER */}
       <div className="break-inside-avoid relative z-10 mt-12 pt-6 border-t border-[#1f2937] flex flex-col items-center justify-center text-center">
         <p className="text-[#e5e7eb] font-bold text-sm mb-2">
-          Hỗ trợ trực tiếp: Lê Vĩnh Phú (Leon) - Zalo: 05.666.5511
+          Hỗ trợ trực tiếp: Lê Vĩnh Phú (Leon) - Zalo: 05.6666.5511
         </p>
         <p className="text-xs text-[#4b5563] uppercase font-bold tracking-widest">
           Tài liệu bản quyền thuộc về Strategy Audit © {new Date().getFullYear()} - Không chia sẻ trái phép

@@ -410,7 +410,7 @@ export default function Vault({}: VaultProps) {
                 {/* Footer sign-off and watermark */}
                 <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-400 font-mono">
                   <span>Strategy Audit © {new Date().getFullYear()} • Intellectual Property</span>
-                  <span>Direct Advisor: Lê Vĩnh Phú (Leon) - Zalo: 05.666.5511</span>
+                  <span>Direct Advisor: Lê Vĩnh Phú (Leon) - Zalo: 05.6666.5511</span>
                 </div>
               </div>
             </motion.div>

@@ -67,7 +67,7 @@ export default function App() {
           <div className="space-y-4 md:text-right">
             <div className="text-gray-400 leading-relaxed font-sans space-y-1">
               <p className="font-bold text-white text-xs">Hỗ trợ &amp; Điều phối trực tiếp:</p>
-              <p>Lê Vĩnh Phú (Leon) • Zalo: <span className="text-neon-green font-mono">05.666.5511</span></p>
+              <p>Lê Vĩnh Phú (Leon) • Zalo: <span className="text-neon-green font-mono">05.6666.5511</span></p>
               <p className="text-[10px] text-gray-500">Tài liệu bản quyền thuộc về Strategy Audit © {new Date().getFullYear()} - Không chia sẻ trái phép.</p>
             </div>
           </div>

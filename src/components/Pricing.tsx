@@ -239,8 +239,8 @@ export default function Pricing({ setActiveTab }: PricingProps) {
               <p className="text-sm font-bold text-white">Liên hệ trực tiếp Lê Vĩnh Phú (Leon)</p>
             </div>
           </div>
-          <a href="https://zalo.me/0566655111" target="_blank" rel="noopener noreferrer" className="px-4 py-3 sm:py-2 bg-black border border-neon-green/30 hover:border-neon-green hover:bg-[#00FFA3]/5 text-neon-green text-xs font-bold font-mono tracking-wider rounded-lg uppercase w-full sm:w-auto text-center shrink-0">
-            Zalo: 05.666.5511
+          <a href="https://zalo.me/0566665511" target="_blank" rel="noopener noreferrer" className="px-4 py-3 sm:py-2 bg-black border border-neon-green/30 hover:border-neon-green hover:bg-[#00FFA3]/5 text-neon-green text-xs font-bold font-mono tracking-wider rounded-lg uppercase w-full sm:w-auto text-center shrink-0">
+            Zalo: 05.6666.5511
           </a>
         </div>
       </section>
