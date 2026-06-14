@@ -463,7 +463,7 @@ const LandingPage: React.FC = () => {
             <p className="text-gray-400 text-xs font-medium mb-3">Kiểm tra cơ bản với báo cáo PDF</p>
             <div className="text-2xl font-bold text-white mb-4">1.500.000 VNĐ</div>
             <ul className="space-y-3 mb-6 flex-1">
-              <li className="flex items-start"><CheckCircle2 className="h-4 w-4 text-gray-500 mr-2 shrink-0" /><span className="text-xs text-gray-400">Chạy 1 biến số cố định trên QuantIDE</span></li>
+              <li className="flex items-start"><CheckCircle2 className="h-4 w-4 text-gray-500 mr-2 shrink-0" /><span className="text-xs text-gray-400">Chạy 1 biến số cố định trên hệ thống Strategy Audit</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-4 w-4 text-gray-500 mr-2 shrink-0" /><span className="text-xs text-gray-400">Phân tích Monte Carlo cơ bản</span></li>
               <li className="flex items-start"><CheckCircle2 className="h-4 w-4 text-gray-500 mr-2 shrink-0" /><span className="text-xs text-gray-400">Báo cáo PDF chi tiết về hiệu suất và rủi ro</span></li>
             </ul>

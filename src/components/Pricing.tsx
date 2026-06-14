@@ -19,7 +19,7 @@ export default function Pricing({ setActiveTab }: PricingProps) {
       period: 'một lần',
       desc: 'Phân tích cơ bản với báo cáo PDF chi tiết về hiệu suất và rủi ro.',
       features: [
-        'Chạy 1 biến số cố định trên QuantIDE',
+        'Chạy 1 biến số cố định trên hệ thống Strategy Audit',
         'Phân tích Monte Carlo cơ bản',
         'Báo cáo PDF chi tiết về hiệu suất và rủi ro'
       ],
