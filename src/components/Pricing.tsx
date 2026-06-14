@@ -95,7 +95,7 @@ export default function Pricing({ setActiveTab }: PricingProps) {
     {
       id: 'prop-hunter',
       name: 'Gói Prop Firm Hunter',
-      price: '12,000,000đ',
+      price: '9,000,000đ',
       period: 'mỗi tháng',
       desc: 'Dành cho những người muốn chinh phục nhiều quỹ hoặc vận hành hệ thống phức tạp.',
       features: [
