@@ -18,6 +18,7 @@ import {
   X,
   AlertCircle
 } from 'lucide-react';
+import { track } from '../analytics';
 
 interface VaultProps {
   setActiveTab: (tab: string) => void;
@@ -128,6 +129,7 @@ export default function Vault({}: VaultProps) {
 
     setIsLoading(false);
     setIsUnlocked(true);
+    track('vault_unlock', {});
   };
 
   const openDocument = (id: string) => {

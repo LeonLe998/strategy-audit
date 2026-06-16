@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft, Settings2, Info, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { track } from '../analytics';
 
 interface IntakeWizardProps {
   selectedPackage?: string | null;
@@ -169,6 +170,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
       });
       
       setIsSuccess(true);
+      track('intake_submit', { package: formData.q19 || '' });
     } catch (error) {
       console.error("Webhook error:", error);
       setErrorMsg("Có lỗi mạng xảy ra khi gửi form. Vui lòng kiểm tra kết nối internet.");
