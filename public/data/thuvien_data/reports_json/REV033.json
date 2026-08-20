@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "REV033",
+  "ten": "Đáy nhọn + volume climax — mua",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Wyckoff selling climax",
+  "mo_ta": "Nến giảm ≥2.5ATR volume đột biến — mua sau nến dừng",
+  "archetype": "climax_vol",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1185,
+  "ev": -0.156,
+  "wr": 23.3,
+  "pf": 0.81,
+  "years_pos": "2/15",
+  "by_year": {
+   "2004": -0.142,
+   "2005": -0.312,
+   "2006": -0.055,
+   "2007": -0.299,
+   "2008": -0.124,
+   "2009": -0.019,
+   "2010": -0.121,
+   "2011": -0.03,
+   "2012": -0.192,
+   "2013": -0.002,
+   "2014": 0.109,
+   "2015": 0.024,
+   "2016": -0.254,
+   "2017": -0.592,
+   "2018": -0.071
+  }
+ },
+ "null": {
+  "median": -0.013,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.143,
+ "robust": {
+  "dummyx0.7": -0.156,
+  "dummyx1.3": -0.156
+ },
+ "OOS": {
+  "n": 329,
+  "ev": -0.106,
+  "wr": 24.6,
+  "pf": 0.87,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.07,
+   "2020": -0.305,
+   "2021": -0.117,
+   "2022": 0.276,
+   "2023": -0.259
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 15,
+  "ev": -0.829,
+  "wr": 6.7,
+  "pf": 0.19,
+  "years_pos": "0/2",
+  "by_year": {
+   "2024": -0.791,
+   "2025": -1.073
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

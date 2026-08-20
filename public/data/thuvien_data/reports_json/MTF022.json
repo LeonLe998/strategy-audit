@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF022",
+  "ten": "Nến tuần làm CRT — ngày trade biên",
+  "ho": "Đa khung & lai",
+  "nguon": "CRT khung tuần",
+  "mo_ta": "Range nến tuần trước: quét biên rồi vào ngược trong tuần",
+  "archetype": "MTF022",
+  "tf": "D1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 108,
+  "ev": -0.016,
+  "wr": 25.0,
+  "pf": 0.98,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": 0.984,
+   "2005": 0.123,
+   "2006": -0.121,
+   "2007": 0.762,
+   "2008": 0.491,
+   "2009": -1.013,
+   "2010": -0.217,
+   "2011": -0.011,
+   "2012": -0.349,
+   "2013": -0.346,
+   "2014": 0.983,
+   "2015": -0.215,
+   "2016": -1.016,
+   "2017": 0.978,
+   "2018": -1.024
+  }
+ },
+ "null": {
+  "median": -0.003,
+  "p": 0.56,
+  "B": 16
+ },
+ "surplus": -0.013,
+ "robust": {
+  "dummyx0.7": -0.016,
+  "dummyx1.3": -0.016
+ },
+ "OOS": {
+  "n": 38,
+  "ev": -0.242,
+  "wr": 21.1,
+  "pf": 0.7,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.351,
+   "2020": -0.513,
+   "2021": 0.318,
+   "2022": 0.128,
+   "2023": -0.841
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 14,
+  "ev": -0.034,
+  "wr": 28.6,
+  "pf": 0.95,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.318,
+   "2025": -0.345,
+   "2026": 0.128
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

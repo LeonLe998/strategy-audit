@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF028",
+  "ten": "Cấu trúc HH-HL D1 + entry H1 tại HL",
+  "ho": "Đa khung & lai",
+  "nguon": "Cấu trúc thuần",
+  "mo_ta": "D1 đang HH-HL → mua tại vùng HL mới hình thành bằng tín hiệu H1",
+  "archetype": "MTF028",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1421,
+  "ev": -0.126,
+  "wr": 24.2,
+  "pf": 0.85,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": -0.07,
+   "2005": -0.215,
+   "2006": 0.241,
+   "2007": -0.381,
+   "2008": -0.314,
+   "2009": -0.195,
+   "2010": -0.029,
+   "2011": 0.332,
+   "2012": -0.067,
+   "2013": -0.351,
+   "2014": -0.31,
+   "2015": -0.103,
+   "2016": 0.045,
+   "2017": -0.097,
+   "2018": -0.197
+  }
+ },
+ "null": {
+  "median": -0.066,
+  "p": 0.75,
+  "B": 16
+ },
+ "surplus": -0.06,
+ "robust": {
+  "dummyx0.7": -0.126,
+  "dummyx1.3": -0.126
+ },
+ "OOS": {
+  "n": 425,
+  "ev": -0.058,
+  "wr": 26.1,
+  "pf": 0.93,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.047,
+   "2020": 0.206,
+   "2021": -0.254,
+   "2022": 0.008,
+   "2023": -0.194
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 193,
+  "ev": 0.064,
+  "wr": 29.0,
+  "pf": 1.08,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.093,
+   "2025": 0.131,
+   "2026": -0.109
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

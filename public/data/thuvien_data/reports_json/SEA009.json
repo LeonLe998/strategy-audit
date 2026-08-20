@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "SEA009",
+  "ten": "NFP thứ Sáu đầu tháng — đứng ngoài rồi theo",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Event seasonality",
+  "mo_ta": "Không lệnh trước NFP, vào theo hướng nến 30p sau tin",
+  "archetype": "nfp_follow",
+  "tf": "M15",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 163,
+  "ev": 0.224,
+  "wr": 36.2,
+  "pf": 1.32,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": -0.395,
+   "2005": 1.297,
+   "2006": -0.596,
+   "2007": -0.714,
+   "2008": 0.595,
+   "2009": 0.695,
+   "2010": -0.727,
+   "2011": 0.367,
+   "2012": 1.252,
+   "2013": -0.033,
+   "2014": 0.758,
+   "2015": 0.791,
+   "2016": 0.183,
+   "2017": 0.181,
+   "2018": -0.474
+  }
+ },
+ "null": {
+  "median": -0.134,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.358,
+ "robust": {
+  "dummyx0.7": 0.224,
+  "dummyx1.3": 0.224
+ },
+ "OOS": {
+  "n": 55,
+  "ev": -0.143,
+  "wr": 27.3,
+  "pf": 0.82,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.129,
+   "2020": -0.443,
+   "2021": 0.245,
+   "2022": 0.548,
+   "2023": -0.936
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 29,
+  "ev": 0.051,
+  "wr": 31.0,
+  "pf": 1.07,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.944,
+   "2025": 0.535,
+   "2026": 0.909
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

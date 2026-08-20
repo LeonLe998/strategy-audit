@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "SEA017",
+  "ten": "Ngày đáo hạn quyền chọn (OpEx)",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Derivatives seasonality",
+  "mo_ta": "Tránh/fade biến động ngày đáo hạn hàng tháng",
+  "archetype": "opex_fade",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 171,
+  "ev": -0.161,
+  "wr": 22.8,
+  "pf": 0.81,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": 0.077,
+   "2005": -0.082,
+   "2006": -0.377,
+   "2007": -0.731,
+   "2008": 0.786,
+   "2009": 0.611,
+   "2010": -0.333,
+   "2011": -0.394,
+   "2012": 0.38,
+   "2013": -0.062,
+   "2014": 0.381,
+   "2015": -0.74,
+   "2016": -0.741,
+   "2017": -0.442,
+   "2018": -0.488
+  }
+ },
+ "null": {
+  "median": -0.136,
+  "p": 0.62,
+  "B": 16
+ },
+ "surplus": -0.025,
+ "robust": {
+  "dummyx0.7": -0.161,
+  "dummyx1.3": -0.161
+ },
+ "OOS": {
+  "n": 57,
+  "ev": -0.307,
+  "wr": 19.3,
+  "pf": 0.65,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.7,
+   "2020": -0.407,
+   "2021": 0.263,
+   "2022": -0.707,
+   "2023": -0.084
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 28,
+  "ev": -0.208,
+  "wr": 21.4,
+  "pf": 0.75,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.346,
+   "2025": -0.344,
+   "2026": 0.295
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

@@ -11,6 +11,8 @@ import Services from './components/Services';
 import Vault from './components/Vault';
 import Pricing from './components/Pricing';
 import IntakeWizard from './pages/IntakeWizard';
+import VIPLibrary from './pages/VIPLibrary';
+import AdminDashboard from './pages/AdminDashboard';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
@@ -39,6 +41,8 @@ export default function App() {
             {activeTab === 'home' && <Home setActiveTab={setActiveTab} />}
             {activeTab === 'services' && <Services setActiveTab={setActiveTab} />}
             {activeTab === 'vault' && <Vault setActiveTab={setActiveTab} />}
+            {activeTab === 'viplibrary' && <VIPLibrary setActiveTab={setActiveTab} />}
+            {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
             {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
             {activeTab === 'audit' && (
               <div className="max-w-4xl mx-auto px-4 mt-8">

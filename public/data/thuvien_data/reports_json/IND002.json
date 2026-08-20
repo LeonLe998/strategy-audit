@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "IND002",
+  "ten": "RSI-14 quá mua/quá bán cổ điển",
+  "ho": "Indicator kinh điển",
+  "nguon": "Wilder (1978)",
+  "mo_ta": "RSI < 30 mua, > 70 bán",
+  "archetype": "rsi_revert",
+  "tf": "H4",
+  "tham_so": {
+   "rsi_len": 14,
+   "buy_below": 30,
+   "sell_above": 70,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "buy_below"
+ },
+ "IS": {
+  "n": 578,
+  "ev": -0.099,
+  "wr": 23.9,
+  "pf": 0.88,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": 0.808,
+   "2005": -0.413,
+   "2006": -0.085,
+   "2007": -0.161,
+   "2008": -0.255,
+   "2009": -0.23,
+   "2010": 0.54,
+   "2011": -0.001,
+   "2012": -0.309,
+   "2013": -0.178,
+   "2014": -0.069,
+   "2015": -0.311,
+   "2016": 0.327,
+   "2017": -0.323,
+   "2018": -0.15
+  }
+ },
+ "null": {
+  "median": -0.009,
+  "p": 0.81,
+  "B": 16
+ },
+ "surplus": -0.09,
+ "robust": {
+  "buy_belowx0.7": -0.21,
+  "buy_belowx1.3": -0.058
+ },
+ "OOS": {
+  "n": 191,
+  "ev": -0.225,
+  "wr": 20.9,
+  "pf": 0.73,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.15,
+   "2020": -0.42,
+   "2021": -0.294,
+   "2022": -0.115,
+   "2023": -0.134
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 119,
+  "ev": -0.228,
+  "wr": 21.0,
+  "pf": 0.72,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.088,
+   "2025": -0.278,
+   "2026": -0.386
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

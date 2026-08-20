@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN035",
+  "ten": "Ba đáy nến bằng nhau (triple bottom nến)",
+  "ho": "Mẫu nến",
+  "nguon": "Price action",
+  "mo_ta": "3 nến có đáy chênh <0.2ATR trong 10 nến, mua khi phá đỉnh cụm",
+  "archetype": "triple_level",
+  "tf": "H4",
+  "tham_so": {
+   "w": 10,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "w"
+ },
+ "IS": {
+  "n": 330,
+  "ev": 0.17,
+  "wr": 30.6,
+  "pf": 1.24,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": -0.122,
+   "2005": 0.424,
+   "2006": 0.307,
+   "2007": 0.235,
+   "2008": -0.021,
+   "2009": -0.229,
+   "2010": -0.239,
+   "2011": 0.629,
+   "2012": 0.08,
+   "2013": 0.42,
+   "2014": 0.755,
+   "2015": -0.195,
+   "2016": 0.415,
+   "2017": 0.48,
+   "2018": -0.307
+  }
+ },
+ "null": {
+  "median": -0.033,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.203,
+ "robust": {
+  "wx0.7": 0.085,
+  "wx1.3": -0.145
+ },
+ "OOS": {
+  "n": 98,
+  "ev": -0.063,
+  "wr": 24.5,
+  "pf": 0.92,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": 0.086,
+   "2020": -0.092,
+   "2021": 0.37,
+   "2022": -0.003,
+   "2023": -0.525
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 55,
+  "ev": 0.348,
+  "wr": 34.5,
+  "pf": 1.52,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.291,
+   "2025": 0.704,
+   "2026": -0.164
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

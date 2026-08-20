@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Activity, ShieldAlert, BookOpen, Layers, Play } from 'lucide-react';
+import { Activity, ShieldAlert, BookOpen, Layers, Play, Settings } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
@@ -15,6 +15,7 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
     { id: 'home', label: 'Trang chủ', icon: Activity },
     { id: 'services', label: 'Dịch vụ', icon: Layers },
     { id: 'vault', label: 'Thư Viện Tài Liệu', icon: BookOpen },
+    { id: 'viplibrary', label: 'Kho Chiến Lược VIP', icon: ShieldAlert },
     { id: 'pricing', label: 'Bảng Giá', icon: ShieldAlert },
   ];
 
@@ -62,21 +63,31 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           })}
         </nav>
 
-        {/* CTA Button */}
-        <button
-          id="cta-start-audit-nav"
-          onClick={() => setActiveTab('audit')}
-          className={`relative group px-5 py-2.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-all duration-300 overflow-hidden ${
-            activeTab === 'audit'
-              ? 'bg-neon-green text-black shadow-[0_0_15px_rgba(0,255,163,0.3)]'
-              : 'bg-black text-neon-green border border-neon-green/30 hover:border-neon-green/80 hover:bg-[#00FFA3]/5'
-          }`}
-        >
-          <div className="relative z-10 flex items-center space-x-2">
-            <Play className="w-3 h-3 fill-current shrink-0" />
-            <span>Bắt đầu</span>
-          </div>
-        </button>
+        {/* CTA Button & Admin Link */}
+        <div className="flex items-center space-x-4">
+          <button
+            id="cta-start-audit-nav"
+            onClick={() => setActiveTab('audit')}
+            className={`relative group px-5 py-2.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-all duration-300 overflow-hidden ${
+              activeTab === 'audit'
+                ? 'bg-neon-green text-black shadow-[0_0_15px_rgba(0,255,163,0.3)]'
+                : 'bg-black text-neon-green border border-neon-green/30 hover:border-neon-green/80 hover:bg-[#00FFA3]/5'
+            }`}
+          >
+            <div className="relative z-10 flex items-center space-x-2">
+              <Play className="w-3 h-3 fill-current shrink-0" />
+              <span>Bắt đầu</span>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => setActiveTab('admin')}
+            className="text-[#1F2937] hover:text-gray-500 transition-colors"
+            title="System Admin"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </header>
   );

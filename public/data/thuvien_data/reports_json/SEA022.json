@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "SEA022",
+  "ten": "Cuối phiên Mỹ chốt lời (last hour)",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Session stats",
+  "mo_ta": "Fade hướng chính của ngày trong giờ cuối phiên Mỹ",
+  "archetype": "lasthour",
+  "tf": "M15",
+  "tham_so": {
+   "h": 20,
+   "mode": "fade",
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "h"
+ },
+ "IS": {
+  "n": 3008,
+  "ev": -0.254,
+  "wr": 23.8,
+  "pf": 0.72,
+  "years_pos": "1/15",
+  "by_year": {
+   "2004": 0.059,
+   "2005": -0.22,
+   "2006": -0.226,
+   "2007": -0.072,
+   "2008": -0.199,
+   "2009": -0.201,
+   "2010": -0.113,
+   "2011": -0.263,
+   "2012": -0.325,
+   "2013": -0.11,
+   "2014": -0.384,
+   "2015": -0.336,
+   "2016": -0.317,
+   "2017": -0.466,
+   "2018": -0.329
+  }
+ },
+ "null": {
+  "median": -0.124,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.13,
+ "robust": {
+  "hx0.7": -0.079,
+  "hx1.3": null
+ },
+ "OOS": {
+  "n": 1153,
+  "ev": -0.273,
+  "wr": 23.9,
+  "pf": 0.7,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.242,
+   "2020": -0.28,
+   "2021": -0.38,
+   "2022": -0.203,
+   "2023": -0.253
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 583,
+  "ev": -0.172,
+  "wr": 25.2,
+  "pf": 0.8,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.129,
+   "2025": -0.148,
+   "2026": -0.302
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

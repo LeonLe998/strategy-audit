@@ -401,8 +401,8 @@ export default function Home({ setActiveTab }: HomeProps) {
             <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
               {/* Alpha Card */}
               <div id="ev-card-output" className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#0B0E14] border border-[#1F2937] p-4 rounded-xl text-center">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Expectation (EV)</span>
+                <div className="bg-[#0B0E14] border border-[#1F2937] p-4 rounded-xl text-center shadow-[inset_0_0_20px_rgba(0,255,163,0.02)]">
+                  <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Lợi Nhuận Kỳ Vọng</span>
                   <span className={`text-2xl font-mono font-bold font-display ${isPositiveEv ? 'text-neon-green' : 'text-coral-red'}`}>
                     {ev > 0 ? `+${ev}` : ev}
                   </span>

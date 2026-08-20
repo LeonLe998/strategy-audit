@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN005",
+  "ten": "Inside bar breakout",
+  "ho": "Mẫu nến",
+  "nguon": "Price action kinh điển",
+  "mo_ta": "Nến nằm trọn trong nến trước; vào khi giá phá đỉnh/đáy nến mẹ",
+  "archetype": "inside_break",
+  "tf": "H4",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 474,
+  "ev": 0.109,
+  "wr": 28.9,
+  "pf": 1.15,
+  "years_pos": "10/15",
+  "by_year": {
+   "2004": 2.072,
+   "2005": 0.23,
+   "2006": 0.158,
+   "2007": 0.461,
+   "2008": -0.244,
+   "2009": 0.178,
+   "2010": -0.26,
+   "2011": 0.247,
+   "2012": 0.002,
+   "2013": 0.186,
+   "2014": -0.073,
+   "2015": -0.072,
+   "2016": 0.836,
+   "2017": 0.277,
+   "2018": -0.449
+  }
+ },
+ "null": {
+  "median": -0.007,
+  "p": 0.06,
+  "B": 16
+ },
+ "surplus": 0.116,
+ "robust": {
+  "dummyx0.7": 0.109,
+  "dummyx1.3": 0.109
+ },
+ "OOS": {
+  "n": 178,
+  "ev": -0.027,
+  "wr": 26.4,
+  "pf": 0.96,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": -0.209,
+   "2020": 0.155,
+   "2021": 0.071,
+   "2022": -0.192,
+   "2023": 0.031
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 77,
+  "ev": 0.456,
+  "wr": 39.0,
+  "pf": 1.72,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.026,
+   "2025": 0.907,
+   "2026": 0.218
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

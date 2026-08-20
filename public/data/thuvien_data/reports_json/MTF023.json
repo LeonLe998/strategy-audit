@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF023",
+  "ten": "Đồng thuận 2/3 hệ con",
+  "ho": "Đa khung & lai",
+  "nguon": "Ensemble đơn giản",
+  "mo_ta": "Chỉ vào khi ≥2 trong 3 hệ (trend/momentum/level) cùng hướng",
+  "archetype": "MTF023",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1931,
+  "ev": -0.0,
+  "wr": 27.2,
+  "pf": 1.0,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 0.037,
+   "2005": -0.045,
+   "2006": 0.098,
+   "2007": 0.199,
+   "2008": 0.194,
+   "2009": -0.03,
+   "2010": -0.152,
+   "2011": 0.104,
+   "2012": -0.223,
+   "2013": 0.191,
+   "2014": -0.254,
+   "2015": 0.122,
+   "2016": -0.079,
+   "2017": 0.064,
+   "2018": -0.201
+  }
+ },
+ "null": {
+  "median": -0.062,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.062,
+ "robust": {
+  "dummyx0.7": -0.0,
+  "dummyx1.3": -0.0
+ },
+ "OOS": {
+  "n": 600,
+  "ev": 0.035,
+  "wr": 28.5,
+  "pf": 1.04,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": -0.098,
+   "2020": 0.368,
+   "2021": -0.167,
+   "2022": 0.099,
+   "2023": 0.001
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 331,
+  "ev": 0.063,
+  "wr": 29.0,
+  "pf": 1.08,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.113,
+   "2025": 0.059,
+   "2026": -0.02
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

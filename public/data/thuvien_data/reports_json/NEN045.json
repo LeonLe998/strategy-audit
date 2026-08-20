@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN045",
+  "ten": "Hai nến engulfing kép",
+  "ho": "Mẫu nến",
+  "nguon": "Biến thể mạnh",
+  "mo_ta": "2 nến engulfing cùng hướng trong 5 nến, vào theo hướng đó",
+  "archetype": "double_engulf",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 669,
+  "ev": -0.118,
+  "wr": 24.1,
+  "pf": 0.86,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": 0.529,
+   "2005": 0.507,
+   "2006": -0.156,
+   "2007": 0.454,
+   "2008": 0.046,
+   "2009": 0.09,
+   "2010": -0.079,
+   "2011": -0.381,
+   "2012": -0.408,
+   "2013": -0.107,
+   "2014": -0.126,
+   "2015": -0.148,
+   "2016": -0.08,
+   "2017": -0.537,
+   "2018": -0.55
+  }
+ },
+ "null": {
+  "median": -0.058,
+  "p": 0.88,
+  "B": 16
+ },
+ "surplus": -0.06,
+ "robust": {
+  "dummyx0.7": -0.118,
+  "dummyx1.3": -0.118
+ },
+ "OOS": {
+  "n": 201,
+  "ev": -0.045,
+  "wr": 26.9,
+  "pf": 0.94,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.151,
+   "2020": -0.066,
+   "2021": -0.005,
+   "2022": 0.204,
+   "2023": -0.27
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 139,
+  "ev": 0.005,
+  "wr": 26.6,
+  "pf": 1.01,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": 0.281,
+   "2025": -0.197,
+   "2026": -0.021
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

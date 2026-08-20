@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "NEN031",
+  "ten": "IBS thấp — mua (Internal Bar Strength)",
+  "ho": "Mẫu nến",
+  "nguon": "QuantifiedStrategies phổ biến",
+  "mo_ta": "(Close−Low)/(High−Low) < 0.2 thì mua, thoát khi IBS > 0.8",
+  "archetype": "ibs",
+  "tf": "D1",
+  "tham_so": {
+   "lo": 0.2,
+   "hi": 0.8,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "lo"
+ },
+ "IS": {
+  "n": 139,
+  "ev": 0.337,
+  "wr": 33.8,
+  "pf": 1.5,
+  "years_pos": "11/15",
+  "by_year": {
+   "2004": 1.381,
+   "2005": 0.212,
+   "2006": 0.22,
+   "2007": 0.129,
+   "2008": 0.99,
+   "2009": -0.347,
+   "2010": 0.126,
+   "2011": -0.287,
+   "2012": 0.982,
+   "2013": 0.766,
+   "2014": -0.292,
+   "2015": 0.984,
+   "2016": -0.708,
+   "2017": 1.977,
+   "2018": 0.975
+  }
+ },
+ "null": {
+  "median": 0.005,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.332,
+ "robust": {
+  "lox0.7": 0.045,
+  "lox1.3": 0.308
+ },
+ "OOS": {
+  "n": 60,
+  "ev": -0.475,
+  "wr": 13.3,
+  "pf": 0.46,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -1.022,
+   "2020": -0.016,
+   "2021": -0.684,
+   "2022": 0.183,
+   "2023": -0.779
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 20,
+  "ev": 0.118,
+  "wr": 30.0,
+  "pf": 1.17,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 1.984,
+   "2025": -0.728,
+   "2026": 2.303
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

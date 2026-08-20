@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "IND010",
+  "ten": "Bollinger tag & revert",
+  "ho": "Indicator kinh điển",
+  "nguon": "John Bollinger (1983)",
+  "mo_ta": "Giá chạm band ngoài rồi đóng lại trong band, vào hồi về SMA20",
+  "archetype": "boll",
+  "tf": "H1",
+  "tham_so": {
+   "mode": "revert",
+   "n": 20,
+   "k": 2.0,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 2015,
+  "ev": -0.064,
+  "wr": 25.7,
+  "pf": 0.92,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": -0.096,
+   "2005": -0.054,
+   "2006": -0.014,
+   "2007": -0.096,
+   "2008": -0.015,
+   "2009": 0.052,
+   "2010": -0.194,
+   "2011": 0.031,
+   "2012": 0.133,
+   "2013": -0.039,
+   "2014": -0.046,
+   "2015": -0.101,
+   "2016": -0.151,
+   "2017": -0.285,
+   "2018": -0.073
+  }
+ },
+ "null": {
+  "median": -0.053,
+  "p": 0.56,
+  "B": 16
+ },
+ "surplus": -0.011,
+ "robust": {
+  "nx0.7": -0.049,
+  "nx1.3": -0.079
+ },
+ "OOS": {
+  "n": 658,
+  "ev": -0.085,
+  "wr": 25.7,
+  "pf": 0.89,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.245,
+   "2020": -0.116,
+   "2021": -0.085,
+   "2022": -0.081,
+   "2023": 0.083
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 338,
+  "ev": -0.264,
+  "wr": 20.7,
+  "pf": 0.69,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.478,
+   "2025": -0.202,
+   "2026": -0.036
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

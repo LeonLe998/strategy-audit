@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF017",
+  "ten": "ADX D1 lọc chợ — hệ H1 đổi mode",
+  "ho": "Đa khung & lai",
+  "nguon": "Regime switch",
+  "mo_ta": "ADX D1 > 25 chạy hệ breakout, < 20 chạy hệ revert",
+  "archetype": "MTF017",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1658,
+  "ev": -0.08,
+  "wr": 25.2,
+  "pf": 0.9,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": 0.136,
+   "2005": -0.318,
+   "2006": 0.006,
+   "2007": -0.096,
+   "2008": 0.072,
+   "2009": -0.097,
+   "2010": -0.254,
+   "2011": 0.157,
+   "2012": -0.094,
+   "2013": -0.134,
+   "2014": -0.051,
+   "2015": 0.131,
+   "2016": -0.224,
+   "2017": 0.098,
+   "2018": -0.374
+  }
+ },
+ "null": {
+  "median": -0.055,
+  "p": 0.81,
+  "B": 16
+ },
+ "surplus": -0.025,
+ "robust": {
+  "dummyx0.7": -0.08,
+  "dummyx1.3": -0.08
+ },
+ "OOS": {
+  "n": 560,
+  "ev": -0.1,
+  "wr": 25.4,
+  "pf": 0.88,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.17,
+   "2020": 0.232,
+   "2021": -0.15,
+   "2022": -0.302,
+   "2023": -0.062
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 306,
+  "ev": 0.033,
+  "wr": 28.4,
+  "pf": 1.04,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.012,
+   "2025": 0.052,
+   "2026": 0.023
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

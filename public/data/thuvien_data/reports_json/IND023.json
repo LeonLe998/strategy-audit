@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "IND023",
+  "ten": "SuperTrend + EMA200 lọc",
+  "ho": "Indicator kinh điển",
+  "nguon": "Combo YouTube phổ biến",
+  "mo_ta": "Chỉ theo SuperTrend khi cùng phía EMA200",
+  "archetype": "supertrend",
+  "tf": "H1",
+  "tham_so": {
+   "n": 10,
+   "m": 3.0,
+   "trend_ema": 200,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "m"
+ },
+ "IS": {
+  "n": 1041,
+  "ev": 0.043,
+  "wr": 28.3,
+  "pf": 1.05,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": 0.112,
+   "2005": -0.147,
+   "2006": 0.493,
+   "2007": 0.178,
+   "2008": -0.002,
+   "2009": 0.396,
+   "2010": -0.036,
+   "2011": 0.181,
+   "2012": 0.08,
+   "2013": -0.238,
+   "2014": -0.263,
+   "2015": 0.082,
+   "2016": 0.004,
+   "2017": 0.511,
+   "2018": -0.48
+  }
+ },
+ "null": {
+  "median": -0.044,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.087,
+ "robust": {
+  "mx0.7": 0.044,
+  "mx1.3": 0.12
+ },
+ "OOS": {
+  "n": 333,
+  "ev": -0.023,
+  "wr": 27.0,
+  "pf": 0.97,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": -0.078,
+   "2020": 0.025,
+   "2021": -0.352,
+   "2022": 0.189,
+   "2023": 0.113
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 167,
+  "ev": 0.127,
+  "wr": 30.5,
+  "pf": 1.17,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.089,
+   "2025": 0.105,
+   "2026": 0.292
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

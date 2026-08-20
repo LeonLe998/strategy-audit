@@ -1,0 +1,81 @@
+{
+ "spec": {
+  "id": "NEN024",
+  "ten": "Đáy nhọn V-bottom",
+  "ho": "Mẫu nến",
+  "nguon": "Mô tả kinh điển",
+  "mo_ta": "Nến giảm mạnh ≥2ATR rồi nến tăng ≥2ATR ngay sau, mua tiếp diễn",
+  "archetype": "vspike",
+  "tf": "H1",
+  "tham_so": {
+   "k": 2.0,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 25,
+  "ev": 0.049,
+  "wr": 28.0,
+  "pf": 1.06,
+  "years_pos": "5/10",
+  "by_year": {
+   "2005": 0.221,
+   "2006": -0.083,
+   "2007": 0.274,
+   "2008": 0.303,
+   "2010": -1.083,
+   "2011": 2.927,
+   "2013": 0.279,
+   "2014": -1.074,
+   "2015": -1.065,
+   "2016": -1.073
+  }
+ },
+ "null": {
+  "median": -0.309,
+  "p": 0.25,
+  "B": 8
+ },
+ "surplus": 0.358,
+ "robust": {
+  "kx0.7": 0.086,
+  "kx1.3": null
+ },
+ "OOS": {
+  "n": 12,
+  "ev": 0.114,
+  "wr": 33.3,
+  "pf": 1.16,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.046,
+   "2020": 2.92,
+   "2021": -1.053,
+   "2022": -1.083,
+   "2023": 0.257
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 1,
+  "ev": 2.852,
+  "wr": 100.0,
+  "pf": 99.0,
+  "years_pos": "1/1",
+  "by_year": {
+   "2024": 2.852
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

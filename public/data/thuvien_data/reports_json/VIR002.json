@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "VIR002",
+  "ten": "ICT Silver Bullet 3-4h London",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "ICT",
+  "mo_ta": "Bản cửa sổ London 3-4AM NY time",
+  "archetype": "silver_bullet",
+  "tf": "M15",
+  "tham_so": {
+   "h0": 7,
+   "h1": 9,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "h1"
+ },
+ "IS": {
+  "n": 1096,
+  "ev": -0.162,
+  "wr": 26.0,
+  "pf": 0.82,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.202,
+   "2005": 0.208,
+   "2006": 0.121,
+   "2007": -0.314,
+   "2008": 0.263,
+   "2009": 0.038,
+   "2010": 0.004,
+   "2011": -0.482,
+   "2012": -0.391,
+   "2013": 0.003,
+   "2014": -0.233,
+   "2015": -0.434,
+   "2016": -0.595,
+   "2017": -0.389,
+   "2018": -0.053
+  }
+ },
+ "null": {
+  "median": -0.127,
+  "p": 0.81,
+  "B": 16
+ },
+ "surplus": -0.035,
+ "robust": {
+  "h1x0.7": null,
+  "h1x1.3": -0.184
+ },
+ "OOS": {
+  "n": 432,
+  "ev": -0.245,
+  "wr": 24.3,
+  "pf": 0.73,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.287,
+   "2020": -0.399,
+   "2021": -0.287,
+   "2022": 0.095,
+   "2023": -0.385
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 198,
+  "ev": -0.101,
+  "wr": 26.8,
+  "pf": 0.88,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.018,
+   "2025": -0.097,
+   "2026": -0.261
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

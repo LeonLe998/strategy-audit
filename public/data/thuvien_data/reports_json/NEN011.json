@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN011",
+  "ten": "Hammer tại đáy tuần",
+  "ho": "Mẫu nến",
+  "nguon": "Nison + lọc vị trí",
+  "mo_ta": "Nến búa có đáy thấp nhất 5 ngày, mua mở nến kế",
+  "archetype": "pinbar",
+  "tf": "D1",
+  "tham_so": {
+   "extreme": 5,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "extreme"
+ },
+ "IS": {
+  "n": 101,
+  "ev": 0.176,
+  "wr": 29.7,
+  "pf": 1.25,
+  "years_pos": "10/15",
+  "by_year": {
+   "2004": 0.981,
+   "2005": -0.131,
+   "2006": -0.21,
+   "2007": 0.127,
+   "2008": -1.008,
+   "2009": -0.013,
+   "2010": 0.584,
+   "2011": 0.542,
+   "2012": -0.018,
+   "2013": 0.13,
+   "2014": 0.124,
+   "2015": 0.698,
+   "2016": 0.588,
+   "2017": 0.069,
+   "2018": 0.577
+  }
+ },
+ "null": {
+  "median": 0.052,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.124,
+ "robust": {
+  "extremex0.7": 0.12,
+  "extremex1.3": 0.137
+ },
+ "OOS": {
+  "n": 40,
+  "ev": -0.102,
+  "wr": 22.5,
+  "pf": 0.87,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": 0.578,
+   "2020": -0.014,
+   "2021": -0.402,
+   "2022": 0.128,
+   "2023": -0.235
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 19,
+  "ev": 0.138,
+  "wr": 31.6,
+  "pf": 1.2,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.317,
+   "2025": -0.127,
+   "2026": 0.466
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

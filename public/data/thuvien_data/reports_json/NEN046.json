@@ -1,0 +1,86 @@
+{
+ "spec": {
+  "id": "NEN046",
+  "ten": "Nến doji chuồn (dragonfly) tại EMA200",
+  "ho": "Mẫu nến",
+  "nguon": "Nison + lọc",
+  "mo_ta": "Dragonfly doji chạm EMA200 D1, mua xác nhận nến kế",
+  "archetype": "dragonfly",
+  "tf": "D1",
+  "tham_so": {
+   "ema": 200,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "ema"
+ },
+ "IS": {
+  "n": 34,
+  "ev": 0.488,
+  "wr": 38.2,
+  "pf": 1.77,
+  "years_pos": "8/14",
+  "by_year": {
+   "2005": -1.023,
+   "2006": 2.748,
+   "2007": -1.019,
+   "2008": 1.658,
+   "2009": 2.983,
+   "2010": 2.989,
+   "2011": -1.007,
+   "2012": -0.016,
+   "2013": 2.988,
+   "2014": -0.219,
+   "2015": 2.981,
+   "2016": 2.986,
+   "2017": -1.023,
+   "2018": 1.454
+  }
+ },
+ "null": {
+  "median": 0.084,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.404,
+ "robust": {
+  "emax0.7": 0.799,
+  "emax1.3": 0.349
+ },
+ "OOS": {
+  "n": 12,
+  "ev": 0.315,
+  "wr": 33.3,
+  "pf": 1.46,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": 2.973,
+   "2020": -1.017,
+   "2021": -0.218,
+   "2022": 2.983,
+   "2023": -1.018
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 2,
+  "ev": 0.988,
+  "wr": 50.0,
+  "pf": 2.96,
+  "years_pos": "1/2",
+  "by_year": {
+   "2024": 2.987,
+   "2026": -1.01
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

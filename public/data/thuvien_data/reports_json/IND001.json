@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "IND001",
+  "ten": "RSI-2 quá bán cực đoan",
+  "ho": "Indicator kinh điển",
+  "nguon": "Larry Connors (2008)",
+  "mo_ta": "RSI(2) < 10 mua, > 90 bán — bắt nhịp hồi ngắn",
+  "archetype": "rsi_revert",
+  "tf": "H1",
+  "tham_so": {
+   "rsi_len": 2,
+   "buy_below": 10,
+   "sell_above": 90,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "buy_below"
+ },
+ "IS": {
+  "n": 2338,
+  "ev": -0.039,
+  "wr": 26.2,
+  "pf": 0.95,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.083,
+   "2005": -0.143,
+   "2006": 0.083,
+   "2007": -0.183,
+   "2008": 0.162,
+   "2009": -0.018,
+   "2010": -0.025,
+   "2011": -0.099,
+   "2012": -0.163,
+   "2013": 0.137,
+   "2014": 0.044,
+   "2015": 0.178,
+   "2016": 0.01,
+   "2017": -0.18,
+   "2018": -0.239
+  }
+ },
+ "null": {
+  "median": -0.066,
+  "p": 0.38,
+  "B": 16
+ },
+ "surplus": 0.027,
+ "robust": {
+  "buy_belowx0.7": -0.036,
+  "buy_belowx1.3": -0.019
+ },
+ "OOS": {
+  "n": 776,
+  "ev": -0.105,
+  "wr": 25.0,
+  "pf": 0.87,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.115,
+   "2020": 0.185,
+   "2021": -0.036,
+   "2022": -0.179,
+   "2023": -0.318
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 408,
+  "ev": -0.138,
+  "wr": 24.0,
+  "pf": 0.83,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.169,
+   "2025": -0.189,
+   "2026": 0.043
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

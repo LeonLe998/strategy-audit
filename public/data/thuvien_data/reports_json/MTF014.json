@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF014",
+  "ten": "H4 FVG + M5 CHoCH entry",
+  "ho": "Đa khung & lai",
+  "nguon": "SMC đa khung viral",
+  "mo_ta": "Giá về FVG H4 → chờ M5 đổi cấu trúc rồi vào (test M15)",
+  "archetype": "MTF014",
+  "tf": "M15",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 742,
+  "ev": -0.123,
+  "wr": 27.2,
+  "pf": 0.86,
+  "years_pos": "4/15",
+  "by_year": {
+   "2004": -0.812,
+   "2005": -0.311,
+   "2006": -0.344,
+   "2007": 0.146,
+   "2008": 0.019,
+   "2009": -0.138,
+   "2010": -0.206,
+   "2011": -0.277,
+   "2012": -0.418,
+   "2013": 0.179,
+   "2014": -0.067,
+   "2015": -0.295,
+   "2016": -0.037,
+   "2017": -0.118,
+   "2018": 0.148
+  }
+ },
+ "null": {
+  "median": -0.109,
+  "p": 0.62,
+  "B": 16
+ },
+ "surplus": -0.014,
+ "robust": {
+  "dummyx0.7": -0.123,
+  "dummyx1.3": -0.123
+ },
+ "OOS": {
+  "n": 281,
+  "ev": -0.309,
+  "wr": 23.1,
+  "pf": 0.67,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.23,
+   "2020": -0.41,
+   "2021": -0.468,
+   "2022": -0.534,
+   "2023": 0.015
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 135,
+  "ev": -0.202,
+  "wr": 24.4,
+  "pf": 0.77,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.67,
+   "2025": 0.035,
+   "2026": 0.328
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

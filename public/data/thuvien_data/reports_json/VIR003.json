@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR003",
+  "ten": "Fair Value Gap (FVG) fill & go",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "ICT — cực viral",
+  "mo_ta": "Giá quay về lấp khoảng trống 3 nến rồi vào tiếp diễn hướng tạo gap",
+  "archetype": "fvg",
+  "tf": "H1",
+  "tham_so": {
+   "expiry": 30,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "expiry"
+ },
+ "IS": {
+  "n": 2090,
+  "ev": 0.003,
+  "wr": 27.4,
+  "pf": 1.0,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": -0.241,
+   "2005": 0.156,
+   "2006": 0.05,
+   "2007": 0.138,
+   "2008": 0.069,
+   "2009": -0.082,
+   "2010": 0.006,
+   "2011": 0.082,
+   "2012": -0.099,
+   "2013": 0.189,
+   "2014": -0.071,
+   "2015": -0.08,
+   "2016": -0.093,
+   "2017": -0.148,
+   "2018": 0.041
+  }
+ },
+ "null": {
+  "median": -0.04,
+  "p": 0.06,
+  "B": 16
+ },
+ "surplus": 0.043,
+ "robust": {
+  "expiryx0.7": 0.02,
+  "expiryx1.3": 0.006
+ },
+ "OOS": {
+  "n": 689,
+  "ev": -0.025,
+  "wr": 26.9,
+  "pf": 0.97,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.25,
+   "2020": 0.068,
+   "2021": -0.035,
+   "2022": -0.072,
+   "2023": 0.148
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 353,
+  "ev": 0.167,
+  "wr": 31.7,
+  "pf": 1.23,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.056,
+   "2025": 0.279,
+   "2026": 0.136
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

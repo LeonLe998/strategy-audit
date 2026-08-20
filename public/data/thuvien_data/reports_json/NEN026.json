@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN026",
+  "ten": "Ba nến tăng dần thân (accelerating)",
+  "ho": "Mẫu nến",
+  "nguon": "Quan sát phổ biến",
+  "mo_ta": "3 nến xanh mỗi nến thân lớn hơn nến trước, mua tiếp diễn",
+  "archetype": "accel3",
+  "tf": "M15",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 4814,
+  "ev": -0.193,
+  "wr": 25.4,
+  "pf": 0.78,
+  "years_pos": "0/15",
+  "by_year": {
+   "2004": -0.156,
+   "2005": -0.189,
+   "2006": -0.068,
+   "2007": -0.027,
+   "2008": -0.21,
+   "2009": -0.259,
+   "2010": -0.215,
+   "2011": -0.039,
+   "2012": -0.258,
+   "2013": -0.272,
+   "2014": -0.273,
+   "2015": -0.205,
+   "2016": -0.216,
+   "2017": -0.2,
+   "2018": -0.183
+  }
+ },
+ "null": {
+  "median": -0.12,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.073,
+ "robust": {
+  "dummyx0.7": -0.193,
+  "dummyx1.3": -0.193
+ },
+ "OOS": {
+  "n": 1791,
+  "ev": -0.132,
+  "wr": 27.3,
+  "pf": 0.85,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.215,
+   "2020": -0.029,
+   "2021": -0.127,
+   "2022": -0.102,
+   "2023": -0.191
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 936,
+  "ev": 0.004,
+  "wr": 29.5,
+  "pf": 1.0,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.107,
+   "2025": 0.047,
+   "2026": 0.139
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

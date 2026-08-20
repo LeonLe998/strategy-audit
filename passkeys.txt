@@ -1,0 +1,10 @@
+DANH SÁCH MẬT KHẨU (PASSKEYS) CỦA HỆ THỐNG STRATEGY AUDIT
+
+1. TRANG QUẢN TRỊ (ADMIN DASHBOARD)
+- Đường dẫn: /admin (Hoặc bấm vào biểu tượng bánh răng ⚙️ trên Thư viện)
+- Passkey (Master Key): SA_ADMIN_2026
+- Chức năng: Viết và chỉnh sửa Báo cáo phân tích chuyên sâu cho từng chiến lược.
+
+2. THƯ VIỆN CHIẾN LƯỢC VIP (Dành cho Khách hàng)
+- Passkey: VIP hoặc ADMIN
+- Chức năng: Khách truy cập nhập mã này vào các phần "Phân tích chuyên sâu" bị làm mờ (VIP Paywall) để mở khóa nội dung. Trang chính (danh sách chiến lược) được mở công khai (Free).

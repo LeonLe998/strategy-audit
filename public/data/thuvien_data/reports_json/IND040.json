@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "IND040",
+  "ten": "VWAP revert (kéo giãn)",
+  "ho": "Indicator kinh điển",
+  "nguon": "Phổ biến intraday",
+  "mo_ta": "Giá cách VWAP ≥2 độ lệch chuẩn, vào ngược về VWAP",
+  "archetype": "vwap_day",
+  "tf": "M15",
+  "tham_so": {
+   "mode": "revert",
+   "k": 2.5,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 2838,
+  "ev": -0.136,
+  "wr": 26.4,
+  "pf": 0.84,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": 0.074,
+   "2005": -0.481,
+   "2006": 0.066,
+   "2007": -0.155,
+   "2008": -0.376,
+   "2009": -0.023,
+   "2010": -0.275,
+   "2011": -0.132,
+   "2012": 0.199,
+   "2013": -0.131,
+   "2014": -0.074,
+   "2015": -0.256,
+   "2016": -0.189,
+   "2017": -0.132,
+   "2018": -0.06
+  }
+ },
+ "null": {
+  "median": -0.106,
+  "p": 0.88,
+  "B": 16
+ },
+ "surplus": -0.03,
+ "robust": {
+  "kx0.7": -0.125,
+  "kx1.3": -0.266
+ },
+ "OOS": {
+  "n": 973,
+  "ev": -0.24,
+  "wr": 24.3,
+  "pf": 0.72,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.434,
+   "2020": -0.444,
+   "2021": -0.068,
+   "2022": -0.135,
+   "2023": -0.101
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 512,
+  "ev": -0.181,
+  "wr": 24.0,
+  "pf": 0.79,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.224,
+   "2025": -0.22,
+   "2026": -0.029
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

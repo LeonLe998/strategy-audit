@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "BRK013",
+  "ten": "Phá vỡ tích luỹ 20 nến (box breakout)",
+  "ho": "Breakout & phiên",
+  "nguon": "Darvas box hiện đại",
+  "mo_ta": "Giá đóng ngoài hộp 20 nến có range hẹp, vào theo hướng",
+  "archetype": "donchian",
+  "tf": "H4",
+  "tham_so": {
+   "n": 20,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 513,
+  "ev": 0.069,
+  "wr": 27.9,
+  "pf": 1.09,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": -0.151,
+   "2005": 0.291,
+   "2006": 0.066,
+   "2007": -0.038,
+   "2008": 0.627,
+   "2009": -0.209,
+   "2010": -0.072,
+   "2011": 0.197,
+   "2012": -0.098,
+   "2013": 0.076,
+   "2014": -0.281,
+   "2015": 0.099,
+   "2016": 0.036,
+   "2017": 0.738,
+   "2018": -0.136
+  }
+ },
+ "null": {
+  "median": -0.04,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.109,
+ "robust": {
+  "nx0.7": -0.038,
+  "nx1.3": 0.048
+ },
+ "OOS": {
+  "n": 187,
+  "ev": 0.116,
+  "wr": 28.9,
+  "pf": 1.16,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": -0.051,
+   "2020": 0.007,
+   "2021": 0.413,
+   "2022": 0.119,
+   "2023": 0.181
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 97,
+  "ev": 0.245,
+  "wr": 32.0,
+  "pf": 1.35,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.371,
+   "2025": 0.233,
+   "2026": 0.07
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

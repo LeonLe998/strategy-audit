@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF015",
+  "ten": "D1 OB + H1 sweep entry",
+  "ho": "Đa khung & lai",
+  "nguon": "SMC đa khung",
+  "mo_ta": "Giá về order block D1 + H1 quét đáy cục bộ — mua",
+  "archetype": "MTF015",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 399,
+  "ev": -0.083,
+  "wr": 25.1,
+  "pf": 0.9,
+  "years_pos": "4/15",
+  "by_year": {
+   "2004": -0.286,
+   "2005": -0.38,
+   "2006": -0.063,
+   "2007": -0.178,
+   "2008": -0.45,
+   "2009": 0.04,
+   "2010": -0.845,
+   "2011": -0.238,
+   "2012": 0.084,
+   "2013": 1.18,
+   "2014": -0.019,
+   "2015": -0.021,
+   "2016": -0.219,
+   "2017": -0.16,
+   "2018": 0.179
+  }
+ },
+ "null": {
+  "median": -0.073,
+  "p": 0.62,
+  "B": 16
+ },
+ "surplus": -0.01,
+ "robust": {
+  "dummyx0.7": -0.083,
+  "dummyx1.3": -0.083
+ },
+ "OOS": {
+  "n": 156,
+  "ev": -0.178,
+  "wr": 23.1,
+  "pf": 0.79,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.385,
+   "2020": -0.032,
+   "2021": -0.116,
+   "2022": -0.301,
+   "2023": -0.1
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 63,
+  "ev": -0.072,
+  "wr": 25.4,
+  "pf": 0.91,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.503,
+   "2025": 0.182,
+   "2026": 0.023
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "BRK005",
+  "ten": "Asian range breakout",
+  "ho": "Breakout & phiên",
+  "nguon": "Cộng đồng forex",
+  "mo_ta": "Range cả phiên Á (00-07 UTC), phá biên nào theo biên đó",
+  "archetype": "session_break",
+  "tf": "M15",
+  "tham_so": {
+   "h0": 0,
+   "h1": 7,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "h1"
+ },
+ "IS": {
+  "n": 3881,
+  "ev": -0.101,
+  "wr": 27.3,
+  "pf": 0.88,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": -0.195,
+   "2005": 0.065,
+   "2006": -0.058,
+   "2007": 0.001,
+   "2008": -0.121,
+   "2009": -0.098,
+   "2010": -0.208,
+   "2011": -0.164,
+   "2012": -0.253,
+   "2013": -0.011,
+   "2014": -0.139,
+   "2015": 0.005,
+   "2016": -0.103,
+   "2017": -0.196,
+   "2018": -0.089
+  }
+ },
+ "null": {
+  "median": -0.123,
+  "p": 0.06,
+  "B": 16
+ },
+ "surplus": 0.022,
+ "robust": {
+  "h1x0.7": -0.135,
+  "h1x1.3": -0.108
+ },
+ "OOS": {
+  "n": 1348,
+  "ev": -0.254,
+  "wr": 23.9,
+  "pf": 0.72,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.301,
+   "2020": -0.108,
+   "2021": -0.276,
+   "2022": -0.252,
+   "2023": -0.334
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 624,
+  "ev": -0.157,
+  "wr": 25.2,
+  "pf": 0.82,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.265,
+   "2025": -0.17,
+   "2026": 0.077
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

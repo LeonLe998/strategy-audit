@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "NEN033",
+  "ten": "Nến cô đơn tiếp diễn (họ Lonely Candle)",
+  "ho": "Mẫu nến",
+  "nguon": "Leon — Strategy Audit (đã audit nội bộ)",
+  "mo_ta": "≥3 nến thuận + đúng 1 nến ngược + nến kế đóng vượt thân nến ngược",
+  "archetype": "lonely",
+  "tf": "H1",
+  "tham_so": {
+   "run": 3,
+   "m": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "run"
+ },
+ "IS": {
+  "n": 1223,
+  "ev": 0.018,
+  "wr": 27.7,
+  "pf": 1.02,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 0.056,
+   "2005": 0.162,
+   "2006": -0.004,
+   "2007": 0.338,
+   "2008": 0.24,
+   "2009": 0.072,
+   "2010": 0.014,
+   "2011": -0.091,
+   "2012": -0.039,
+   "2013": -0.281,
+   "2014": -0.082,
+   "2015": 0.117,
+   "2016": -0.144,
+   "2017": 0.335,
+   "2018": -0.174
+  }
+ },
+ "null": {
+  "median": -0.054,
+  "p": 0.06,
+  "B": 16
+ },
+ "surplus": 0.072,
+ "robust": {
+  "runx0.7": 0.013,
+  "runx1.3": -0.006
+ },
+ "OOS": {
+  "n": 490,
+  "ev": -0.123,
+  "wr": 24.5,
+  "pf": 0.85,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.203,
+   "2020": 0.01,
+   "2021": 0.142,
+   "2022": -0.202,
+   "2023": -0.356
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 249,
+  "ev": 0.034,
+  "wr": 28.1,
+  "pf": 1.04,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.126,
+   "2025": 0.125,
+   "2026": 0.15
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

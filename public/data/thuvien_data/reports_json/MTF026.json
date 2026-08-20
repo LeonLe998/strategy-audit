@@ -1,0 +1,72 @@
+{
+ "spec": {
+  "id": "MTF026",
+  "ten": "Tuần mở gap + ngày theo gap có lọc H4",
+  "ho": "Đa khung & lai",
+  "nguon": "Gap đa khung",
+  "mo_ta": "Gap tuần cùng hướng trend H4 mới theo, ngược thì bỏ",
+  "archetype": "MTF026",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 16,
+  "ev": 0.919,
+  "wr": 50.0,
+  "pf": 2.7,
+  "years_pos": "4/7",
+  "by_year": {
+   "2005": 0.931,
+   "2006": 1.935,
+   "2007": -1.109,
+   "2010": -1.076,
+   "2011": -1.096,
+   "2017": 2.855,
+   "2018": 2.896
+  }
+ },
+ "null": {
+  "median": 0.986,
+  "p": 0.5,
+  "B": 2
+ },
+ "surplus": -0.067,
+ "robust": {
+  "dummyx0.7": 0.919,
+  "dummyx1.3": 0.919
+ },
+ "OOS": {
+  "n": 1,
+  "ev": 2.924,
+  "wr": 100.0,
+  "pf": 99.0,
+  "years_pos": "1/1",
+  "by_year": {
+   "2023": 2.924
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 0,
+  "ev": 0.0,
+  "wr": 0.0,
+  "pf": 0.0,
+  "years_pos": "0/0",
+  "by_year": {},
+  "status": "không lệnh",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

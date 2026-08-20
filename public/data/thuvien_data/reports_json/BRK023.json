@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "BRK023",
+  "ten": "NR7 + inside day combo",
+  "ho": "Breakout & phiên",
+  "nguon": "Toby Crabel",
+  "mo_ta": "Nến vừa NR7 vừa inside — phá biên nào theo biên đó",
+  "archetype": "nr_inside",
+  "tf": "D1",
+  "tham_so": {
+   "n": 7,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 114,
+  "ev": -0.034,
+  "wr": 24.6,
+  "pf": 0.96,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": -1.018,
+   "2005": -0.134,
+   "2006": -0.648,
+   "2007": 1.271,
+   "2008": -1.008,
+   "2009": 0.489,
+   "2010": -0.616,
+   "2011": 1.656,
+   "2012": 1.382,
+   "2013": -0.57,
+   "2014": -0.129,
+   "2015": 0.582,
+   "2016": -0.515,
+   "2017": 0.309,
+   "2018": 0.118
+  }
+ },
+ "null": {
+  "median": 0.056,
+  "p": 0.62,
+  "B": 16
+ },
+ "surplus": -0.09,
+ "robust": {
+  "nx0.7": -0.027,
+  "nx1.3": -0.061
+ },
+ "OOS": {
+  "n": 36,
+  "ev": -0.123,
+  "wr": 25.0,
+  "pf": 0.84,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.45,
+   "2020": 1.122,
+   "2021": -0.22,
+   "2022": -0.616,
+   "2023": 0.04
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 20,
+  "ev": 0.128,
+  "wr": 30.0,
+  "pf": 1.18,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.516,
+   "2025": -0.127,
+   "2026": 2.61
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

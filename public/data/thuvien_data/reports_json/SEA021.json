@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "SEA021",
+  "ten": "Thứ Hai sau NFP xấu — hồi",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Event follow-through",
+  "mo_ta": "NFP làm vàng giảm mạnh thứ Sáu → mua hồi thứ Hai",
+  "archetype": "nfp_monday",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 74,
+  "ev": 0.391,
+  "wr": 37.8,
+  "pf": 1.59,
+  "years_pos": "10/14",
+  "by_year": {
+   "2005": 0.355,
+   "2006": -0.388,
+   "2007": 1.354,
+   "2008": 0.286,
+   "2009": -1.041,
+   "2010": 0.919,
+   "2011": 1.612,
+   "2012": -0.266,
+   "2013": 0.621,
+   "2014": 0.904,
+   "2015": 0.537,
+   "2016": 1.678,
+   "2017": 0.256,
+   "2018": -0.304
+  }
+ },
+ "null": {
+  "median": 0.085,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.306,
+ "robust": {
+  "dummyx0.7": 0.391,
+  "dummyx1.3": 0.391
+ },
+ "OOS": {
+  "n": 24,
+  "ev": 0.523,
+  "wr": 41.7,
+  "pf": 1.84,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 1.514,
+   "2020": -0.404,
+   "2021": 1.652,
+   "2022": 0.933,
+   "2023": -0.274
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 14,
+  "ev": 1.238,
+  "wr": 57.1,
+  "pf": 3.76,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 1.619,
+   "2025": 1.615,
+   "2026": -1.038
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

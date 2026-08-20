@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN013",
+  "ten": "Three white soldiers",
+  "ho": "Mẫu nến",
+  "nguon": "Nison",
+  "mo_ta": "3 nến xanh thân lớn liên tiếp, mua tiếp diễn nến 4",
+  "archetype": "soldiers",
+  "tf": "H4",
+  "tham_so": {
+   "k": 0.8,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 39,
+  "ev": -0.161,
+  "wr": 23.1,
+  "pf": 0.8,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -1.034,
+   "2005": -1.048,
+   "2006": -0.585,
+   "2007": -1.045,
+   "2008": 0.975,
+   "2009": -1.022,
+   "2010": 0.283,
+   "2011": -1.038,
+   "2012": 2.976,
+   "2013": 0.563,
+   "2014": 0.296,
+   "2015": 2.957,
+   "2016": -1.046,
+   "2017": -1.048,
+   "2018": -1.053
+  }
+ },
+ "null": {
+  "median": -0.175,
+  "p": 0.5,
+  "B": 16
+ },
+ "surplus": 0.014,
+ "robust": {
+  "kx0.7": 0.081,
+  "kx1.3": 0.419
+ },
+ "OOS": {
+  "n": 11,
+  "ev": 0.778,
+  "wr": 45.5,
+  "pf": 2.39,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": 0.952,
+   "2020": 0.297,
+   "2021": 0.293,
+   "2022": -1.032,
+   "2023": 2.96
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 14,
+  "ev": 0.397,
+  "wr": 35.7,
+  "pf": 1.6,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.296,
+   "2025": 0.466,
+   "2026": 0.314
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

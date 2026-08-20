@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "IND058",
+  "ten": "KST cross (Know Sure Thing)",
+  "ho": "Indicator kinh điển",
+  "nguon": "Martin Pring",
+  "mo_ta": "KST cắt signal, vào theo hướng",
+  "archetype": "kst",
+  "tf": "D1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 95,
+  "ev": 0.235,
+  "wr": 31.6,
+  "pf": 1.34,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": -1.017,
+   "2005": 0.481,
+   "2006": 1.39,
+   "2007": 0.32,
+   "2008": 0.769,
+   "2009": -0.012,
+   "2010": -0.015,
+   "2011": -0.035,
+   "2012": 0.581,
+   "2013": -0.512,
+   "2014": 0.072,
+   "2015": 0.584,
+   "2016": 0.318,
+   "2017": -0.354,
+   "2018": 0.976
+  }
+ },
+ "null": {
+  "median": 0.064,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.171,
+ "robust": {
+  "dummyx0.7": 0.235,
+  "dummyx1.3": 0.235
+ },
+ "OOS": {
+  "n": 29,
+  "ev": 0.089,
+  "wr": 31.0,
+  "pf": 1.13,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.354,
+   "2020": -0.024,
+   "2021": -0.351,
+   "2022": -0.015,
+   "2023": 1.175
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 17,
+  "ev": 0.46,
+  "wr": 41.2,
+  "pf": 1.77,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.586,
+   "2025": 0.32,
+   "2026": 0.496
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

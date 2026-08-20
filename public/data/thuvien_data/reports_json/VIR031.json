@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR031",
+  "ten": "Trap trading (bẫy 2 phía)",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "Viral phổ thông",
+  "mo_ta": "Range hẹp bị phá 2 phía liên tiếp — vào theo cú phá thứ 2",
+  "archetype": "trap2",
+  "tf": "M15",
+  "tham_so": {
+   "n": 10,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 4237,
+  "ev": -0.176,
+  "wr": 26.0,
+  "pf": 0.8,
+  "years_pos": "1/15",
+  "by_year": {
+   "2004": -0.234,
+   "2005": -0.295,
+   "2006": 0.094,
+   "2007": -0.112,
+   "2008": -0.03,
+   "2009": -0.111,
+   "2010": -0.031,
+   "2011": -0.208,
+   "2012": -0.134,
+   "2013": -0.234,
+   "2014": -0.326,
+   "2015": -0.281,
+   "2016": -0.261,
+   "2017": -0.196,
+   "2018": -0.312
+  }
+ },
+ "null": {
+  "median": -0.121,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.055,
+ "robust": {
+  "nx0.7": -0.198,
+  "nx1.3": -0.124
+ },
+ "OOS": {
+  "n": 1635,
+  "ev": -0.269,
+  "wr": 24.2,
+  "pf": 0.71,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.313,
+   "2020": -0.372,
+   "2021": -0.12,
+   "2022": -0.189,
+   "2023": -0.369
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 846,
+  "ev": -0.173,
+  "wr": 25.1,
+  "pf": 0.8,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.281,
+   "2025": -0.083,
+   "2026": -0.15
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

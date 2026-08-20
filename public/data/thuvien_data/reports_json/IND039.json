@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "IND039",
+  "ten": "VWAP bounce (phiên)",
+  "ho": "Indicator kinh điển",
+  "nguon": "Phổ biến intraday",
+  "mo_ta": "Giá hồi về VWAP trong trend, bật lại — vào thuận trend",
+  "archetype": "vwap_day",
+  "tf": "M15",
+  "tham_so": {
+   "mode": "bounce",
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 5281,
+  "ev": -0.191,
+  "wr": 25.4,
+  "pf": 0.78,
+  "years_pos": "0/15",
+  "by_year": {
+   "2004": -0.159,
+   "2005": -0.01,
+   "2006": -0.036,
+   "2007": -0.22,
+   "2008": -0.138,
+   "2009": -0.321,
+   "2010": -0.209,
+   "2011": -0.073,
+   "2012": -0.294,
+   "2013": -0.132,
+   "2014": -0.261,
+   "2015": -0.266,
+   "2016": -0.263,
+   "2017": -0.147,
+   "2018": -0.273
+  }
+ },
+ "null": {
+  "median": -0.13,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.061,
+ "robust": {
+  "dummyx0.7": null,
+  "dummyx1.3": null
+ },
+ "OOS": {
+  "n": 1865,
+  "ev": -0.21,
+  "wr": 25.5,
+  "pf": 0.77,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.273,
+   "2020": -0.122,
+   "2021": -0.19,
+   "2022": -0.276,
+   "2023": -0.2
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 903,
+  "ev": 0.071,
+  "wr": 31.6,
+  "pf": 1.09,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.035,
+   "2025": 0.104,
+   "2026": 0.22
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

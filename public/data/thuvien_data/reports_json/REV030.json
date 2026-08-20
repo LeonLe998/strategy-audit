@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "REV030",
+  "ten": "Trở về EMA200 D1",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Nam châm dài hạn",
+  "mo_ta": "Cách EMA200 D1 ≥5% — vào ngược hướng kéo giãn (swing)",
+  "archetype": "pct_stretch",
+  "tf": "D1",
+  "tham_so": {
+   "ema": 200,
+   "k": 0.05,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 58,
+  "ev": 0.092,
+  "wr": 27.6,
+  "pf": 1.13,
+  "years_pos": "7/14",
+  "by_year": {
+   "2005": -1.017,
+   "2006": 0.323,
+   "2007": -0.017,
+   "2008": 0.991,
+   "2009": -1.011,
+   "2010": -1.015,
+   "2011": 0.319,
+   "2012": 0.316,
+   "2013": -1.013,
+   "2014": 0.628,
+   "2015": -0.017,
+   "2016": -0.515,
+   "2017": 1.646,
+   "2018": 1.644
+  }
+ },
+ "null": {
+  "median": -0.058,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.15,
+ "robust": {
+  "kx0.7": 0.184,
+  "kx1.3": -0.097
+ },
+ "OOS": {
+  "n": 19,
+  "ev": -0.132,
+  "wr": 21.1,
+  "pf": 0.83,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -1.015,
+   "2020": -1.014,
+   "2021": 1.383,
+   "2022": -0.215,
+   "2023": -0.818
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 2,
+  "ev": 0.251,
+  "wr": 50.0,
+  "pf": 1.5,
+  "years_pos": "1/2",
+  "by_year": {
+   "2024": -1.013,
+   "2026": 1.515
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

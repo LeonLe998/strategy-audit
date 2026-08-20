@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "IND056",
+  "ten": "CMF (Chaikin Money Flow) đổi dấu",
+  "ho": "Indicator kinh điển",
+  "nguon": "Marc Chaikin",
+  "mo_ta": "CMF vượt 0 mua, thủng 0 bán",
+  "archetype": "cmf",
+  "tf": "H4",
+  "tham_so": {
+   "n": 20,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 467,
+  "ev": 0.071,
+  "wr": 28.1,
+  "pf": 1.1,
+  "years_pos": "10/15",
+  "by_year": {
+   "2004": 0.058,
+   "2005": 0.09,
+   "2006": 0.331,
+   "2007": 0.564,
+   "2008": 0.497,
+   "2009": -0.026,
+   "2010": 0.354,
+   "2011": 0.448,
+   "2012": -0.279,
+   "2013": -0.368,
+   "2014": 0.068,
+   "2015": 0.084,
+   "2016": 0.257,
+   "2017": -0.141,
+   "2018": -0.286
+  }
+ },
+ "null": {
+  "median": -0.072,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.143,
+ "robust": {
+  "nx0.7": 0.039,
+  "nx1.3": 0.009
+ },
+ "OOS": {
+  "n": 155,
+  "ev": -0.096,
+  "wr": 23.9,
+  "pf": 0.88,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": 0.281,
+   "2020": -0.032,
+   "2021": -0.227,
+   "2022": -0.57,
+   "2023": 0.209
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 70,
+  "ev": -0.092,
+  "wr": 24.3,
+  "pf": 0.88,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.041,
+   "2025": -0.266,
+   "2026": 0.15
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

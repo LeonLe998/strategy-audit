@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "BRK040",
+  "ten": "Volatility breakout ×ATR từ open",
+  "ho": "Breakout & phiên",
+  "nguon": "Larry Williams",
+  "mo_ta": "Vào khi giá cách open ngày ≥ k×ATR hôm qua (k=0.6)",
+  "archetype": "open_atr",
+  "tf": "H1",
+  "tham_so": {
+   "k": 0.6,
+   "mode": "follow",
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 1278,
+  "ev": 0.019,
+  "wr": 27.6,
+  "pf": 1.02,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": -0.233,
+   "2005": -0.049,
+   "2006": 0.199,
+   "2007": 0.059,
+   "2008": 0.148,
+   "2009": 0.012,
+   "2010": 0.187,
+   "2011": 0.47,
+   "2012": -0.301,
+   "2013": -0.131,
+   "2014": -0.048,
+   "2015": -0.077,
+   "2016": 0.099,
+   "2017": 0.027,
+   "2018": -0.087
+  }
+ },
+ "null": {
+  "median": -0.032,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.051,
+ "robust": {
+  "kx0.7": -0.011,
+  "kx1.3": 0.078
+ },
+ "OOS": {
+  "n": 420,
+  "ev": -0.013,
+  "wr": 27.1,
+  "pf": 0.98,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.038,
+   "2020": 0.167,
+   "2021": -0.143,
+   "2022": -0.119,
+   "2023": 0.119
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 256,
+  "ev": 0.2,
+  "wr": 32.0,
+  "pf": 1.28,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.12,
+   "2025": 0.431,
+   "2026": 0.352
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

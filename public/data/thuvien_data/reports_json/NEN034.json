@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "NEN034",
+  "ten": "Hai nến ngược liền nhau rồi tiếp diễn",
+  "ho": "Mẫu nến",
+  "nguon": "Biến thể Lonely Candle 2 nến",
+  "mo_ta": "≥3 nến thuận + đúng 2 nến ngược + xác nhận vượt",
+  "archetype": "lonely",
+  "tf": "H1",
+  "tham_so": {
+   "run": 3,
+   "m": 2,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "run"
+ },
+ "IS": {
+  "n": 430,
+  "ev": -0.033,
+  "wr": 26.7,
+  "pf": 0.96,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": 0.91,
+   "2005": 0.049,
+   "2006": 0.199,
+   "2007": -0.248,
+   "2008": 0.204,
+   "2009": -0.222,
+   "2010": -0.186,
+   "2011": -0.009,
+   "2012": -0.422,
+   "2013": 0.15,
+   "2014": 0.133,
+   "2015": 0.474,
+   "2016": -0.011,
+   "2017": -0.263,
+   "2018": -0.423
+  }
+ },
+ "null": {
+  "median": -0.058,
+  "p": 0.38,
+  "B": 16
+ },
+ "surplus": 0.025,
+ "robust": {
+  "runx0.7": -0.081,
+  "runx1.3": -0.038
+ },
+ "OOS": {
+  "n": 171,
+  "ev": 0.003,
+  "wr": 27.5,
+  "pf": 1.0,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.025,
+   "2020": -0.033,
+   "2021": 0.168,
+   "2022": -0.057,
+   "2023": -0.039
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 90,
+  "ev": 0.38,
+  "wr": 36.7,
+  "pf": 1.56,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.66,
+   "2025": 0.136,
+   "2026": 0.511
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "SEA012",
+  "ten": "Santa rally vàng (cuối tháng 12)",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Seasonality",
+  "mo_ta": "Mua tuần cuối năm, đóng đầu năm",
+  "archetype": "season_window",
+  "tf": "D1",
+  "tham_so": {
+   "month": 12,
+   "d0": 24,
+   "d1": 31,
+   "dir": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "d0"
+ },
+ "IS": {
+  "n": 15,
+  "ev": 1.21,
+  "wr": 60.0,
+  "pf": 3.98,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": -1.021,
+   "2005": 2.99,
+   "2006": -1.019,
+   "2007": 2.986,
+   "2008": 2.992,
+   "2009": -1.011,
+   "2010": -1.015,
+   "2011": -1.011,
+   "2012": -1.021,
+   "2013": 2.987,
+   "2014": 2.987,
+   "2015": 2.983,
+   "2016": 2.979,
+   "2017": 2.969,
+   "2018": 0.372
+  }
+ },
+ "null": {
+  "median": 0.139,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 1.071,
+ "robust": {
+  "d0x0.7": 0.795,
+  "d0x1.3": null
+ },
+ "OOS": {
+  "n": 5,
+  "ev": 1.609,
+  "wr": 80.0,
+  "pf": 8.92,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": 2.968,
+   "2020": -1.016,
+   "2021": 2.976,
+   "2022": 2.982,
+   "2023": 0.137
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 2,
+  "ev": 0.985,
+  "wr": 50.0,
+  "pf": 2.94,
+  "years_pos": "1/2",
+  "by_year": {
+   "2024": 2.985,
+   "2025": -1.015
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

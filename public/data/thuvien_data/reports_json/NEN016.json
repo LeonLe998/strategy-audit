@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN016",
+  "ten": "Tweezer bottom (đáy nhíp)",
+  "ho": "Mẫu nến",
+  "nguon": "Nison",
+  "mo_ta": "2 nến có đáy gần trùng nhau sau chuỗi giảm, mua khi phá đỉnh nến 2",
+  "archetype": "tweezer",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1273,
+  "ev": -0.036,
+  "wr": 26.6,
+  "pf": 0.96,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": -0.279,
+   "2005": -0.102,
+   "2006": 0.194,
+   "2007": 0.088,
+   "2008": 0.239,
+   "2009": 0.143,
+   "2010": -0.114,
+   "2011": -0.097,
+   "2012": -0.227,
+   "2013": -0.022,
+   "2014": -0.151,
+   "2015": -0.029,
+   "2016": -0.17,
+   "2017": 0.03,
+   "2018": -0.167
+  }
+ },
+ "null": {
+  "median": -0.054,
+  "p": 0.25,
+  "B": 16
+ },
+ "surplus": 0.018,
+ "robust": {
+  "dummyx0.7": -0.036,
+  "dummyx1.3": -0.036
+ },
+ "OOS": {
+  "n": 437,
+  "ev": -0.103,
+  "wr": 24.9,
+  "pf": 0.87,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.246,
+   "2020": 0.08,
+   "2021": -0.076,
+   "2022": -0.189,
+   "2023": -0.069
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 227,
+  "ev": -0.002,
+  "wr": 26.9,
+  "pf": 1.0,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.133,
+   "2025": 0.087,
+   "2026": 0.086
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}
