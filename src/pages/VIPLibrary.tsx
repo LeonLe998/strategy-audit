@@ -601,6 +601,21 @@ export default function VIPLibrary({}: VIPLibraryProps) {
                             {isVerifying ? <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <span>Mở Khóa Báo Cáo</span>}
                           </button>
                         </form>
+
+                        <div className="mt-6 pt-4 border-t border-[#1F2937]/50 text-center">
+                          <p className="text-xs text-gray-400">
+                            Bạn chưa có Passkey?{' '}
+                            <a 
+                              href="https://zalo.me/0566665511" 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-neon-green hover:text-[#00E593] transition-colors font-bold underline decoration-dotted"
+                            >
+                              Liên hệ Zalo Admin (05.6666.5511)
+                            </a>{' '}
+                            để nhận mã kích hoạt.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
