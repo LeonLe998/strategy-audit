@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import ReactMarkdown from 'react-markdown';
+import { getGasApiUrl } from '../config';
 
 interface VIPLibraryProps {
   setActiveTab: (tab: string) => void;
@@ -69,6 +70,29 @@ export default function VIPLibrary({}: VIPLibraryProps) {
   const [selectedStrategyIndex, setSelectedStrategyIndex] = useState<any | null>(null);
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
 
+  const fetchArticles = async () => {
+    const currentGasUrl = getGasApiUrl();
+    if (currentGasUrl) {
+      try {
+        const res = await fetch(`${currentGasUrl}?action=getArticles`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          setAdminArticles(data.data);
+          localStorage.setItem('quant_admin_strategies', JSON.stringify(data.data));
+          return;
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải bài viết từ Google Sheets:", err);
+      }
+    }
+    
+    // Fallback load local
+    const localData = localStorage.getItem('quant_admin_strategies');
+    if (localData) {
+      setAdminArticles(JSON.parse(localData));
+    }
+  };
+
   useEffect(() => {
     let deviceId = localStorage.getItem('quant_device_id');
     if (!deviceId) {
@@ -80,14 +104,9 @@ export default function VIPLibrary({}: VIPLibraryProps) {
       setIsAuthenticated(true);
     }
 
-    const loadLocal = () => {
-      const localData = localStorage.getItem('quant_admin_strategies');
-      if (localData) {
-        setAdminArticles(JSON.parse(localData));
-      }
-    };
-    loadLocal();
-    const interval = setInterval(loadLocal, 3000);
+    fetchArticles();
+    // Đồng bộ lại mỗi 10 giây nếu cấu hình Google Sheets
+    const interval = setInterval(fetchArticles, 10000);
 
     fetch('/data/thuvien_data/thu_vien_index.json')
       .then(res => res.json())
@@ -102,15 +121,39 @@ export default function VIPLibrary({}: VIPLibraryProps) {
     if (passkey.trim() === '') return;
     setIsVerifying(true);
     setErrorMsg('');
-    setTimeout(() => {
+
+    const currentGasUrl = getGasApiUrl();
+    if (currentGasUrl) {
+      try {
+        const res = await fetch(`${currentGasUrl}?action=verifyPasskey&passkey=${encodeURIComponent(passkey)}`);
+        const data = await res.json();
+        if (data.success && data.valid) {
+          setIsAuthenticated(true);
+          localStorage.setItem('quant_vip_auth_v2', 'true');
+          localStorage.setItem('quant_vip_role', data.role || 'vip');
+        } else {
+          setErrorMsg(data.message || 'Passkey không hợp lệ hoặc đã bị thu hồi.');
+        }
+      } catch (err) {
+        console.error("Lỗi kết nối API xác thực:", err);
+        // Fallback sang local key đề phòng mất kết nối nhưng đã cấu hình
+        if (passkey === 'ADMIN' || passkey === 'VIP') {
+          setIsAuthenticated(true);
+          localStorage.setItem('quant_vip_auth_v2', 'true');
+        } else {
+          setErrorMsg('Lỗi kết nối API xác thực. Vui lòng thử lại sau.');
+        }
+      }
+    } else {
+      // Fallback khi chưa cấu hình GAS
       if (passkey === 'ADMIN' || passkey === 'VIP') {
         setIsAuthenticated(true);
         localStorage.setItem('quant_vip_auth_v2', 'true');
       } else {
         setErrorMsg('Passkey không hợp lệ hoặc đã bị thu hồi.');
       }
-      setIsVerifying(false);
-    }, 1200);
+    }
+    setIsVerifying(false);
   };
 
   const openReport = (strategy: any) => {

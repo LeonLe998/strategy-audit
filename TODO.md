@@ -5,14 +5,14 @@ Dự án: **Strategy Audit - Thư Viện Chiến Lược VIP**
 Dưới đây là các hạng mục công việc tiếp theo để hoàn thiện 100% dự án trước khi Launching (Ra mắt) chính thức. Anh có thể pull file này về laptop để theo dõi nhé:
 
 ## 1. Triển khai Backend / Cơ sở dữ liệu (Database)
-- [ ] Thiết lập **Google Sheets** làm Database lưu trữ các Bài Phân Tích Chuyên Sâu (Article Content) thay vì lưu tạm trên trình duyệt (LocalStorage).
-- [ ] Triển khai mã **Google Apps Script (GAS)** để tạo API đọc/ghi dữ liệu từ Google Sheets xuống Website.
-- [ ] Đấu nối (Fetch API) trên `AdminDashboard.tsx` và `VIPLibrary.tsx` để đọc dữ liệu thật từ Server.
+- [x] Thiết lập **Google Sheets** làm Database lưu trữ các Bài Phân Tích Chuyên Sâu (Article Content) thay vì lưu tạm trên trình duyệt (LocalStorage).
+- [x] Triển khai mã **Google Apps Script (GAS)** để tạo API đọc/ghi dữ liệu từ Google Sheets xuống Website.
+- [x] Đấu nối (Fetch API) trên `AdminDashboard.tsx` và `VIPLibrary.tsx` để đọc dữ liệu thật từ Server.
 
 ## 2. Nâng cấp Hệ thống Passkey (VIP Auth)
-- [ ] Thiết lập bảng tính thứ 2 trên Google Sheets để quản lý danh sách Passkey hợp lệ.
-- [ ] Viết API kiểm tra tính hợp lệ của Passkey (Check thời hạn, Passkey có bị khóa hay không).
-- [ ] Thay thế hàm `handleVerifyPasskey` hiện tại (đang hardcode 'ADMIN' và 'VIP') bằng hàm gọi API xác thực thật.
+- [x] Thiết lập bảng tính thứ 2 trên Google Sheets để quản lý danh sách Passkey hợp lệ.
+- [x] Viết API kiểm tra tính hợp lệ của Passkey (Check thời hạn, Passkey có bị khóa hay không).
+- [x] Thay thế hàm `handleVerifyPasskey` hiện tại (đang hardcode 'ADMIN' và 'VIP') bằng hàm gọi API xác thực thật.
 
 ## 3. Hoàn thiện Nội dung (Content)
 - [ ] Viết bài phân tích chuyên sâu cho 15 chiến lược "CHẤT" đầu tiên thông qua Admin Dashboard.

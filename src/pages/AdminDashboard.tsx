@@ -4,6 +4,7 @@ import {
   ShieldAlert, Settings, Edit2, X, Save, 
   ArrowLeft, Loader2, Database, Search, FileText
 } from 'lucide-react';
+import { getGasApiUrl, setGasApiUrl } from '../config';
 
 interface AdminDashboardProps {
   setActiveTab: (tab: string) => void;
@@ -15,6 +16,7 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   
+  const [gasUrl, setGasUrl] = useState(getGasApiUrl());
   const [strategies, setStrategies] = useState<any[]>([]);
   const [adminData, setAdminData] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -29,10 +31,30 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Load admin overrides from localStorage
-        const localData = localStorage.getItem('quant_admin_strategies');
-        if (localData) {
-          setAdminData(JSON.parse(localData));
+        const currentGasUrl = getGasApiUrl();
+        if (currentGasUrl) {
+          try {
+            const resGas = await fetch(`${currentGasUrl}?action=getArticles`);
+            const dataGas = await resGas.json();
+            if (dataGas.success && dataGas.data) {
+              setAdminData(dataGas.data);
+              localStorage.setItem('quant_admin_strategies', JSON.stringify(dataGas.data));
+            } else {
+              throw new Error(dataGas.message || "Không thể tải dữ liệu bài viết");
+            }
+          } catch (gasErr) {
+            console.error("Lỗi khi tải dữ liệu từ Google Sheets, sử dụng Cache:", gasErr);
+            const localData = localStorage.getItem('quant_admin_strategies');
+            if (localData) {
+              setAdminData(JSON.parse(localData));
+            }
+          }
+        } else {
+          // Load admin overrides from localStorage
+          const localData = localStorage.getItem('quant_admin_strategies');
+          if (localData) {
+            setAdminData(JSON.parse(localData));
+          }
         }
 
         // Fetch real strategies data
@@ -52,18 +74,39 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     }
   }, [isAuthenticated]);
 
-  const handleVerify = (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsVerifying(true);
     setErrorMsg('');
-    setTimeout(() => {
+    
+    const currentGasUrl = getGasApiUrl();
+    if (currentGasUrl) {
+      try {
+        const res = await fetch(`${currentGasUrl}?action=verifyPasskey&passkey=${encodeURIComponent(adminKey)}`);
+        const data = await res.json();
+        if (data.success && data.valid && data.role === 'admin') {
+          setIsAuthenticated(true);
+        } else {
+          setErrorMsg(data.message || 'Mã xác thực không có quyền Admin hoặc không hợp lệ.');
+        }
+      } catch (err) {
+        console.error("Lỗi xác thực qua Google Sheet:", err);
+        // Fallback sang local admin key đề phòng lỗi kết nối nhưng URL vẫn cấu hình đúng
+        if (adminKey === 'SA_ADMIN_2026') {
+          setIsAuthenticated(true);
+        } else {
+          setErrorMsg('Lỗi kết nối Server Sheet. Hoặc sai mật khẩu Master Key.');
+        }
+      }
+    } else {
+      // Fallback nếu chưa cấu hình GAS
       if (adminKey === 'SA_ADMIN_2026') {
         setIsAuthenticated(true);
       } else {
         setErrorMsg('Sai mật khẩu Master Key.');
       }
-      setIsVerifying(false);
-    }, 1000);
+    }
+    setIsVerifying(false);
   };
 
   const openEditModal = (strategy: any) => {
@@ -72,26 +115,56 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingStrategy) return;
     setIsSaving(true);
     
-    setTimeout(() => {
-      const updatedAdminData = {
-        ...adminData,
-        [editingStrategy.id]: {
-          ...adminData[editingStrategy.id],
-          articleContent: articleContent
+    const updatedAdminData = {
+      ...adminData,
+      [editingStrategy.id]: {
+        ...adminData[editingStrategy.id],
+        articleContent: articleContent
+      }
+    };
+    
+    const currentGasUrl = getGasApiUrl();
+    let savedOnGAS = false;
+    
+    if (currentGasUrl) {
+      try {
+        const res = await fetch(currentGasUrl, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify({
+            action: 'saveArticle',
+            id: editingStrategy.id,
+            articleContent: articleContent
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          savedOnGAS = true;
+        } else {
+          console.error("Lưu trên Google Sheets thất bại:", data.message);
         }
-      };
-      
-      setAdminData(updatedAdminData);
-      localStorage.setItem('quant_admin_strategies', JSON.stringify(updatedAdminData));
-      
-      setIsSaving(false);
-      setIsModalOpen(false);
-      setEditingStrategy(null);
-    }, 800);
+      } catch (err) {
+        console.error("Lỗi khi kết nối GAS:", err);
+      }
+    }
+    
+    setAdminData(updatedAdminData);
+    localStorage.setItem('quant_admin_strategies', JSON.stringify(updatedAdminData));
+    
+    setIsSaving(false);
+    setIsModalOpen(false);
+    setEditingStrategy(null);
+    
+    if (currentGasUrl && !savedOnGAS) {
+      alert("Đã lưu bài viết vào Local Cache (Trình duyệt) của bạn thành công, nhưng gặp lỗi khi đồng bộ lên Google Sheets. Vui lòng kiểm tra lại kết nối mạng hoặc URL script.");
+    }
   };
 
   if (!isAuthenticated) {
@@ -115,6 +188,30 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
               {isVerifying ? <Loader2 className="w-5 h-5 animate-spin" /> : <span>Đăng nhập hệ thống</span>}
             </button>
           </form>
+
+          <div className="mt-6 pt-6 border-t border-[#1F2937]/50 text-left">
+            <details className="group">
+              <summary className="text-xs text-gray-400 font-bold font-mono cursor-pointer list-none flex items-center justify-between select-none">
+                <span>⚙️ CẤU HÌNH GOOGLE SHEETS API</span>
+                <span className="transition-transform group-open:rotate-180 text-[10px]">▼</span>
+              </summary>
+              <div className="mt-3 space-y-2">
+                <input 
+                  type="text" 
+                  value={gasUrl} 
+                  onChange={e => {
+                    setGasUrl(e.target.value);
+                    setGasApiUrl(e.target.value);
+                  }} 
+                  placeholder="Nhập URL Google Apps Script Web App..." 
+                  className="w-full bg-[#0B0E14] border border-[#1F2937] text-gray-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-coral-red font-mono leading-relaxed" 
+                />
+                <p className="text-[10px] text-gray-500 leading-normal">
+                  Nếu để trống, hệ thống sẽ mặc định lưu trữ tạm thời tại <strong>LocalStorage</strong> của trình duyệt. Cung cấp URL Web App để đồng bộ dữ liệu với Google Sheets.
+                </p>
+              </div>
+            </details>
+          </div>
         </motion.div>
       </div>
     );
@@ -130,7 +227,7 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <button onClick={() => setActiveTab('library')} className="p-2 bg-[#131722] border border-[#1F2937] rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
+          <button onClick={() => setActiveTab('viplibrary')} className="p-2 bg-[#131722] border border-[#1F2937] rounded-lg text-gray-400 hover:text-white hover:border-gray-500 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
@@ -150,6 +247,33 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
         </div>
       </div>
 
+      {/* Google Sheets API Config Card */}
+      <div className="bg-[#131722] border border-[#1F2937] p-5 rounded-2xl mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+        <div className="flex items-center space-x-3 shrink-0">
+          <div className={`p-2 rounded-xl ${gasUrl ? 'bg-neon-green/10 text-neon-green' : 'bg-coral-red/10 text-coral-red'}`}>
+            <Database className="w-6 h-6" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-white">Kết Nối Google Sheet Database</h4>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Trạng thái: {gasUrl ? <span className="text-neon-green font-bold font-mono">Hoạt động (Google Sheets)</span> : <span className="text-amber-500 font-bold font-mono">Chưa cấu hình (LocalStorage)</span>}
+            </p>
+          </div>
+        </div>
+        <div className="w-full md:flex-1 max-w-2xl">
+          <input 
+            type="text" 
+            value={gasUrl} 
+            onChange={e => {
+              setGasUrl(e.target.value);
+              setGasApiUrl(e.target.value);
+            }} 
+            placeholder="Dán URL Google Apps Script Web App tại đây để chuyển sang Database thực..." 
+            className="w-full bg-[#0B0E14] border border-[#1F2937] text-gray-300 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-neon-green font-mono" 
+          />
+        </div>
+      </div>
+
       <div className="bg-[#131722] border border-[#1F2937] rounded-2xl overflow-hidden shadow-xl flex flex-col h-[70vh]">
         <div className="p-4 border-b border-[#1F2937] flex items-center justify-between bg-[#0B0E14]">
           <div className="relative w-80">
@@ -166,7 +290,7 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500 space-y-4">
               <Loader2 className="w-8 h-8 animate-spin text-neon-green" />
-              <p>Đang tải dữ liệu JSON...</p>
+              <p>Đang tải dữ liệu...</p>
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
@@ -175,7 +299,7 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
                   <th className="py-3 px-6 font-medium w-24">ID</th>
                   <th className="py-3 px-6 font-medium">Tên Chiến Lược</th>
                   <th className="py-3 px-6 font-medium">Nhóm</th>
-                  <th className="py-3 px-6 font-medium">Trạng Thái Bài Viết</th>
+                  <th className="py-3 px-6 font-medium">Trạng Thế Bài Viết</th>
                   <th className="py-3 px-6 font-medium text-right">Thao tác</th>
                 </tr>
               </thead>
