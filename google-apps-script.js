@@ -614,3 +614,9 @@ function sendTelegram(text) {
     muteHttpExceptions: true,
   });
 }
+
+// Helper to return JSON output in Apps Script Web App
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
