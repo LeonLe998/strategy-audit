@@ -115,6 +115,22 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     setIsModalOpen(true);
   };
 
+  const restoreOriginal = async () => {
+    if (!editingStrategy) return;
+    try {
+      const res = await fetch(`/data/vip_articles/VIP_${editingStrategy.id}.md`);
+      if (res.ok) {
+        const text = await res.text();
+        setArticleContent(text);
+      } else {
+        alert("Không tìm thấy file bài viết gốc!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi khi tải bài viết gốc.");
+    }
+  };
+
   const handleSave = async () => {
     if (!editingStrategy) return;
     setIsSaving(true);
@@ -375,7 +391,10 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-[#1F2937] bg-[#0B0E14] rounded-b-2xl flex justify-end shrink-0">
+              <div className="p-6 border-t border-[#1F2937] bg-[#0B0E14] rounded-b-2xl flex justify-between items-center shrink-0">
+                <button type="button" onClick={restoreOriginal} className="px-4 py-2.5 rounded-xl border border-coral-red text-coral-red hover:bg-coral-red/10 transition-colors font-bold text-xs">
+                  Khôi phục bài gốc
+                </button>
                 <div className="space-x-3">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-xl text-gray-400 hover:text-white transition-colors font-bold text-sm">Hủy</button>
                   <button type="button" onClick={handleSave} disabled={isSaving} className="px-6 py-2.5 rounded-xl bg-neon-green text-black hover:bg-[#00E593] transition-colors font-bold text-sm flex items-center space-x-2 disabled:opacity-70">

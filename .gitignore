@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary unzipped folders
+vip_articles_pack.zip
+vip_articles_pack/

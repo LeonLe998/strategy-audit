@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { getGasApiUrl } from '../config';
 
 interface VIPLibraryProps {
@@ -47,6 +48,21 @@ const IsometricBar = (props: any) => {
   );
 };
 
+const truncateForFreeUser = (content: string): string => {
+  if (!content) return '';
+  const searchKey = '## Tóm tắt 30 giây';
+  const startIndex = content.indexOf(searchKey);
+  if (startIndex === -1) return content.substring(0, 500);
+  
+  const remainingText = content.substring(startIndex + searchKey.length);
+  const nextHeadingMatch = remainingText.match(/\n##?\s+/);
+  if (nextHeadingMatch && nextHeadingMatch.index !== undefined) {
+    return content.substring(0, startIndex + searchKey.length + nextHeadingMatch.index);
+  }
+  
+  return content.substring(0, startIndex + 800);
+};
+
 const VERDICT_ORDER: Record<string, number> = {
   'CHẤT': 1,
   'TÌNH HUỐNG': 2,
@@ -62,6 +78,7 @@ export default function VIPLibrary({}: VIPLibraryProps) {
 
   const [indexData, setIndexData] = useState<any | null>(null);
   const [adminArticles, setAdminArticles] = useState<Record<string, any>>({});
+  const [defaultArticleContent, setDefaultArticleContent] = useState<string>('');
   
   const [filterHo, setFilterHo] = useState<string>('All');
   const [filterVerdict, setFilterVerdict] = useState<string>('All');
@@ -169,6 +186,25 @@ export default function VIPLibrary({}: VIPLibraryProps) {
       .catch(err => {
         console.error(err);
       });
+
+    // Tải bài viết gốc của VIP từ folder static public
+    fetch(`/data/vip_articles/VIP_${targetId}.md`)
+      .then(res => {
+        if (!res.ok) throw new Error('No static VIP article found');
+        return res.text();
+      })
+      .then(text => {
+        setDefaultArticleContent(text);
+      })
+      .catch(err => {
+        console.error(err);
+        setDefaultArticleContent('');
+      });
+  };
+
+  const getArticleDisplayContent = () => {
+    if (!selectedReport) return '';
+    return adminArticles[selectedReport.spec.id]?.articleContent || defaultArticleContent;
   };
 
   let filteredList = indexData?.danh_sach || [];
@@ -554,12 +590,23 @@ export default function VIPLibrary({}: VIPLibraryProps) {
                     <BookOpen className="w-5 h-5 text-[#FFD700]" />
                     <h3 className="font-bold text-xl text-white font-display">Báo Cáo Phân Tích Chuyên Sâu</h3>
                   </div>
+                  {selectedStrategyIndex?.trang_thai === 'gop' && (
+                    <div className="bg-neon-green/5 border border-neon-green/30 px-4 py-2.5 rounded-lg text-xs text-neon-green mb-4 italic">
+                      Đây là bản đối xứng của chiến lược gốc {selectedStrategyIndex.goc} — Đang tải bài viết phân tích của {selectedStrategyIndex.goc}.
+                    </div>
+                  )}
+
                   {isAuthenticated ? (
-                    adminArticles[selectedReport.spec.id]?.articleContent ? (
+                    getArticleDisplayContent() ? (
                       <div className="prose prose-invert prose-neon max-w-none prose-h2:text-white prose-h2:border-b prose-h2:border-[#1F2937] prose-h2:pb-2 prose-h3:text-[#FFD700] prose-a:text-[#1D9E75] hover:prose-a:text-[#FFD700] prose-blockquote:border-l-[#1D9E75] prose-blockquote:bg-[#131722] prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg prose-blockquote:font-mono prose-blockquote:text-sm prose-blockquote:text-gray-300">
-                        <ReactMarkdown>
-                          {adminArticles[selectedReport.spec.id].articleContent}
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {getArticleDisplayContent()}
                         </ReactMarkdown>
+                        
+                        {/* Footer disclaimer inside article */}
+                        <div className="mt-8 pt-6 border-t border-[#1F2937]/30 text-xs text-gray-500 font-sans leading-relaxed">
+                          Báo cáo kiểm định độc lập — không phải lời khuyên đầu tư. Kết quả quá khứ không bảo đảm tương lai.
+                        </div>
                       </div>
                     ) : (
                       <div className="text-center py-8 text-gray-400 font-mono text-sm bg-[#131722] rounded-xl border border-[#1F2937]">
@@ -569,52 +616,75 @@ export default function VIPLibrary({}: VIPLibraryProps) {
                       </div>
                     )
                   ) : (
-                    <div className="relative text-center py-12 px-4 rounded-xl border border-dashed border-[#1F2937] bg-[#131722]/50">
-                      <div className="absolute inset-0 overflow-hidden rounded-xl">
-                        <div className="w-full h-full bg-[linear-gradient(rgba(19,23,34,0)_0%,rgba(19,23,34,0.9)_50%,rgba(19,23,34,1)_100%)] absolute z-10 pointer-events-none"></div>
-                        <div className="prose prose-invert max-w-none opacity-30 blur-sm pointer-events-none text-left p-8">
-                          <h2 className="text-white text-2xl font-bold mb-4">Điểm yếu chết người của chiến lược này</h2>
-                          <p className="mb-4">Đây là phần phân tích chuyên sâu giải thích vì sao chiến lược này thất bại trong thực tế dù backtest có vẻ rất tốt. Lỗi thường gặp nhất là overfitting...</p>
-                          <p className="mb-4">Các bẫy tâm lý thường gặp và cách các quỹ lớn lợi dụng liquidity ở các vùng cản quan trọng này:</p>
-                          <ul>
-                            <li className="mb-2">Dấu hiệu nhận biết fakeout</li>
-                            <li className="mb-2">Điểm mù của indicator ở khung H4</li>
-                            <li>Cách thiết lập trailing stop an toàn</li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div className="relative z-20 max-w-md mx-auto">
-                        <div className="w-16 h-16 bg-neon-green/10 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(0,255,163,0.2)]">
-                          <Key className="w-8 h-8 text-neon-green" />
-                        </div>
-                        <h4 className="text-xl font-bold text-white mb-2">Nội Dung Độc Quyền (VIP)</h4>
-                        <p className="text-gray-400 text-sm mb-6 leading-relaxed">Bạn cần nhập Passkey để mở khóa các bài phân tích chuyên sâu từ đội ngũ Admin.</p>
-                        <form onSubmit={handleVerifyPasskey} className="space-y-4 text-left">
-                          <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                              <Key className="w-4 h-4 text-gray-500" />
-                            </div>
-                            <input type="password" value={passkey} onChange={e => setPasskey(e.target.value)} placeholder="Nhập Passkey..." className="w-full bg-[#0B0E14] border border-[#1F2937] text-white rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-neon-green transition-colors text-center tracking-widest font-mono text-sm" />
+                    <div className="space-y-6">
+                      {getArticleDisplayContent() ? (
+                        <div className="relative">
+                          {/* Truncated content */}
+                          <div className="prose prose-invert prose-neon max-w-none prose-h2:text-white prose-h2:border-b prose-h2:border-[#1F2937] prose-h2:pb-2 prose-h3:text-[#FFD700] prose-a:text-[#1D9E75] hover:prose-a:text-[#FFD700] prose-blockquote:border-l-[#1D9E75] prose-blockquote:bg-[#131722] prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg prose-blockquote:font-mono prose-blockquote:text-sm prose-blockquote:text-gray-300 opacity-60 pointer-events-none select-none">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                              {truncateForFreeUser(getArticleDisplayContent())}
+                            </ReactMarkdown>
                           </div>
-                          {errorMsg && <p className="text-coral-red text-xs font-mono text-center flex justify-center items-center space-x-1"><X className="w-3 h-3" /><span>{errorMsg}</span></p>}
-                          <button type="submit" disabled={isVerifying} className="w-full bg-neon-green hover:bg-[#00E593] text-black font-bold rounded-xl py-3 transition-all uppercase tracking-wider text-sm flex items-center justify-center space-x-2 disabled:opacity-70">
-                            {isVerifying ? <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <span>Mở Khóa Báo Cáo</span>}
-                          </button>
-                        </form>
+                          
+                          {/* Blurred gradient overlay */}
+                          <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0B0E14] via-[#0B0E14]/80 to-transparent pointer-events-none"></div>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-400 italic text-center py-4">Đội ngũ chuyên gia Quant đang soạn thảo báo cáo phân tích cho chiến lược này.</p>
+                      )}
 
-                        <div className="mt-6 pt-4 border-t border-[#1F2937]/50 text-center">
-                          <p className="text-xs text-gray-400">
-                            Bạn chưa có Passkey?{' '}
-                            <a 
-                              href="https://zalo.me/0566665511" 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
-                              className="text-neon-green hover:text-[#00E593] transition-colors font-bold underline decoration-dotted"
-                            >
-                              Liên hệ Zalo Admin (05.6666.5511)
-                            </a>{' '}
-                            để nhận mã kích hoạt.
+                      {/* Upgrade Form Area */}
+                      <div className="relative text-center py-8 px-4 rounded-xl border border-dashed border-[#1F2937] bg-[#131722]/30 max-w-xl mx-auto">
+                        <div className="relative z-20 max-w-md mx-auto">
+                          <div className="w-12 h-12 bg-neon-green/10 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_15px_rgba(0,255,163,0.15)]">
+                            <Key className="w-6 h-6 text-neon-green" />
+                          </div>
+                          <h4 className="text-lg font-bold text-white mb-1">Nội Dung Độc Quyền (VIP)</h4>
+                          <p className="text-gray-400 text-xs mb-4 leading-relaxed">
+                            Mục lục phân tích nâng cao: sụt vốn sâu nhất, chuỗi thua kỷ lục, bẫy rủi ro và hướng dẫn chi tiết đang bị khóa. Nhập Passkey VIP để mở khóa trọn đời.
                           </p>
+                          <form onSubmit={handleVerifyPasskey} className="space-y-3 text-left">
+                            <div className="relative">
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Key className="w-3.5 h-3.5 text-gray-500" />
+                              </div>
+                              <input 
+                                type="password" 
+                                value={passkey} 
+                                onChange={e => setPasskey(e.target.value)} 
+                                placeholder="Nhập Passkey..." 
+                                className="w-full bg-[#0B0E14] border border-[#1F2937] text-white rounded-xl pl-9 pr-3 py-2.5 focus:outline-none focus:border-neon-green transition-colors text-center tracking-widest font-mono text-xs" 
+                              />
+                            </div>
+                            {errorMsg && (
+                              <p className="text-coral-red text-xxs font-mono text-center flex justify-center items-center space-x-1">
+                                <X className="w-3 h-3" />
+                                <span>{errorMsg}</span>
+                              </p>
+                            )}
+                            <button 
+                              type="submit" 
+                              disabled={isVerifying} 
+                              className="w-full bg-neon-green hover:bg-[#00E593] text-black font-bold rounded-xl py-2.5 transition-all uppercase tracking-wider text-xs flex items-center justify-center space-x-2 disabled:opacity-70"
+                            >
+                              {isVerifying ? <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <span>Mở Khóa Báo Cáo</span>}
+                            </button>
+                          </form>
+
+                          <div className="mt-4 pt-3 border-t border-[#1F2937]/50 text-center">
+                            <p className="text-xxs text-gray-400">
+                              Bạn chưa có Passkey?{' '}
+                              <a 
+                                href="https://zalo.me/0566665511" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-neon-green hover:text-[#00E593] transition-colors font-bold underline decoration-dotted"
+                              >
+                                Liên hệ Zalo Admin (05.6666.5511)
+                              </a>{' '}
+                              để nhận mã kích hoạt.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
