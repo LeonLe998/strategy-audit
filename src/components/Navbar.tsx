@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Activity, ShieldAlert, BookOpen, Layers, Play, Settings, Menu, X } from 'lucide-react';
 
@@ -14,6 +14,24 @@ interface NavbarProps {
 
 export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showAdminIcon, setShowAdminIcon] = useState<boolean>(() => {
+    return localStorage.getItem('quant_show_admin') === 'true';
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('admin') === 'true') {
+      localStorage.setItem('quant_show_admin', 'true');
+      setShowAdminIcon(true);
+      const newUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    } else if (params.get('admin') === 'false') {
+      localStorage.removeItem('quant_show_admin');
+      setShowAdminIcon(false);
+      const newUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
   const navItems = [
     { id: 'home', label: 'Trang chủ', icon: Activity },
     { id: 'services', label: 'Dịch vụ', icon: Layers },
@@ -89,16 +107,18 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             </div>
           </button>
           
-          <button 
-            onClick={() => {
-              setActiveTab('admin');
-              setIsMobileMenuOpen(false);
-            }}
-            className="text-gray-400 hover:text-white transition-colors p-1"
-            title="System Admin"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
+          {showAdminIcon && (
+            <button 
+              onClick={() => {
+                setActiveTab('admin');
+                setIsMobileMenuOpen(false);
+              }}
+              className="text-gray-400 hover:text-white transition-colors p-1"
+              title="System Admin"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Hamburger Menu Icon */}
           <button
