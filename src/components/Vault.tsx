@@ -26,7 +26,7 @@ interface VaultProps {
 
 // Lead Thư viện POST về CÙNG Apps Script với form Intake, kèm source:'library_vault'.
 // doPost nhận diện source này -> ghi sang tab riêng "Leads_ThuVien" rồi thoát sớm (không sinh YAML quant).
-const VAULT_LEADS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbxmgHECJwBIDzREA03oUMrabWIWhmNVhJ5-YVoXhT3ofaeGcVpjk6twZNiR3q5qJ4eAYA/exec';
+const VAULT_LEADS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec';
 
 export default function Vault({}: VaultProps) {
   // Lock system states

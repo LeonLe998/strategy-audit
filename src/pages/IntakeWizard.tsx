@@ -160,7 +160,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await fetch('https://script.google.com/macros/s/AKfycbxmgHECJwBIDzREA03oUMrabWIWhmNVhJ5-YVoXhT3ofaeGcVpjk6twZNiR3q5qJ4eAYA/exec', {
+      await fetch('https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec', {
         method: 'POST',
         mode: 'no-cors',
         headers: {
