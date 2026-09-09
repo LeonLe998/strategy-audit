@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
@@ -17,6 +19,7 @@
     font-family: var(--font-sans);
     background-color: #0B0E14;
     color: #F3F4F6;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
 
@@ -34,4 +37,523 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #374151;
+}
+
+/* ==========================================================================
+   AMBIENT BACKGROUND ANIMATIONS (For both Dark & Light Themes)
+   ========================================================================== */
+
+@keyframes ambientFloat1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(60px, -40px) scale(1.08);
+  }
+  66% {
+    transform: translate(-30px, 50px) scale(0.95);
+  }
+}
+
+@keyframes ambientFloat2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(-70px, 40px) scale(1.06);
+  }
+  66% {
+    transform: translate(40px, -30px) scale(0.92);
+  }
+}
+
+@keyframes ambientFloat3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(50px, -50px) scale(1.1);
+  }
+}
+
+@keyframes ambientPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes ambientWave {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes ambientWaveReverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes floatSymbol {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(1deg);
+  }
+}
+
+.animate-ambient-float-1 {
+  animation: ambientFloat1 18s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-ambient-float-2 {
+  animation: ambientFloat2 22s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-ambient-float-3 {
+  animation: ambientFloat3 20s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-ambient-pulse {
+  animation: ambientPulse 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.animate-ambient-wave {
+  animation: ambientWave 30s linear infinite;
+  will-change: transform;
+}
+.animate-ambient-wave-reverse {
+  animation: ambientWaveReverse 36s linear infinite;
+  will-change: transform;
+}
+.animate-float-symbol-1 {
+  animation: floatSymbol 9s ease-in-out infinite;
+}
+.animate-float-symbol-2 {
+  animation: floatSymbol 11s ease-in-out infinite 1.5s;
+}
+.animate-float-symbol-3 {
+  animation: floatSymbol 13s ease-in-out infinite 0.8s;
+}
+.animate-float-symbol-4 {
+  animation: floatSymbol 10s ease-in-out infinite 2s;
+}
+.animate-float-symbol-5 {
+  animation: floatSymbol 12s ease-in-out infinite 3s;
+}
+.animate-float-symbol-6 {
+  animation: floatSymbol 14s ease-in-out infinite 1.2s;
+}
+
+/* ==========================================================================
+   LIGHT THEME DESIGN SYSTEM (Slate / Crisp White / Emerald Accent)
+   ========================================================================== */
+
+html.light body {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #F1F5F9 !important;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #CBD5E1 !important;
+  border-radius: 4px;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8 !important;
+}
+
+/* Base page background and outer wraps */
+html.light #quant-app-container,
+html.light .bg-\[\#0B0E14\],
+html.light .bg-\[\#0B0E14\]\/80,
+html.light .bg-\[\#0B0E14\]\/90,
+html.light .bg-\[\#0B0E14\]\/95,
+html.light [class*="bg-[#0B0E14]"] {
+  background-color: #F8FAFC !important;
+}
+
+/* All card elements that use any variation of bg-[#131722] */
+html.light .bg-\[\#131722\],
+html.light .bg-\[\#131722\]\/10,
+html.light .bg-\[\#131722\]\/20,
+html.light .bg-\[\#131722\]\/30,
+html.light .bg-\[\#131722\]\/40,
+html.light .bg-\[\#131722\]\/50,
+html.light .bg-\[\#131722\]\/60,
+html.light .bg-\[\#131722\]\/70,
+html.light .bg-\[\#131722\]\/80,
+html.light .bg-\[\#131722\]\/90,
+html.light .bg-\[\#131722\]\/95,
+html.light [class*="bg-[#131722]"] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02) !important;
+}
+
+/* Nested inner containers inside cards that had bg-[#0B0E14] or bg-[#131722]/30 */
+html.light [class*="bg-[#131722]"] .bg-\[\#0B0E14\],
+html.light [class*="bg-[#131722]"] [class*="bg-[#0B0E14]"],
+html.light .bg-white [class*="bg-[#0B0E14]"],
+html.light [class*="bg-[#131722]"] .bg-\[\#131722\]\/30,
+html.light [class*="bg-[#131722]"] .bg-\[\#131722\]\/40 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Gray backgrounds in light mode */
+html.light .bg-gray-800 {
+  background-color: #FFFFFF !important;
+}
+html.light .bg-gray-900 {
+  background-color: #F8FAFC !important;
+}
+html.light .bg-\[\#1F2937\] {
+  background-color: #F1F5F9 !important;
+}
+html.light .bg-\[\#1F2937\]\/20,
+html.light .bg-\[\#1F2937\]\/30,
+html.light .bg-\[\#1F2937\]\/40,
+html.light .bg-\[\#1F2937\]\/50 {
+  background-color: rgba(241, 245, 249, 0.7) !important;
+}
+
+/* General Borders mapping */
+html.light .border-\[\#1F2937\],
+html.light [class*="border-[#1F2937]"],
+html.light .border-gray-800,
+html.light .border-gray-700,
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-white\/20 {
+  border-color: #E2E8F0 !important;
+}
+
+/* ==========================================================================
+   HIGH CONTRAST TEXT RULES (No text is sunken/faded)
+   ========================================================================== */
+
+/* Main headings & bold titles */
+html.light .text-white {
+  color: #0F172A !important;
+}
+
+/* Body texts & subtitles: rich dark slate */
+html.light .text-gray-200 {
+  color: #1E293B !important;
+}
+html.light .text-gray-300 {
+  color: #334155 !important;
+}
+html.light .text-gray-400 {
+  color: #334155 !important;
+}
+html.light .text-gray-500 {
+  color: #475569 !important;
+}
+html.light .text-gray-600 {
+  color: #64748B !important;
+}
+
+/* High contrast primary accent colors in Light Mode */
+html.light .text-neon-green,
+html.light .text-\[\#00FFA3\],
+html.light [class*="text-[#00FFA3]"] {
+  color: #047857 !important;
+}
+
+html.light .text-coral-red,
+html.light .text-\[\#FF3366\],
+html.light [class*="text-[#FF3366]"] {
+  color: #DC2626 !important;
+}
+
+html.light .text-\[\#FFD700\],
+html.light [class*="text-[#FFD700]"] {
+  color: #B45309 !important;
+}
+
+/* Alert Boxes & Status Tags */
+html.light .bg-neon-green\/5,
+html.light .bg-neon-green\/10,
+html.light .bg-neon-green\/20,
+html.light [class*="bg-neon-green/"],
+html.light [class*="bg-[#00FFA3]/"] {
+  background-color: #ECFDF5 !important;
+}
+
+html.light .border-neon-green\/10,
+html.light .border-neon-green\/20,
+html.light .border-neon-green\/30,
+html.light .border-neon-green\/40,
+html.light .border-neon-green\/50,
+html.light [class*="border-neon-green"],
+html.light [class*="border-[#00FFA3]"] {
+  border-color: #A7F3D0 !important;
+}
+
+html.light .bg-coral-red\/5,
+html.light .bg-coral-red\/10,
+html.light .bg-coral-red\/20,
+html.light [class*="bg-coral-red/"],
+html.light [class*="bg-[#FF3366]/"] {
+  background-color: #FEF2F2 !important;
+}
+
+html.light .border-coral-red\/10,
+html.light .border-coral-red\/20,
+html.light .border-coral-red\/30,
+html.light .border-coral-red\/40,
+html.light [class*="border-coral-red"],
+html.light [class*="border-[#FF3366]"] {
+  border-color: #FECACA !important;
+}
+
+/* Primary buttons with green or red background */
+html.light button.bg-neon-green,
+html.light a.bg-neon-green,
+html.light .bg-neon-green[role="button"] {
+  background-color: #059669 !important;
+  color: #FFFFFF !important;
+}
+html.light button.bg-neon-green *,
+html.light a.bg-neon-green * {
+  color: #FFFFFF !important;
+}
+html.light button.bg-neon-green:hover,
+html.light a.bg-neon-green:hover {
+  background-color: #047857 !important;
+}
+
+html.light button.bg-coral-red,
+html.light a.bg-coral-red {
+  background-color: #DC2626 !important;
+  color: #FFFFFF !important;
+}
+html.light button.bg-coral-red *,
+html.light a.bg-coral-red * {
+  color: #FFFFFF !important;
+}
+
+/* Buttons with bg-[#0B0E14] (e.g. in Pricing.tsx) */
+html.light button.bg-\[\#0B0E14\],
+html.light button[class*="bg-[#0B0E14]"] {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+html.light button.bg-\[\#0B0E14\]:hover,
+html.light button[class*="bg-[#0B0E14]"]:hover {
+  background-color: #F1F5F9 !important;
+  border-color: #94A3B8 !important;
+}
+
+/* Transparent button with gray text */
+html.light button.text-gray-300 {
+  color: #1E293B !important;
+  border-color: #CBD5E1 !important;
+}
+html.light button.text-gray-300:hover {
+  background-color: #F1F5F9 !important;
+  border-color: #94A3B8 !important;
+}
+
+/* Hover effects */
+html.light .hover\:text-white:hover {
+  color: #0F172A !important;
+}
+html.light .hover\:text-neon-green:hover {
+  color: #047857 !important;
+}
+html.light .hover\:bg-white\/5:hover {
+  background-color: #F1F5F9 !important;
+}
+html.light .hover\:bg-\[\#1F2937\]\/50:hover {
+  background-color: #F8FAFC !important;
+}
+html.light .hover\:bg-gray-700:hover {
+  background-color: #E2E8F0 !important;
+}
+html.light .hover\:bg-\[\#1c2233\]:hover {
+  background-color: #F1F5F9 !important;
+}
+
+/* Header & Logo styling */
+html.light #app-header {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-bottom-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.light #desktop-nav button.text-neon-green {
+  background-color: #ECFDF5 !important;
+  border-color: #A7F3D0 !important;
+  color: #047857 !important;
+}
+
+html.light #desktop-nav button:not(.text-neon-green) {
+  color: #475569 !important;
+}
+
+html.light #desktop-nav button:not(.text-neon-green):hover {
+  color: #0F172A !important;
+  background-color: #F1F5F9 !important;
+}
+
+html.light #cta-start-audit-nav.bg-neon-green {
+  background-color: #059669 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25) !important;
+}
+
+html.light #cta-start-audit-nav.bg-black {
+  background-color: #FFFFFF !important;
+  color: #047857 !important;
+  border-color: #059669 !important;
+}
+
+html.light #cta-start-audit-nav.bg-black:hover {
+  background-color: #ECFDF5 !important;
+}
+
+/* Range Sliders */
+html.light input[type="range"] {
+  background-color: #E2E8F0 !important;
+  accent-color: #059669 !important;
+}
+
+/* Inputs, Textareas, and Selects in Light Mode */
+html.light input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.light select,
+html.light textarea {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+html.light input:focus,
+html.light select:focus,
+html.light textarea:focus {
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15) !important;
+  outline: none !important;
+}
+
+/* Tables in Light Mode */
+html.light table thead tr,
+html.light table thead th {
+  background-color: #F1F5F9 !important;
+  color: #334155 !important;
+  border-bottom-color: #CBD5E1 !important;
+}
+
+html.light table tbody tr {
+  border-bottom-color: #E2E8F0 !important;
+}
+
+html.light table tbody tr:hover {
+  background-color: #F8FAFC !important;
+}
+
+/* Modals & Dialogs */
+html.light .bg-black\/80,
+html.light .bg-black\/90 {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Holographic Card in Hero */
+html.light .bg-white\/5.backdrop-blur-xl {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08) !important;
+}
+html.light .bg-white\/5.backdrop-blur-xl p {
+  color: #0F172A !important;
+}
+
+/* In-Sample bars in Services */
+html.light .bg-\[\#1F2937\].text-\[\#4b5563\] {
+  background-color: #E2E8F0 !important;
+  color: #475569 !important;
+}
+
+/* Recharts Tooltips & Charts in Light Mode */
+html.light .recharts-default-tooltip {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+  color: #0F172A !important;
+  border-radius: 8px !important;
+}
+
+html.light .recharts-tooltip-item {
+  color: #0F172A !important;
+}
+
+html.light .recharts-tooltip-label {
+  color: #64748B !important;
+}
+
+html.light .recharts-cartesian-grid line {
+  stroke: #E2E8F0 !important;
+}
+
+html.light .recharts-text {
+  fill: #64748B !important;
+}
+
+/* Prose / Markdown in Light Mode */
+html.light .prose {
+  color: #334155 !important;
+}
+
+html.light .prose h1,
+html.light .prose h2,
+html.light .prose h3,
+html.light .prose h4 {
+  color: #0F172A !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+
+html.light .prose blockquote {
+  background-color: #F8FAFC !important;
+  border-left-color: #047857 !important;
+  color: #334155 !important;
+}
+
+html.light .prose code {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+/* Footer in Light Mode */
+html.light #app-footer {
+  background-color: #FFFFFF !important;
+  border-top-color: #E2E8F0 !important;
+  color: #64748B !important;
+}
+
+html.light #app-footer .bg-\[\#131722\]\/30 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
 }

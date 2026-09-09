@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Activity, ShieldAlert, BookOpen, Layers, Play, Settings, Menu, X } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 interface NavbarProps {
   activeTab: string;
@@ -87,8 +88,10 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
           })}
         </nav>
 
-        {/* CTA Button & Admin Link */}
-        <div className="flex items-center space-x-2 md:space-x-4">
+        {/* CTA Button, Theme Toggle & Admin Link */}
+        <div className="flex items-center space-x-2 md:space-x-3">
+          <ThemeToggle variant="desktop" />
+
           <button
             id="cta-start-audit-nav"
             onClick={() => {
@@ -163,6 +166,11 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
                   </button>
                 );
               })}
+
+              {/* Mobile theme switch item */}
+              <div className="pt-2 border-t border-[#1F2937]/40 mt-3">
+                <ThemeToggle variant="mobile" />
+              </div>
             </div>
           </motion.div>
         )}

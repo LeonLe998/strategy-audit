@@ -13,16 +13,20 @@ import Pricing from './components/Pricing';
 import IntakeWizard from './pages/IntakeWizard';
 import VIPLibrary from './pages/VIPLibrary';
 import AdminDashboard from './pages/AdminDashboard';
+import AmbientBackground from './components/AmbientBackground';
+import CustomCursor from './components/CustomCursor';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
 
   return (
-    <div id="quant-app-container" className="min-h-screen bg-[#0B0E14] text-gray-300 relative font-sans antialiased overflow-x-hidden selection:bg-neon-green selection:text-black">
+    <div id="quant-app-container" className="min-h-screen bg-[#0B0E14] text-gray-300 relative font-sans antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white dark:selection:bg-neon-green dark:selection:text-black transition-colors duration-300">
       
-      {/* Background radial overlays */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-neon-green/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-coral-red/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      {/* Interactive Mouse Tracking Dot & Spring Halo */}
+      <CustomCursor />
+
+      {/* Dynamic Animated Quant Ambient Background */}
+      <AmbientBackground />
 
       {/* Main navigation header */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />

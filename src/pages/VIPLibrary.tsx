@@ -229,8 +229,19 @@ export default function VIPLibrary({}: VIPLibraryProps) {
       
       {/* Header */}
       <section className="text-center max-w-4xl mx-auto space-y-6 relative">
-        <div className="absolute top-0 right-0 -z-10 opacity-30 transform translate-x-1/4 -translate-y-1/4 pointer-events-none">
-          <img src="/assets/quant_3d_cube.png" alt="3D Quant Cube" className="w-64 h-64 object-contain blur-[1px]" />
+        <div className="absolute top-0 right-0 -z-10 pointer-events-none transform translate-x-1/4 -translate-y-1/4 select-none">
+          {/* Dark mode glowing green holographic cube */}
+          <img 
+            src="/assets/quant_3d_cube.png" 
+            alt="3D Quant Cube Dark" 
+            className="hidden dark:block w-64 h-64 object-contain blur-[0.5px] opacity-40 mix-blend-screen" 
+          />
+          {/* Light mode crystal emerald glass cube */}
+          <img 
+            src="/assets/quant_3d_cube_light.png" 
+            alt="3D Quant Cube Light" 
+            className="block dark:hidden w-64 h-64 object-contain blur-[0.5px] opacity-65 mix-blend-multiply" 
+          />
         </div>
         <div className="inline-flex items-center space-x-2 bg-[#FFD700]/10 border border-[#FFD700]/30 px-4 py-2 rounded-full text-[#FFD700] text-xs font-bold font-mono tracking-widest uppercase mb-2">
           <Star className="w-4 h-4 fill-current" />
