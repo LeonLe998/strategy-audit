@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
@@ -13,11 +13,131 @@ import Pricing from './components/Pricing';
 import IntakeWizard from './pages/IntakeWizard';
 import VIPLibrary from './pages/VIPLibrary';
 import AdminDashboard from './pages/AdminDashboard';
+import SauO from './pages/SauO';
 import AmbientBackground from './components/AmbientBackground';
 import CustomCursor from './components/CustomCursor';
 
+interface RouteInfo {
+  tab: string;
+  subId: string | null;
+  isSauO: boolean;
+}
+
+function parseCurrentRoute(): RouteInfo {
+  if (typeof window === 'undefined') {
+    return { tab: 'home', subId: null, isSauO: false };
+  }
+
+  const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryStrat = searchParams.get('strat') || searchParams.get('strategy') || searchParams.get('id');
+  const queryDoc = searchParams.get('doc');
+  const queryTab = searchParams.get('tab');
+
+  if (pathname.toLowerCase() === '/sauo') {
+    return { tab: 'sauo', subId: null, isSauO: true };
+  }
+
+  // Khớp /vip/:id hoặc /viplibrary/:id hoặc /strategy/:id
+  const vipMatch = pathname.match(/^\/(?:vip|viplibrary|strategy)(?:\/([^/]+))?\/?$/i);
+  if (vipMatch) {
+    const stratId = vipMatch[1] ? decodeURIComponent(vipMatch[1]) : (queryStrat || null);
+    return { tab: 'viplibrary', subId: stratId, isSauO: false };
+  }
+
+  // Khớp /vault/:docId hoặc /tai-lieu/:docId
+  const vaultMatch = pathname.match(/^\/(?:vault|tai-lieu)(?:\/([^/]+))?\/?$/i);
+  if (vaultMatch) {
+    const docId = vaultMatch[1] ? decodeURIComponent(vaultMatch[1]) : (queryDoc || null);
+    return { tab: 'vault', subId: docId, isSauO: false };
+  }
+
+  const pLower = pathname.toLowerCase();
+  if (pLower === '/services' || pLower === '/dich-vu') {
+    return { tab: 'services', subId: null, isSauO: false };
+  }
+  if (pLower === '/pricing' || pLower === '/bang-gia') {
+    return { tab: 'pricing', subId: null, isSauO: false };
+  }
+  if (pLower === '/audit' || pLower === '/bat-dau' || pLower === '/kiem-dinh' || pLower === '/wizard') {
+    return { tab: 'audit', subId: null, isSauO: false };
+  }
+  if (pLower === '/admin') {
+    return { tab: 'admin', subId: null, isSauO: false };
+  }
+
+  if (queryStrat) {
+    return { tab: 'viplibrary', subId: queryStrat, isSauO: false };
+  }
+  if (queryDoc) {
+    return { tab: 'vault', subId: queryDoc, isSauO: false };
+  }
+  if (queryTab) {
+    return { tab: queryTab, subId: null, isSauO: queryTab === 'sauo' };
+  }
+
+  return { tab: 'home', subId: null, isSauO: false };
+}
+
+function getPathForRoute(tab: string, subId?: string | null): string {
+  switch (tab) {
+    case 'home':
+      return '/';
+    case 'services':
+      return '/services';
+    case 'pricing':
+      return '/pricing';
+    case 'audit':
+      return '/audit';
+    case 'admin':
+      return '/admin';
+    case 'sauo':
+      return '/sauo';
+    case 'vault':
+      return subId ? `/vault/${encodeURIComponent(subId)}` : '/vault';
+    case 'viplibrary':
+      return subId ? `/vip/${encodeURIComponent(subId)}` : '/vip';
+    default:
+      return '/';
+  }
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('home');
+  const [routeInfo, setRouteInfo] = useState<RouteInfo>(parseCurrentRoute);
+
+  const navigate = (tab: string, subId: string | null = null, replace: boolean = false) => {
+    const newPath = getPathForRoute(tab, subId);
+    if (typeof window !== 'undefined' && window.location.pathname !== newPath) {
+      if (replace) {
+        window.history.replaceState(null, '', newPath);
+      } else {
+        window.history.pushState(null, '', newPath);
+      }
+    }
+    setRouteInfo({
+      tab,
+      subId,
+      isSauO: tab === 'sauo'
+    });
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const parsed = parseCurrentRoute();
+      setRouteInfo(parsed);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const activeTab = routeInfo.tab;
+  const setActiveTab = (tab: string) => navigate(tab, null);
+
+  // Nếu đang ở đường dẫn /sauo, hiển thị trang Sáu Ô độc lập (chuẩn phễu mobile)
+  if (routeInfo.isSauO || activeTab === 'sauo') {
+    return <SauO />;
+  }
 
   return (
     <div id="quant-app-container" className="min-h-screen bg-[#0B0E14] text-gray-300 relative font-sans antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white dark:selection:bg-neon-green dark:selection:text-black transition-colors duration-300">
@@ -44,8 +164,20 @@ export default function App() {
           >
             {activeTab === 'home' && <Home setActiveTab={setActiveTab} />}
             {activeTab === 'services' && <Services setActiveTab={setActiveTab} />}
-            {activeTab === 'vault' && <Vault setActiveTab={setActiveTab} />}
-            {activeTab === 'viplibrary' && <VIPLibrary setActiveTab={setActiveTab} />}
+            {activeTab === 'vault' && (
+              <Vault 
+                setActiveTab={setActiveTab} 
+                initialDocId={routeInfo.subId} 
+                onDocChange={(docId) => navigate('vault', docId)} 
+              />
+            )}
+            {activeTab === 'viplibrary' && (
+              <VIPLibrary 
+                setActiveTab={setActiveTab} 
+                initialStrategyId={routeInfo.subId} 
+                onStrategyChange={(stratId) => navigate('viplibrary', stratId)} 
+              />
+            )}
             {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
             {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
             {activeTab === 'audit' && (

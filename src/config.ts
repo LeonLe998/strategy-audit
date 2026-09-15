@@ -16,3 +16,13 @@ export const setGasApiUrl = (url: string): void => {
 export const isGasConfigured = (): boolean => {
   return getGasApiUrl() !== '';
 };
+
+/**
+ * Endpoint Google Apps Script cho trang Sáu Ô (/sauo)
+ * Chủ site có thể cấu hình biến môi trường VITE_SAUO_GAS_URL trên Netlify
+ * hoặc dán trực tiếp link Web App URL vào hằng số dưới đây:
+ */
+export const SAUO_GAS_ENDPOINT = 
+  import.meta.env.VITE_SAUO_GAS_URL || 
+  "DAN_LINK_APPS_SCRIPT_VAO_DAY";
+

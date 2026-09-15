@@ -1,0 +1,396 @@
+/* ==========================================================================
+   TRANG SÁU Ô - STYLES BIỆT LẬP (WCAG AA)
+   Bảng màu & kích thước chuẩn xác theo sauo.html, tối ưu điện thoại
+   ========================================================================== */
+
+#sauo-root {
+  --bg: #f2f7f8;
+  --panel: #ffffff;
+  --ink: #071420;
+  --muted: #54666f;
+  --dim: #7a8b93;
+  --line: #dde8ec;
+  --mint: #007a5a;
+  --mintDim: #e9f8f2;
+  --mintLine: #5cc9a8;
+  --red: #b62b31;
+  --redDim: #fdeceb;
+  --redLine: #e8908d;
+  --amber: #7a4e03;
+  --amberDim: #fdf4e0;
+  --amberLine: #d9b465;
+  --violet: #5b4ef0;
+  --violetDim: #f1f0ff;
+  --violetLine: #cfcbff;
+
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  width: 100%;
+}
+
+#sauo-root *,
+#sauo-root *::before,
+#sauo-root *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#sauo-root .sauo-wrap {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 18px 18px 40px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#sauo-root .sauo-bar {
+  height: 4px;
+  background: var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+#sauo-root .sauo-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--mint);
+  transition: width 0.35s ease;
+}
+
+#sauo-root .sauo-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+}
+
+#sauo-root .sauo-seal {
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--mint);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  font: 800 11px/1 sans-serif;
+  color: var(--mint);
+}
+
+#sauo-root .sauo-brand b {
+  font: 800 12px/1 sans-serif;
+  letter-spacing: 0.13em;
+  color: var(--mint);
+}
+
+#sauo-root h1 {
+  font: 800 30px/1.2 sans-serif;
+  letter-spacing: -0.5px;
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+
+#sauo-root h1 em {
+  font-style: normal;
+  color: var(--mint);
+}
+
+#sauo-root p {
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+#sauo-root .small {
+  font-size: 14px;
+  color: var(--dim);
+}
+
+#sauo-root .sauo-screen {
+  display: none;
+  animation: sauo-in 0.28s ease;
+}
+
+#sauo-root .sauo-screen.on {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+@keyframes sauo-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+#sauo-root .qnum {
+  font: 800 12px/1 sans-serif;
+  letter-spacing: 0.16em;
+  margin-bottom: 12px;
+}
+
+#sauo-root .qten {
+  font: 800 13px/1 sans-serif;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  margin-left: 9px;
+}
+
+#sauo-root .qhoi {
+  font: 800 23px/1.3 sans-serif;
+  margin-bottom: 12px;
+}
+
+#sauo-root .qgoi {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+#sauo-root .vd {
+  border-left: 3px solid var(--line);
+  padding: 2px 0 2px 13px;
+  margin-bottom: 20px;
+}
+
+#sauo-root .vd span {
+  display: block;
+  font: 700 11px/1 sans-serif;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+#sauo-root .vd i {
+  font-size: 15px;
+  color: var(--ink);
+  font-style: italic;
+}
+
+#sauo-root textarea,
+#sauo-root input,
+#sauo-root select {
+  width: 100%;
+  font: 400 17px/1.5 inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  resize: none;
+  transition: border-color 0.15s ease;
+}
+
+#sauo-root textarea {
+  min-height: 104px;
+}
+
+#sauo-root textarea:focus,
+#sauo-root input:focus,
+#sauo-root select:focus {
+  outline: none;
+  border-color: var(--mint);
+}
+
+#sauo-root label {
+  display: block;
+  font: 700 12px/1 sans-serif;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  margin: 16px 0 7px;
+  text-transform: uppercase;
+}
+
+/* ── ô chọn ── */
+#sauo-root .opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 15px 16px;
+  margin-bottom: 9px;
+  font: 400 16px/1.4 inherit;
+  color: var(--ink);
+  cursor: pointer;
+  transition: 0.15s ease;
+  min-height: 48px;
+}
+
+#sauo-root .opt:active {
+  transform: scale(0.99);
+}
+
+#sauo-root .opt.sel {
+  border-color: var(--violet);
+  background: var(--violetDim);
+  font-weight: 600;
+}
+
+#sauo-root .opt.mo {
+  color: var(--dim);
+  font-style: italic;
+}
+
+#sauo-root .row {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 22px;
+}
+
+#sauo-root button {
+  font: 700 16px/1 sans-serif;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+}
+
+#sauo-root button:active {
+  transform: scale(0.99);
+}
+
+#sauo-root .go {
+  flex: 1;
+  background: var(--mint);
+  color: #ffffff;
+}
+
+#sauo-root .go:disabled {
+  background: #c3d5d3;
+  cursor: default;
+  transform: none;
+}
+
+#sauo-root .ghost {
+  background: transparent;
+  color: var(--dim);
+  border: 1.5px solid var(--line);
+  flex: 0 0 auto;
+  min-width: 44px;
+}
+
+#sauo-root .skip {
+  background: transparent;
+  color: var(--dim);
+  border: 1.5px solid var(--line);
+  font-size: 14px;
+  padding: 13px 16px;
+  flex: 0 0 auto;
+}
+
+#sauo-root .score {
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+}
+
+#sauo-root .score .n {
+  font: 800 62px/1 sans-serif;
+  letter-spacing: -2px;
+}
+
+#sauo-root .score .t {
+  font-size: 15px;
+  margin-top: 6px;
+  opacity: 0.85;
+}
+
+#sauo-root .verdict {
+  font: 800 22px/1.32 sans-serif;
+  margin: 20px 0 10px;
+}
+
+#sauo-root .oList {
+  margin: 18px 0;
+}
+
+#sauo-root .oRow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+}
+
+#sauo-root .oRow b {
+  width: 20px;
+  font: 800 13px sans-serif;
+  color: var(--dim);
+}
+
+#sauo-root .tick {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 800 12px sans-serif;
+  color: #ffffff;
+  flex: 0 0 auto;
+}
+
+#sauo-root .ok {
+  background: var(--mint);
+}
+
+#sauo-root .no {
+  background: #c8d5da;
+}
+
+#sauo-root .note {
+  background: var(--mintDim);
+  border: 1px solid var(--mintLine);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 18px 0;
+}
+
+#sauo-root .note b {
+  color: var(--mint);
+}
+
+#sauo-root .done {
+  text-align: center;
+  padding: 40px 0;
+}
+
+#sauo-root .done .big {
+  font: 800 26px/1.3 sans-serif;
+  margin: 16px 0 10px;
+}
+
+#sauo-root a {
+  color: var(--mint);
+  text-decoration: none;
+}
+
+#sauo-root .sauo-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--dim);
+  padding: 22px 18px 30px;
+  line-height: 1.7;
+}

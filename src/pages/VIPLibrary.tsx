@@ -11,6 +11,8 @@ import { getGasApiUrl } from '../config';
 
 interface VIPLibraryProps {
   setActiveTab: (tab: string) => void;
+  initialStrategyId?: string | null;
+  onStrategyChange?: (id: string | null) => void;
 }
 
 const VERDICT_COLORS: Record<string, string> = {
@@ -70,7 +72,7 @@ const VERDICT_ORDER: Record<string, number> = {
   'CHƯA KIỂM ĐỊNH': 4
 };
 
-export default function VIPLibrary({}: VIPLibraryProps) {
+export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPLibraryProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [passkey, setPasskey] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -173,11 +175,19 @@ export default function VIPLibrary({}: VIPLibraryProps) {
     setIsVerifying(false);
   };
 
-  const openReport = (strategy: any) => {
+  const openReport = (strategy: any, updateUrl: boolean = true) => {
     if (strategy.trang_thai === 'chua_kiem_dinh') return;
     setSelectedStrategyIndex(strategy);
     const targetId = strategy.trang_thai === 'gop' ? strategy.goc : strategy.id;
     
+    if (updateUrl) {
+      if (onStrategyChange) {
+        onStrategyChange(strategy.id);
+      } else {
+        window.history.pushState(null, '', `/vip/${strategy.id}`);
+      }
+    }
+
     fetch(`/data/thuvien_data/reports_json/${targetId}.json`)
       .then(res => res.json())
       .then(data => {
@@ -201,6 +211,51 @@ export default function VIPLibrary({}: VIPLibraryProps) {
         setDefaultArticleContent('');
       });
   };
+
+  const closeReport = () => {
+    setSelectedReport(null);
+    setSelectedStrategyIndex(null);
+    if (onStrategyChange) {
+      onStrategyChange(null);
+    } else {
+      window.history.pushState(null, '', '/vip');
+    }
+  };
+
+  // Tự động mở modal khi có initialStrategyId từ URL hoặc Deep Link
+  useEffect(() => {
+    if (!initialStrategyId) {
+      setSelectedReport(null);
+      setSelectedStrategyIndex(null);
+      return;
+    }
+
+    if (selectedStrategyIndex && selectedStrategyIndex.id.toLowerCase() === initialStrategyId.toLowerCase()) {
+      return;
+    }
+
+    if (indexData?.danh_sach) {
+      const match = indexData.danh_sach.find(
+        (s: any) => s.id.toLowerCase() === initialStrategyId.toLowerCase()
+      );
+      if (match) {
+        openReport(match, false);
+        return;
+      }
+    }
+
+    // Nếu indexData chưa xong hoặc ID không có trong index, vẫn fetch trực tiếp
+    const upperId = initialStrategyId.toUpperCase();
+    const directStrat = {
+      id: upperId,
+      ten: `Chiến lược ${upperId}`,
+      ho: 'Chiến lược VIP',
+      tf: 'H4',
+      verdict: 'CHẤT',
+      trang_thai: 'da_kiem_dinh'
+    };
+    openReport(directStrat, false);
+  }, [initialStrategyId, indexData]);
 
   const getArticleDisplayContent = () => {
     if (!selectedReport) return '';
@@ -413,7 +468,7 @@ export default function VIPLibrary({}: VIPLibraryProps) {
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              onClick={() => { setSelectedReport(null); setSelectedStrategyIndex(null); }}
+              onClick={closeReport}
             ></motion.div>
             
             <motion.div 
@@ -451,7 +506,7 @@ export default function VIPLibrary({}: VIPLibraryProps) {
                   <p className="text-sm text-gray-400 mt-1">{selectedReport.spec.mo_ta}</p>
                 </div>
                 <button 
-                  onClick={() => { setSelectedReport(null); setSelectedStrategyIndex(null); }}
+                  onClick={closeReport}
                   className="p-2 bg-[#1F2937] rounded-full text-gray-400 hover:text-white hover:bg-gray-700 transition-colors shrink-0"
                 >
                   <X className="w-5 h-5" />

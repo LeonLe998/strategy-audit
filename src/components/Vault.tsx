@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Lock, 
@@ -22,23 +22,27 @@ import { track } from '../analytics';
 
 interface VaultProps {
   setActiveTab: (tab: string) => void;
+  initialDocId?: string | null;
+  onDocChange?: (id: string | null) => void;
 }
 
 // Lead Thư viện POST về CÙNG Apps Script với form Intake, kèm source:'library_vault'.
 // doPost nhận diện source này -> ghi sang tab riêng "Leads_ThuVien" rồi thoát sớm (không sinh YAML quant).
 const VAULT_LEADS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec';
 
-export default function Vault({}: VaultProps) {
+export default function Vault({ initialDocId, onDocChange }: VaultProps) {
   // Lock system states
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
-  const [name, setName] = useState<string>('');
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
+    return localStorage.getItem('quant_vault_unlocked') === 'true' || Boolean(initialDocId);
+  });
+  const [name, setName] = useState<string>(() => localStorage.getItem('quant_vault_user_name') || '');
   const [phone, setPhone] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>(() => localStorage.getItem('quant_vault_user_email') || '');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   // PDF Viewer states
-  const [activeDocId, setActiveDocId] = useState<string | null>(null);
+  const [activeDocId, setActiveDocId] = useState<string | null>(initialDocId || null);
   const [, setIsPrinting] = useState<boolean>(false);
 
   const vaultDocs = [
@@ -129,12 +133,38 @@ export default function Vault({}: VaultProps) {
 
     setIsLoading(false);
     setIsUnlocked(true);
+    localStorage.setItem('quant_vault_unlocked', 'true');
+    if (name.trim()) localStorage.setItem('quant_vault_user_name', name.trim());
+    if (email.trim()) localStorage.setItem('quant_vault_user_email', email.trim());
     track('vault_unlock', {});
   };
 
+  useEffect(() => {
+    if (initialDocId) {
+      setIsUnlocked(true);
+      setActiveDocId(initialDocId);
+    } else {
+      setActiveDocId(null);
+    }
+  }, [initialDocId]);
+
   const openDocument = (id: string) => {
-    if (!isUnlocked) return;
+    setIsUnlocked(true);
     setActiveDocId(id);
+    if (onDocChange) {
+      onDocChange(id);
+    } else {
+      window.history.pushState(null, '', `/vault/${id}`);
+    }
+  };
+
+  const closeDocument = () => {
+    setActiveDocId(null);
+    if (onDocChange) {
+      onDocChange(null);
+    } else {
+      window.history.pushState(null, '', '/vault');
+    }
   };
 
   const handlePrint = () => {
@@ -339,7 +369,7 @@ export default function Vault({}: VaultProps) {
                     <span>PRINT/PDF</span>
                   </button>
                   <button 
-                    onClick={() => setActiveDocId(null)}
+                    onClick={closeDocument}
                     className="p-1.5 rounded-lg bg-[#0B0E14] border border-[#1F2937] hover:bg-white/5 text-gray-400 hover:text-white transition"
                   >
                     <X className="w-4 h-4" />
