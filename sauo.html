@@ -171,7 +171,7 @@ footer{text-align:center;font-size:12px;color:var(--dim);padding:22px 18px 30px;
 /* ══════════════════════════════════════════════════════════
    Dán link Google Apps Script vào đây sau khi triển khai
    ══════════════════════════════════════════════════════════ */
-const ENDPOINT = "DAN_LINK_APPS_SCRIPT_VAO_DAY";
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec";
 
 /* Nguyên tắc viết câu hỏi: hỏi VIỆC HỌ ĐANG LÀM, không hỏi LUẬT CỦA HỌ.
    Người chưa có hệ thống vẫn trả lời được "lần trước tôi đã làm gì" —
@@ -311,7 +311,7 @@ function gui(){
   if(zalo.length < 8) { $("zalo").focus(); $("zalo").style.borderColor = "var(--red)"; return; }
 
   const b = $("btnGui"); b.disabled = true; b.textContent = "Đang gửi…";
-  const data = {
+  const data = { source: "sauo",
     thoi_gian: new Date().toISOString(),
     ten, zalo, quy_mo: $("quymo").value,
     so_o_dien: O.map((_,i)=>daDien(i)).filter(Boolean).length,

@@ -237,6 +237,7 @@ export default function SauO() {
     setIsSubmitting(true);
 
     const payload = {
+      source: 'sauo',
       thoi_gian: new Date().toISOString(),
       ten: tenTrim,
       zalo: zaloTrim,
