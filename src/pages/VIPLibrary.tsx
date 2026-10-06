@@ -100,45 +100,30 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
   const fetchArticles = async (activeKey?: string) => {
     const currentGasUrl = getGasApiUrl();
     const authKey = (activeKey !== undefined ? activeKey : localStorage.getItem('quant_vip_passkey')) || '';
-    
-    // Chỉ tải bài viết chuyên sâu khi có passkey
-    if (!authKey) {
+    localStorage.removeItem('quant_admin_strategies');
+    if (!authKey || !currentGasUrl) {
       setAdminArticles({});
       return;
     }
-
-    if (currentGasUrl) {
-      try {
-        const res = await fetch(`${currentGasUrl}?action=getArticles&passkey=${encodeURIComponent(authKey)}`);
-        const data = await res.json();
-        if (data.success && data.data) {
-          setAdminArticles(data.data);
-          localStorage.setItem('quant_admin_strategies', JSON.stringify(data.data));
-          return;
-        } else if (data.authenticated === false) {
-          // Passkey không hợp lệ hoặc đã bị thu hồi từ máy chủ
-          setIsAuthenticated(false);
-          localStorage.removeItem('quant_vip_passkey');
-          localStorage.removeItem('quant_vip_auth_v2');
-          localStorage.removeItem('quant_vip_role');
-          setAdminArticles({});
-        }
-      } catch (err) {
-        console.error("Lỗi khi tải bài viết từ máy chủ:", err);
-      }
-    }
-    
-    // Fallback load local cache nếu có và đã xác thực
-    const localData = localStorage.getItem('quant_admin_strategies');
-    if (localData && localStorage.getItem('quant_vip_passkey')) {
-      try {
-        setAdminArticles(JSON.parse(localData));
-      } catch {
+    try {
+      const res = await fetch(`${currentGasUrl}?action=getArticles&passkey=${encodeURIComponent(authKey)}`);
+      const data = await res.json();
+      if (data.success && data.authenticated && data.data) {
+        setAdminArticles(data.data);
+      } else if (data.authenticated === false) {
+        setIsAuthenticated(false);
+        localStorage.removeItem('quant_vip_passkey');
+        localStorage.removeItem('quant_vip_auth_v2');
+        localStorage.removeItem('quant_vip_role');
+        setAdminArticles({});
+      } else {
         setAdminArticles({});
       }
+    } catch (err) {
+      console.error('Lỗi khi tải bài viết từ máy chủ:', err);
+      setAdminArticles({});
     }
   };
-
   useEffect(() => {
     let deviceId = localStorage.getItem('quant_device_id');
     if (!deviceId) {
@@ -242,19 +227,26 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
         console.error(err);
       });
 
-    // Tải bài viết gốc của VIP từ folder static public
-    fetch(`/data/vip_articles/VIP_${targetId}.md`)
-      .then(res => {
-        if (!res.ok) throw new Error('No static VIP article found');
-        return res.text();
-      })
-      .then(text => {
-        setDefaultArticleContent(text);
-      })
-      .catch(err => {
-        console.error(err);
-        setDefaultArticleContent('');
-      });
+    // Nội dung thành viên chỉ tải từ Apps Script sau khi có passkey hợp lệ.
+    setDefaultArticleContent('');
+    const currentGasUrl = getGasApiUrl();
+    const authKey = localStorage.getItem('quant_vip_passkey') || '';
+    if (currentGasUrl && authKey) {
+      fetch(`${currentGasUrl}?action=getArticle&id=${encodeURIComponent(targetId)}&passkey=${encodeURIComponent(authKey)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.authenticated && typeof data.articleContent === 'string') {
+            setDefaultArticleContent(data.articleContent);
+          } else if (data.authenticated === false) {
+            setIsAuthenticated(false);
+            setAdminArticles({});
+            localStorage.removeItem('quant_vip_passkey');
+            localStorage.removeItem('quant_vip_auth_v2');
+            localStorage.removeItem('quant_vip_role');
+          }
+        })
+        .catch(err => console.error('Không tải được bài VIP từ máy chủ:', err));
+    }
   };
 
   const closeReport = () => {
@@ -461,7 +453,10 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
               </thead>
               <tbody className="divide-y divide-[#1F2937]">
                 {pageItems.map((strat: any) => {
-                  const hasArticle = adminArticles[strat.id]?.articleContent;
+                  const hasArticle = Boolean(
+                    adminArticles[strat.id]?.articleContent ||
+                    (strat.trang_thai === 'gop' && strat.goc && adminArticles[strat.goc]?.articleContent)
+                  );
                   return (
                   <tr 
                     key={strat.id} 

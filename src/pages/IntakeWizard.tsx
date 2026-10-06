@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft, Settings2, Info, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { track } from '../analytics';
+import { getGasApiUrl } from '../config';
 
 interface IntakeWizardProps {
   selectedPackage?: string | null;
@@ -160,7 +161,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await fetch('https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec', {
+      await fetch(getGasApiUrl(), {
         method: 'POST',
         mode: 'no-cors',
         headers: {

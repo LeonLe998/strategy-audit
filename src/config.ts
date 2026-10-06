@@ -4,7 +4,11 @@
 
 // Lấy URL Apps Script đã được lưu trong localStorage hoặc mặc định
 export const getGasApiUrl = (): string => {
-  return localStorage.getItem('quant_gas_api_url') || 'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec';
+  return (
+    localStorage.getItem('quant_gas_api_url') ||
+    import.meta.env.VITE_GAS_API_URL ||
+    'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec'
+  );
 };
 
 // Lưu URL Apps Script mới vào localStorage để sử dụng cho toàn bộ ứng dụng

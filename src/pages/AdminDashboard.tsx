@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShieldAlert, Settings, Edit2, X, Save, 
@@ -25,55 +25,117 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<any | null>(null);
   const [articleContent, setArticleContent] = useState('');
+  const [isLoadingArticle, setIsLoadingArticle] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isImportingArticles, setIsImportingArticles] = useState(false);
+  const [importStatus, setImportStatus] = useState('');
+  const [isImportConfirmOpen, setIsImportConfirmOpen] = useState(false);
+  const importLockRef = useRef(false);
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
+      setAdminData({});
       try {
         const currentGasUrl = getGasApiUrl();
         if (currentGasUrl) {
           try {
-            const resGas = await fetch(`${currentGasUrl}?action=getArticles`);
-            const dataGas = await resGas.json();
-            if (dataGas.success && dataGas.data) {
-              setAdminData(dataGas.data);
-              localStorage.setItem('quant_admin_strategies', JSON.stringify(dataGas.data));
-            } else {
-              throw new Error(dataGas.message || "Không thể tải dữ liệu bài viết");
-            }
-          } catch (gasErr) {
-            console.error("Lỗi khi tải dữ liệu từ Google Sheets, sử dụng Cache:", gasErr);
-            const localData = localStorage.getItem('quant_admin_strategies');
-            if (localData) {
-              setAdminData(JSON.parse(localData));
-            }
-          }
-        } else {
-          // Load admin overrides from localStorage
-          const localData = localStorage.getItem('quant_admin_strategies');
-          if (localData) {
-            setAdminData(JSON.parse(localData));
+            const response = await fetch(`${currentGasUrl}?action=getArticleIndex&passkey=${encodeURIComponent(adminKey)}`, { cache: 'no-store' });
+            const data = await response.json();
+            if (data.success && data.authenticated && data.data) setAdminData(data.data);
+            else throw new Error(data.message || 'Không thể tải danh sách bài từ Google Sheets.');
+            setImportStatus('');
+          } catch (gasError) {
+            console.error('Không tải được danh sách bài từ Google Sheets:', gasError);
+            setAdminData({});
+            const message = gasError instanceof Error ? gasError.message : 'Lỗi kết nối không xác định.';
+            setImportStatus(`Chưa tải được trạng thái bài từ Google Sheets: ${message}`);
           }
         }
-
-        // Fetch real strategies data
-        const res = await fetch('/data/thuvien_data/thu_vien_index.json');
-        const data = await res.json();
-        if (data && data.danh_sach) {
-          setStrategies(data.danh_sach);
-        }
+        const response = await fetch('/data/thuvien_data/thu_vien_index.json');
+        if (!response.ok) throw new Error('Không tải được danh mục chiến lược trên máy.');
+        const data = await response.json();
+        if (data?.danh_sach) setStrategies(data.danh_sach);
       } catch (err) {
-        console.error("Lỗi khi tải dữ liệu:", err);
+        console.error('Lỗi tải dữ liệu quản trị:', err);
+        setAdminData({});
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
-    
-    if (isAuthenticated) {
-      loadData();
-    }
-  }, [isAuthenticated]);
+    if (isAuthenticated) loadData();
+  }, [isAuthenticated, adminKey]);
+  const handleImportPublicArticles = () => {
+    if (!gasUrl || !adminKey || strategies.length === 0 || isImportingArticles) return;
+    setIsImportConfirmOpen(true);
+  };
+  const startImportPublicArticles = async () => {
+    if (!gasUrl || !adminKey || strategies.length === 0 || importLockRef.current) return;
+    importLockRef.current = true;
+    setIsImportConfirmOpen(false);
+    setIsImportingArticles(true);
+    setImportStatus('Đang đọc các bài viết hiện có...');
+    try {
+      const sourceArticles: Array<{ id: string; articleContent: string }> = [];
+      const missingIds: string[] = [];
+      for (let start = 0; start < strategies.length; start += 8) {
+        const group = strategies.slice(start, start + 8);
+        const results = await Promise.all(group.map(async (strategy) => {
+          const id = String(strategy.id || '').trim();
+          if (!/^[A-Za-z0-9_-]{1,80}$/.test(id)) return { id, content: null };
+          try {
+            const response = await fetch(`/data/vip_articles/VIP_${encodeURIComponent(id)}.md`, { cache: 'no-store' });
+            if (!response.ok) return { id, content: null };
+            const contentType = (response.headers.get('content-type') || '').toLowerCase();
+            const content = await response.text();
+            if (contentType.includes('text/html') || /^\s*(?:<!doctype\s+html|<html[\s>])/i.test(content)) return { id, content: null };
+            return { id, content };
+          } catch {
+            return { id, content: null };
+          }
+        }));
+        for (const result of results) {
+          if (result.content === null) missingIds.push(result.id);
+          else sourceArticles.push({ id: result.id, articleContent: result.content });
+        }
+        setImportStatus(`Đã tìm thấy ${sourceArticles.length} bài; đang quét ${Math.min(start + group.length, strategies.length)}/${strategies.length} chiến lược...`);
+      }
+      if (sourceArticles.length === 0) throw new Error('Không tìm thấy tệp bài viết public để nhập.');
 
+      let imported = 0;
+      let skipped = 0;
+      let removedInvalid = 0;
+      for (let start = 0; start < sourceArticles.length; start += 10) {
+        const batch = sourceArticles.slice(start, start + 10);
+        const response = await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'importArticles', passkey: adminKey, articles: batch }),
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error(data.message || `Máy chủ từ chối lô bắt đầu tại ${start + 1}.`);
+        imported += Number(data.imported || 0);
+        skipped += Number(data.skipped || 0);
+        removedInvalid += Number(data.removedInvalid || 0);
+        setImportStatus(`Đã xử lý ${Math.min(start + batch.length, sourceArticles.length)}/${sourceArticles.length} bài...`);
+      }
+      setImportStatus('Hoàn tất: thêm ' + imported + ', giữ nguyên ' + skipped + ' bài hợp lệ; đã dọn ' + removedInvalid + ' hàng HTML lỗi; thiếu tệp Markdown: ' + missingIds.length + '.');
+      setAdminData((current) => {
+        const next = { ...current };
+        for (const article of sourceArticles) {
+          if (!next[article.id]) next[article.id] = { articleContent: article.articleContent };
+        }
+        return next;
+      });
+    } catch (err) {
+      console.error('Lỗi nhập thư viện VIP:', err);
+      setImportStatus(err instanceof Error ? `Chưa hoàn tất: ${err.message}` : 'Chưa hoàn tất do lỗi kết nối.');
+    } finally {
+      setIsImportingArticles(false);
+      importLockRef.current = false;
+    }
+  };
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsVerifying(true);
@@ -99,28 +161,36 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     setIsVerifying(false);
   };
 
-  const openEditModal = (strategy: any) => {
+  const openEditModal = async (strategy: any) => {
     setEditingStrategy(strategy);
-    setArticleContent(adminData[strategy.id]?.articleContent || '');
+    setArticleContent('');
     setIsModalOpen(true);
-  };
-
-  const restoreOriginal = async () => {
-    if (!editingStrategy) return;
+    setIsLoadingArticle(true);
     try {
-      const res = await fetch(`/data/vip_articles/VIP_${editingStrategy.id}.md`);
-      if (res.ok) {
-        const text = await res.text();
-        setArticleContent(text);
+      const currentGasUrl = getGasApiUrl();
+      const response = await fetch(`${currentGasUrl}?action=getArticle&id=${encodeURIComponent(strategy.id)}&passkey=${encodeURIComponent(adminKey)}`, { cache: 'no-store' });
+      const data = await response.json();
+      if (data.success && data.authenticated) {
+        const content = data.articleContent || '';
+        setArticleContent(content);
+        setAdminData((current) => ({ ...current, [strategy.id]: { ...current[strategy.id], hasArticle: Boolean(content.trim()), articleContent: content } }));
+      } else if (data.notFound) {
+        setArticleContent('');
       } else {
-        alert("Không tìm thấy file bài viết gốc!");
+        throw new Error(data.message || 'Không tải được nội dung bài viết.');
       }
     } catch (err) {
-      console.error(err);
-      alert("Lỗi khi tải bài viết gốc.");
+      console.error('Không tải được nội dung bài viết:', err);
+      setImportStatus(err instanceof Error ? `Không tải được bài ${strategy.id}: ${err.message}` : `Không tải được bài ${strategy.id}.`);
+    } finally {
+      setIsLoadingArticle(false);
     }
   };
 
+  const restoreSavedArticle = () => {
+    if (!editingStrategy) return;
+    setArticleContent(adminData[editingStrategy.id]?.articleContent || '');
+  };
   const handleSave = async () => {
     if (!editingStrategy) return;
     setIsSaving(true);
@@ -169,7 +239,6 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
     }
     
     setAdminData(updatedAdminData);
-    localStorage.setItem('quant_admin_strategies', JSON.stringify(updatedAdminData));
     
     setIsSaving(false);
     setIsModalOpen(false);
@@ -287,6 +356,28 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
         </div>
       </div>
 
+      <div className="bg-[#131722] border border-[#1F2937] p-5 rounded-2xl mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h4 className="text-sm font-bold text-white">Chuyển bài VIP vào Google Sheets</h4>
+          <p className="text-xs text-gray-400 mt-1">Nhập bài Markdown thật; giữ bài hợp lệ đã có và báo riêng ID không có tệp.</p>
+          {importStatus && <p className="text-xs text-neon-green mt-2" role="status">{importStatus}</p>}
+        </div>
+        <button type="button" onClick={handleImportPublicArticles} disabled={!gasUrl || !adminKey || isLoading || isImportingArticles || strategies.length === 0} className="shrink-0 px-5 py-3 rounded-xl bg-neon-green text-black font-bold text-xs disabled:opacity-50">
+          {isImportingArticles ? 'Đang chuyển...' : 'Nhập thư viện bài VIP'}
+        </button>
+      </div>
+      {isImportConfirmOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
+          <div role="dialog" aria-modal="true" aria-labelledby="import-confirm-title" className="w-full max-w-lg rounded-2xl border border-[#1F2937] bg-[#131722] p-6 shadow-2xl">
+            <h3 id="import-confirm-title" className="text-xl font-bold text-white">Xác nhận nhập thư viện VIP</h3>
+            <p className="mt-3 text-sm leading-6 text-gray-300">Hệ thống sẽ đọc các tệp Markdown, giữ nguyên bài hợp lệ đã có, dọn hàng HTML lỗi và chỉ thêm bài chưa có. Anh muốn tiếp tục chứ?</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button type="button" onClick={() => setIsImportConfirmOpen(false)} className="rounded-xl border border-[#334155] px-4 py-2.5 text-sm font-bold text-gray-200 hover:bg-[#1f2937]">Hủy</button>
+              <button type="button" onClick={startImportPublicArticles} className="rounded-xl bg-neon-green px-4 py-2.5 text-sm font-bold text-black hover:brightness-110">Bắt đầu nhập</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="bg-[#131722] border border-[#1F2937] rounded-2xl overflow-hidden shadow-xl flex flex-col h-[70vh]">
         <div className="p-4 border-b border-[#1F2937] flex items-center justify-between bg-[#0B0E14]">
           <div className="relative w-80">
@@ -318,7 +409,7 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
               </thead>
               <tbody className="divide-y divide-[#1F2937]">
                 {filteredStrategies.map((strat) => {
-                  const hasArticle = adminData[strat.id]?.articleContent && adminData[strat.id].articleContent.trim() !== '';
+                  const hasArticle = Boolean(adminData[strat.id]?.hasArticle || (adminData[strat.id]?.articleContent && adminData[strat.id].articleContent.trim() !== ''));
                   return (
                     <tr key={strat.id} className="hover:bg-[#1F2937]/30 transition-colors">
                       <td className="py-4 px-6 font-mono text-xs text-gray-400">{strat.id}</td>
@@ -379,8 +470,9 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
                     <textarea 
                       rows={16} 
                       value={articleContent} 
+                      disabled={isLoadingArticle}
                       onChange={e => setArticleContent(e.target.value)} 
-                      placeholder="Dùng Markdown: **in đậm**, ## Tiêu đề lớn, > trích dẫn..."
+                      placeholder={isLoadingArticle ? 'Đang tải nội dung từ Google Sheets...' : 'Dùng Markdown: **in đậm**, ## Tiêu đề lớn, > trích dẫn...'}
                       className="w-full bg-[#0B0E14] border border-[#1F2937] text-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-neon-green focus:ring-1 focus:ring-neon-green transition-all font-mono text-sm leading-relaxed"
                     ></textarea>
                     <p className="text-xs text-gray-500 mt-2 italic">Lưu ý: Mọi con số định lượng (Winrate, EV...) sẽ được tải tự động từ Data thật. Anh chỉ cần viết bình luận/cảnh báo ở đây.</p>
@@ -389,8 +481,8 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
               </div>
 
               <div className="p-6 border-t border-[#1F2937] bg-[#0B0E14] rounded-b-2xl flex justify-between items-center shrink-0">
-                <button type="button" onClick={restoreOriginal} className="px-4 py-2.5 rounded-xl border border-coral-red text-coral-red hover:bg-coral-red/10 transition-colors font-bold text-xs">
-                  Khôi phục bài gốc
+                <button type="button" onClick={restoreSavedArticle} className="px-4 py-2.5 rounded-xl border border-coral-red text-coral-red hover:bg-coral-red/10 transition-colors font-bold text-xs">
+                  Khôi phục nội dung đã lưu
                 </button>
                 <div className="space-x-3">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-xl text-gray-400 hover:text-white transition-colors font-bold text-sm">Hủy</button>

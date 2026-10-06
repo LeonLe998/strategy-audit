@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown,
-  ClipboardCheck, Database, FileSearch, ShieldCheck, Users, CircleAlert,
+  ClipboardCheck, Database, FileSearch, ShieldCheck, Users, X,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import NumberTicker from './NumberTicker';
@@ -44,9 +44,11 @@ const questions = [
 ];
 
 const faqs = [
-  ['Strategy Audit có phát tín hiệu giao dịch không?', 'Không. Strategy Audit tập trung vào cách mô tả và kiểm tra phương pháp; không phát lệnh hay khuyến nghị mua bán cá nhân.'],
-  ['Tôi chưa biết thuật ngữ có làm được Sáu Ô không?', 'Được. Sáu Ô dùng câu hỏi đời thường, cho phép bạn trả lời “chưa có” và không chấm hiệu quả giao dịch.'],
-  ['Kết quả quá khứ có đảm bảo tương lai không?', 'Không. Backtest và dữ liệu quá khứ có giới hạn; kết quả chỉ giúp hiểu cách phương pháp đã hoạt động trong phạm vi được kiểm tra.'],
+  ['Vì sao trader cần đo và kiểm định phương pháp?', 'Nhiều trader giao dịch 5–10 năm nhưng vẫn chủ yếu cố gắng làm đúng những khái niệm đã học. Câu hỏi quan trọng là: khái niệm đó có hiệu quả trong những điều kiện nào? Đo và kiểm định giúp bạn có dữ liệu để đánh giá phương pháp trước khi tiếp tục sử dụng. Kết quả phản ánh phạm vi đã kiểm tra, không bảo đảm tương lai.'],
+  ['Đo và kiểm định giúp trader điều gì?', 'Số liệu là cơ sở quan trọng để trader ra quyết định. Nếu không biết phương pháp từng có chuỗi thua dài nhất bao nhiêu lệnh, bạn khó xây dựng mức rủi ro và kế hoạch quản lý vốn phù hợp. Kiểm định giúp bạn hiểu những tình huống đã xuất hiện trong dữ liệu để chuẩn bị tốt hơn; nó không loại bỏ rủi ro hay dự đoán chắc chắn chuỗi lệnh tiếp theo.'],
+  ['Kiểm định có cho biết phương pháp chắc chắn sẽ sinh lời không?', 'Không. Kết quả quá khứ không dự đoán chắc chắn tương lai. Kiểm định giúp đánh giá phương pháp trong phạm vi dữ liệu và giả định đã chọn; thị trường, chi phí giao dịch và cách thực hiện thực tế đều có thể làm kết quả khác đi.'],
+  ['Strategy Audit có phát tín hiệu giao dịch không?', 'Không. Strategy Audit không phát lệnh hay khuyến nghị mua bán cá nhân. Trọng tâm là giúp bạn mô tả, đo và hiểu giới hạn của phương pháp trước khi tự quyết định bước tiếp theo.'],
+  ['Tôi chưa biết thuật ngữ có làm được Sáu Ô không?', 'Được. Sáu Ô dùng câu hỏi đời thường, cho phép bạn trả lời “chưa có” và không chấm hiệu quả giao dịch. Bạn có thể bắt đầu từ cách mình đang giao dịch rồi bổ sung dần những điều còn thiếu.'],
 ];
 
 export default function HomeStitch({ setActiveTab }: HomeProps) {
@@ -78,7 +80,7 @@ export default function HomeStitch({ setActiveTab }: HomeProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
         >
-          <span className="sa-eyebrow"><span className="sa-eyebrow-dot" />Strategy Audit <span>·</span> Đo trước khi tin</span>
+          <span className="sa-eyebrow"><span className="sa-eyebrow-dot" />Strategy Audit <span>·</span> Đo trước khi thực hành</span>
           <h1>Biết cách giao dịch chưa đủ.<br /><em>Hãy kiểm tra phương pháp có đứng vững qua dữ liệu không.</em></h1>
           <p className="sa-lead">Strategy Audit giúp bạn làm rõ quy tắc, đo phương pháp trên dữ liệu và hiểu kết quả trước khi quyết định bước tiếp theo.</p>
           <div className="sa-hero-actions">
@@ -88,45 +90,28 @@ export default function HomeStitch({ setActiveTab }: HomeProps) {
           <div className="sa-reassurance"><span><Check size={15} /> Không cần gửi bí mật chiến lược</span><span><Check size={15} /> Có thể trả lời “chưa biết”</span></div>
         </motion.div>
 
-        {example && (
-          <motion.article 
-            className="sa-report" 
-            aria-label="Trích đoạn hồ sơ kiểm định thật"
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
-          >
-            <div className="sa-report-top"><div><span className="sa-kicker">MỘT HỒ SƠ THẬT TRONG THƯ VIỆN</span><h2>{example.ten}</h2></div><span className="sa-report-mark"><Database size={17} /> {example.id} · {example.tf ?? '—'}</span></div>
-            <div className="sa-report-alert sa-report-alert-real"><CircleAlert size={15} /> Kết quả theo dữ liệu nội bộ cập nhật {dateLabel}; xem báo cáo để biết điều kiện và giới hạn.</div>
-            <div className="sa-report-result"><span>KẾT LUẬN TRONG PHẠM VI ĐÃ KIỂM TRA</span><b>{example.verdict === 'CHÁT' ? 'Chưa đạt tiêu chí' : example.verdict === 'TÌNH HUỐNG' ? 'Phụ thuộc tình huống' : 'Đạt tiêu chí nội bộ'}</b></div>
-            <div className="sa-report-metrics">
-              <div>
-                <span>EV ngoài mẫu</span>
-                <b>
-                  {typeof example.oos_ev === 'number' ? (
-                    <NumberTicker
-                      value={Math.abs(example.oos_ev)}
-                      decimalPlaces={3}
-                      prefix={example.oos_ev > 0 ? '+' : '-'}
-                      suffix=" R"
-                    />
-                  ) : '—'}
-                </b>
-              </div>
-              <div>
-                <span>Số lệnh ngoài mẫu</span>
-                <b>
-                  {typeof example.oos_n === 'number' ? (
-                    <NumberTicker value={example.oos_n} decimalPlaces={0} />
-                  ) : '—'}
-                </b>
-              </div>
-              <div><span>Năm dương</span><b>{example.oos_years ?? '—'}</b></div>
-            </div>
-            <p className="sa-report-explainer">Ví dụ này cho thấy vì sao cần đo: một chiến lược có thể được kiểm tra trên nhiều lệnh mà vẫn không đạt tiêu chí đã đặt ra.</p>
-            <div className="sa-report-foot"><span><ShieldCheck size={14} /> Kết quả quá khứ không đảm bảo tương lai</span><button onClick={() => window.location.assign(`/vip/${encodeURIComponent(example.id)}`)}>Đọc hồ sơ <ArrowRight size={14} /></button></div>
-          </motion.article>
-        )}
+        <motion.aside
+          className="sa-process-card"
+          aria-label="So sánh quy trình giao dịch"
+          initial={{ opacity: 0, scale: 0.96, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+        >
+          <div className="sa-process-card-heading">
+            <span className="sa-kicker">HAI CÁCH ĐI TỪ HỌC ĐẾN THỰC HÀNH</span>
+            <h2>Thêm bước đo để biết mình đang làm gì</h2>
+          </div>
+          <div className="sa-path sa-path-old">
+            <div className="sa-path-label"><X size={15} /><span>QUY TRÌNH THIẾU BƯỚC KIỂM CHỨNG</span></div>
+            <div className="sa-path-steps sa-path-steps-old"><span>Học khái niệm</span><ArrowRight size={15} /><span>Thực hành</span><ArrowRight size={15} /><span>Rút kinh nghiệm</span></div>
+            <div className="sa-path-slash" aria-hidden="true" />
+          </div>
+          <div className="sa-path sa-path-good">
+            <div className="sa-path-label"><Check size={15} /><span>QUY TRÌNH CÓ BƯỚC ĐO</span></div>
+            <div className="sa-path-steps"><span>Học khái niệm</span><ArrowRight size={15} /><span>Đo / kiểm định ý tưởng</span><ArrowRight size={15} /><span>Thực hành</span><ArrowRight size={15} /><span>Tối ưu</span></div>
+            <p>Đo trước khi thực hành — hiểu dữ liệu rồi mới quyết định bước tiếp theo.</p>
+          </div>
+        </motion.aside>
       </section>
 
       <section className="sa-section sa-method">
@@ -380,7 +365,7 @@ export default function HomeStitch({ setActiveTab }: HomeProps) {
       <section className="sa-section sa-faq">
         <div className="sa-section-heading">
           <span className="sa-kicker">CÂU HỎI THƯỜNG GẶP</span>
-          <h2>Hiểu rõ trước khi bắt đầu</h2>
+          <h2>Đo phương pháp để biết điều gì?</h2>
         </div>
         {faqs.map(([question, answer]) => (
           <details key={question}>

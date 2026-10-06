@@ -91,6 +91,10 @@ function doGet(e) {
   const params = (e && e.parameter) || {};
   const action = params.action;
   
+  if (action === 'getArticleIndex') {
+    return handleGetArticleIndex(params.passkey);
+  }
+
   if (action === 'getArticles') {
     return handleGetArticles(params.passkey);
   }
@@ -127,30 +131,42 @@ function doPost(e) {
 
     // A0. Xử lý kết quả tự đánh giá Sáu ô
     if (data.source === 'sauo') {
+      if (data.hp || data._honey) return jsonResponse({ ok: true });
       const sauO = getOrCreateSheetByName('SAU_O', [
         'Thời gian', 'Tên', 'Zalo', 'Quy mô tài khoản', 'Số ô điền',
         'Ô1 Lối đánh', 'Ô2 Chỗ vào', 'Ô3 Chỗ thoát',
         'Ô4 Nhịp', 'Ô5 Giờ', 'Ô6 Số lệnh', 'Nguồn'
       ]);
       sauO.appendRow([
-        data.thoi_gian || new Date(), data.ten || '', data.zalo || '',
-        data.quy_mo || '', data.so_o_dien || '',
-        data.o1_loi_danh || '', data.o2_cho_vao || '', data.o3_cho_thoat || '',
-        data.o4_nhip || '', data.o5_gio || '', data.o6_so_lenh || '', data.nguon || ''
+        data.thoi_gian || new Date(),
+        sanitizeStr(data.ten, 100),
+        sanitizeStr(data.zalo, 150),
+        sanitizeStr(data.quy_mo, 100),
+        sanitizeStr(data.so_o_dien, 50),
+        sanitizeStr(data.o1_loi_danh, 2000),
+        sanitizeStr(data.o2_cho_vao, 2000),
+        sanitizeStr(data.o3_cho_thoat, 2000),
+        sanitizeStr(data.o4_nhip, 2000),
+        sanitizeStr(data.o5_gio, 2000),
+        sanitizeStr(data.o6_so_lenh, 2000),
+        sanitizeStr(data.nguon, 100)
       ]);
       return jsonResponse({ ok: true });
     }
 
     // A1. Ghi yêu cầu tham gia thành viên
     if (data.source === 'member_interest') {
-      if (!data.name || !data.contact || data.consent !== true) {
+      if (data.hp || data._honey) return jsonResponse({ ok: true });
+      const name = sanitizeStr(data.name, 100);
+      const contact = sanitizeStr(data.contact, 150);
+      if (!name || !contact || data.consent !== true) {
         return jsonResponse({ status: 'error', message: 'Thiếu thông tin liên hệ hoặc sự đồng ý.' });
       }
       const members = getOrCreateSheetByName('Leads_ThanhVien', [
         'Thời gian', 'Nguồn', 'Tên', 'Liên hệ', 'Gói thành viên', 'Đồng ý', 'Trạng thái'
       ]);
       members.appendRow([
-        new Date(), 'member_interest', data.name || '', data.contact || '',
+        new Date(), 'member_interest', name, contact,
         '50 USD tháng đầu; 100 USD từ tháng thứ hai', 'Có', 'Chờ xác nhận chuyển khoản'
       ]);
       return jsonResponse({ ok: true });
@@ -158,20 +174,24 @@ function doPost(e) {
 
     // A. Xử lý Lead Thư viện (Vault)
     if (data.source === 'library_vault') {
-      var _ss = SpreadsheetApp.getActiveSpreadsheet();
-      var _sh = _ss.getSheetByName('Leads_ThuVien');
-      if (!_sh) {
-        _sh = _ss.insertSheet('Leads_ThuVien');
-        _sh.appendRow(['Thời gian', 'Nguồn', 'Họ tên', 'SĐT', 'Email']);
-      }
-      _sh.appendRow([new Date(), 'library_vault',
-                     data.name || '', data.phone || '', data.email || '']);
+      if (data.hp || data._honey) return jsonResponse({ ok: true });
+      const sh = getOrCreateSheetByName('Leads_ThuVien', ['Thời gian', 'Nguồn', 'Họ tên', 'SĐT', 'Email']);
+      sh.appendRow([
+        new Date(), 'library_vault',
+        sanitizeStr(data.name, 100),
+        sanitizeStr(data.phone, 50),
+        sanitizeStr(data.email, 150)
+      ]);
       return jsonResponse({ ok: true });
     }
 
     // B. Xử lý lưu Bài viết (CMS) - Bắt buộc quyền Quản trị (Admin)
     if (data.action === 'saveArticle') {
       return handleSaveArticle(data.id, data.articleContent, data.passkey);
+    }
+
+    if (data.action === 'importArticles') {
+      return handleImportArticles(data.articles, data.passkey);
     }
 
     // C. Xử lý xác thực Passkey VIP qua POST (nếu dùng)
@@ -360,6 +380,29 @@ function handleVerifyPasskey(passkey) {
   }
 }
 
+// Danh sách trạng thái bài viết, không gửi nội dung dài về trang quản trị.
+function handleGetArticleIndex(passkey) {
+  try {
+    const auth = validatePasskeyAuth(passkey);
+    if (!auth.valid || auth.role !== 'admin') {
+      return jsonResponse({ success: false, authenticated: false, message: 'Cần quyền Admin để xem danh sách bài viết.', data: {} });
+    }
+    const sheet = getOrCreateSheetByName('articles', ['id', 'articleContent', 'updatedAt']);
+    const lastRow = sheet.getLastRow();
+    const articles = {};
+    if (lastRow > 1) {
+      const rows = sheet.getRange(2, 1, lastRow - 1, 3).getValues();
+      for (let i = 0; i < rows.length; i++) {
+        const id = rows[i][0] ? rows[i][0].toString().trim() : '';
+        const content = rows[i][1] ? rows[i][1].toString() : '';
+        if (id && content.trim()) articles[id] = { hasArticle: true, updatedAt: rows[i][2] || '' };
+      }
+    }
+    return jsonResponse({ success: true, authenticated: true, role: auth.role, data: articles });
+  } catch (err) {
+    return jsonResponse({ success: false, authenticated: false, message: 'Lỗi tải danh sách bài viết: ' + err.toString(), data: {} });
+  }
+}
 // Lấy tất cả bài viết từ sheet "articles" (Bắt buộc xác thực quyền VIP hoặc Admin)
 function handleGetArticles(passkey) {
   try {
@@ -463,6 +506,79 @@ function handleGetArticle(id, passkey) {
   }
 }
 
+// Import bài VIP theo lô; chỉ thêm ID chưa có để giữ nguyên bài đã biên tập.
+function handleImportArticles(articles, passkey) {
+  try {
+    const auth = validatePasskeyAuth(passkey);
+    if (!auth.valid || auth.role !== 'admin') {
+      return jsonResponse({ success: false, message: 'Thao tác nhập bài yêu cầu quyền Admin.' });
+    }
+    if (!Array.isArray(articles) || articles.length < 1 || articles.length > 25) {
+      return jsonResponse({ success: false, message: 'Mỗi lô phải có từ 1 đến 25 bài viết.' });
+    }
+
+    const validArticles = [];
+    for (let i = 0; i < articles.length; i++) {
+      const article = articles[i];
+      const id = article && typeof article.id === 'string' ? article.id.trim() : '';
+      const articleContent = article && typeof article.articleContent === 'string' ? article.articleContent : null;
+      const isHtmlFallback = typeof articleContent === 'string' && /^\s*(?:<!doctype\s+html|<html[\s>])/i.test(articleContent);
+      if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || articleContent === null || articleContent.length > 48000 || isHtmlFallback) {
+        throw new Error('Bài viết không hợp lệ hoặc là trang HTML dự phòng: ' + (id || 'không có ID'));
+      }
+      validArticles.push({ id: id, articleContent: articleContent });
+    }
+
+    const sheet = getOrCreateSheetByName('articles', ['id', 'articleContent', 'updatedAt']);
+    const rows = sheet.getDataRange().getValues();
+    const invalidRowNumbers = [];
+    for (let i = 1; i < rows.length; i++) {
+      const content = rows[i][1] ? rows[i][1].toString() : '';
+      if (/^\s*(?:<!doctype\s+html|<html[\s>])/i.test(content)) invalidRowNumbers.push(i + 1);
+    }
+
+    // Gỡ riêng các hàng HTML dự phòng do máy chủ phát cho ID không có tệp Markdown.
+    const groups = [];
+    for (let i = 0; i < invalidRowNumbers.length; i++) {
+      const rowNumber = invalidRowNumbers[i];
+      const last = groups.length ? groups[groups.length - 1] : null;
+      if (last && rowNumber === last.start + last.count) last.count++;
+      else groups.push({ start: rowNumber, count: 1 });
+    }
+    for (let i = groups.length - 1; i >= 0; i--) {
+      sheet.deleteRows(groups[i].start, groups[i].count);
+    }
+
+    const currentRows = sheet.getDataRange().getValues();
+    const knownIds = {};
+    for (let i = 1; i < currentRows.length; i++) {
+      const knownId = currentRows[i][0] ? currentRows[i][0].toString().trim() : '';
+      if (knownId) knownIds[knownId] = true;
+    }
+    const now = new Date();
+    const rowsToAdd = [];
+    let skipped = 0;
+    for (let i = 0; i < validArticles.length; i++) {
+      const article = validArticles[i];
+      if (knownIds[article.id]) {
+        skipped++;
+      } else {
+        knownIds[article.id] = true;
+        rowsToAdd.push([article.id, article.articleContent, now]);
+      }
+    }
+    if (rowsToAdd.length) {
+      const neededRows = (sheet.getLastRow() + rowsToAdd.length) - sheet.getMaxRows();
+      if (neededRows > 0) {
+        sheet.insertRowsAfter(sheet.getMaxRows(), neededRows);
+      }
+      sheet.getRange(sheet.getLastRow() + 1, 1, rowsToAdd.length, 3).setValues(rowsToAdd);
+    }
+    return jsonResponse({ success: true, imported: rowsToAdd.length, skipped: skipped, removedInvalid: invalidRowNumbers.length });
+  } catch (err) {
+    return jsonResponse({ success: false, message: 'Lỗi nhập bài viết: ' + err.toString() });
+  }
+}
 // Lưu bài viết (Bắt buộc quyền Quản trị viên - Admin)
 function handleSaveArticle(id, articleContent, passkey) {
   try {
@@ -527,6 +643,14 @@ function getOrCreateSheetByName(name, headers) {
     sheet.setFrozenRows(1);
   }
   return sheet;
+}
+
+// =====================================================================
+// SANITIZE STRING - Gioi han do dai va cat khoang trang tranh tran cell
+// =====================================================================
+function sanitizeStr(val, maxLen) {
+  if (val === null || val === undefined) return '';
+  return String(val).trim().substring(0, maxLen || 500);
 }
 
 // =====================================================================

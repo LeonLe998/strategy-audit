@@ -19,6 +19,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { track } from '../analytics';
+import { getGasApiUrl } from '../config';
 
 interface VaultProps {
   setActiveTab: (tab: string) => void;
@@ -28,7 +29,6 @@ interface VaultProps {
 
 // Lead Thư viện POST về CÙNG Apps Script với form Intake, kèm source:'library_vault'.
 // doPost nhận diện source này -> ghi sang tab riêng "Leads_ThuVien" rồi thoát sớm (không sinh YAML quant).
-const VAULT_LEADS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec';
 
 export default function Vault({ initialDocId, onDocChange }: VaultProps) {
   // Lock system states
@@ -112,9 +112,10 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
     setIsLoading(true);
 
     // Gửi lead về Google Sheet (fire-and-forget: lỗi mạng không chặn mở khóa)
-    if (VAULT_LEADS_WEBHOOK && !VAULT_LEADS_WEBHOOK.startsWith('__')) {
+    const webhookUrl = getGasApiUrl();
+    if (webhookUrl && !webhookUrl.startsWith('__')) {
       try {
-        await fetch(VAULT_LEADS_WEBHOOK, {
+        await fetch(webhookUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },

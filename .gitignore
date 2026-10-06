@@ -29,6 +29,7 @@ vip_articles_pack/
 
 # Sensitive secrets & credentials
 passkeys.txt
+google-apps-script-clean.txt
 *.env
 *.env.*
 !*.env.example
