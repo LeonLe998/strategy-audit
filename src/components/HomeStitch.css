@@ -270,3 +270,165 @@
 @media (prefers-reduced-motion: reduce) {
   .sa-home *, .sa-home *::before, .sa-home *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; }
 }
+
+/* ==========================================================================
+   LIGHT THEME STYLING FOR HOMESTITCH (Clean Slate / Crisp White / Emerald)
+   ========================================================================== */
+html.light .sa-home {
+  --sa-bg: #F8FAFC;
+  --sa-panel: #FFFFFF;
+  --sa-panel-raised: #F1F5F9;
+  --sa-border: #E2E8F0;
+  --sa-text: #0F172A;
+  --sa-muted: #475569;
+  --sa-soft: #64748B;
+  --sa-mint: #059669;
+  --sa-cyan: #0284C7;
+  color: var(--sa-text);
+  background: var(--sa-bg);
+}
+
+html.light .sa-home h1 em { color: #059669; }
+html.light .sa-eyebrow { color: #047857; }
+html.light .sa-eyebrow-dot { background: #059669; box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15); }
+html.light .sa-eyebrow > span:not(.sa-eyebrow-dot) { color: #64748B; }
+html.light .sa-lead { color: #334155; }
+html.light .sa-button-primary { background: #059669; color: #FFFFFF; }
+html.light .sa-button-primary:hover { background: #047857; }
+html.light .sa-button-secondary { background: #FFFFFF; color: #0F172A; border-color: #CBD5E1; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+html.light .sa-button-secondary:hover { border-color: #059669; background: #F8FAFC; color: #047857; }
+html.light .sa-reassurance { color: #475569; }
+html.light .sa-reassurance svg { color: #059669; }
+
+/* Process Card in Light Mode */
+html.light .sa-process-card {
+  background: radial-gradient(ellipse at 100% 0%, #E0F2FE 0%, transparent 50%), linear-gradient(145deg, #FFFFFF, #F8FAFC 82%);
+  border-color: #E2E8F0;
+  box-shadow: 0 16px 40px -10px rgba(15, 23, 42, 0.08);
+}
+html.light .sa-process-card-heading .sa-kicker { color: #0284C7; }
+html.light .sa-process-card-heading h2 { color: #0F172A; }
+html.light .sa-path-old { border-color: #FECDD3; background: linear-gradient(110deg, #FFF1F2, #FFF7ED); }
+html.light .sa-path-old .sa-path-label { color: #BE123C; }
+html.light .sa-path-steps-old span { border-color: #FDA4AF; color: #9F1239; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); }
+html.light .sa-path-steps-old > svg { color: #F43F5E; }
+html.light .sa-path-slash { background: #E11D48; box-shadow: 0 0 10px rgba(225, 29, 72, 0.35); }
+html.light .sa-path-good { border-color: #6EE7B7; background: linear-gradient(120deg, #ECFDF5, #F0FDF4); box-shadow: inset 0 0 30px rgba(16, 185, 129, 0.05); }
+html.light .sa-path-good .sa-path-label { color: #047857; }
+html.light .sa-path-good .sa-path-steps span { border-color: #A7F3D0; color: #065F46; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); }
+html.light .sa-path-good .sa-path-steps > svg { color: #059669; }
+html.light .sa-path-good > p { color: #065F46; }
+
+/* Method Flow in Light Mode */
+html.light .sa-section { border-top-color: #E2E8F0; }
+html.light .sa-section-heading .sa-kicker { color: #0284C7; }
+html.light .sa-section-heading h2 { color: #0F172A; }
+html.light .sa-section-heading p { color: #475569; }
+html.light .sa-method-flow > div:not(.sa-flow-connector) {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+}
+html.light .sa-method-flow > div > svg { color: #0284C7; }
+html.light .sa-method-flow .sa-method-highlight {
+  border-color: #10B981;
+  background: linear-gradient(145deg, #ECFDF5, #F0FDF4);
+}
+html.light .sa-method-highlight > svg,
+html.light .sa-method-highlight h3 { color: #047857 !important; }
+html.light .sa-method-flow h3 { color: #0F172A; }
+html.light .sa-method-flow p { color: #475569; }
+html.light .sa-highlight-label { color: #059669; }
+html.light .sa-step-number { color: #94A3B8; }
+html.light .sa-flow-connector { color: #94A3B8; }
+
+/* Process Steps in Light Mode */
+html.light .sa-step-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+}
+html.light .sa-step-card > svg { color: #059669; }
+html.light .sa-step-card h3 { color: #0F172A; }
+html.light .sa-step-card p { color: #475569; }
+
+/* Six preview in Light Mode */
+html.light .sa-six-preview {
+  border-color: #CBD5E1;
+  background: linear-gradient(130deg, #F8FAFC, #FFFFFF 58%, #F1F5F9);
+  box-shadow: 0 12px 36px -10px rgba(15, 23, 42, 0.06);
+}
+html.light .sa-six-copy .sa-kicker { color: #0284C7; }
+html.light .sa-six-copy h2 { color: #0F172A; }
+html.light .sa-six-copy > p { color: #475569; }
+html.light .sa-small-facts { color: #334155; }
+html.light .sa-small-facts svg { color: #0284C7; }
+html.light .sa-question-preview { background: #FFFFFF; border-color: #E2E8F0; }
+html.light .sa-question-row { border-bottom-color: #F1F5F9; }
+html.light .sa-question-row b { color: #0F172A; }
+html.light .sa-question-row p { color: #475569; }
+html.light .sa-question-row > span { border-color: #A7F3D0; color: #047857; background: #ECFDF5; }
+html.light .sa-question-row > svg { color: #94A3B8; }
+
+/* Library Proof Stats in Light Mode */
+html.light .sa-stats-grid article {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+}
+html.light .sa-stats-grid article > span { color: #475569; }
+html.light .sa-stats-grid article > b { color: #0F172A; }
+html.light .sa-stats-grid article > small { color: #64748B; }
+html.light .sa-stat-pass > b { color: #059669; }
+html.light .sa-stat-context > b { color: #D97706; }
+html.light .sa-stat-fail > b { color: #DC2626; }
+html.light .sa-data-note { color: #475569; }
+html.light .sa-data-note svg { color: #0284C7; }
+
+/* Case Study in Light Mode */
+html.light .sa-case-copy .sa-kicker { color: #0284C7; }
+html.light .sa-case-copy h2 { color: #0F172A; }
+html.light .sa-case-copy p { color: #475569; }
+html.light .sa-case-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06);
+}
+html.light .sa-case-title { border-bottom-color: #F1F5F9; }
+html.light .sa-case-title .sa-kicker { color: #0284C7; }
+html.light .sa-case-title h3 { color: #0F172A; }
+html.light .sa-case-metrics > div { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 10px; }
+html.light .sa-case-metrics span { color: #64748B; }
+html.light .sa-case-metrics b { color: #0F172A; }
+html.light .sa-case-card > p { border-top-color: #F1F5F9; color: #475569; }
+
+/* Membership Card in Light Mode */
+html.light .sa-membership {
+  background: linear-gradient(120deg, #FFFFFF, #F8FAFC);
+  border-color: #E2E8F0;
+  box-shadow: 0 16px 40px -10px rgba(15, 23, 42, 0.06);
+}
+html.light .sa-membership .sa-kicker { color: #0284C7; }
+html.light .sa-membership h2 { color: #0F172A; }
+html.light .sa-membership > div > p { color: #475569; }
+html.light .sa-member-benefits { color: #334155; }
+html.light .sa-member-benefits svg { color: #059669; }
+html.light .sa-price-card {
+  background: #FFFFFF;
+  border-color: #6EE7B7;
+  box-shadow: 0 12px 30px -5px rgba(5, 150, 105, 0.08);
+}
+html.light .sa-price-card .sa-kicker { color: #047857; }
+html.light .sa-price-line b { color: #059669; }
+html.light .sa-price-line span { color: #475569; }
+html.light .sa-price-next { border-bottom-color: #F1F5F9; }
+html.light .sa-price-next b { color: #0F172A; }
+html.light .sa-price-card > p { color: #475569; }
+
+/* FAQ in Light Mode */
+html.light .sa-faq .sa-section-heading .sa-kicker { color: #0284C7; }
+html.light .sa-faq details { border-color: #E2E8F0; }
+html.light .sa-faq summary { color: #0F172A; }
+html.light .sa-faq summary svg { color: #64748B; }
+html.light .sa-faq details p { color: #475569; }
+

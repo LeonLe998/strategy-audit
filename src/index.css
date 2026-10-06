@@ -521,9 +521,31 @@ html.light .hover\:bg-\[\#1c2233\]:hover {
 
 /* Header & Logo styling */
 html.light #app-header {
-  background-color: rgba(255, 255, 255, 0.9) !important;
+  background-color: rgba(255, 255, 255, 0.94) !important;
   border-bottom-color: #E2E8F0 !important;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.04);
+}
+
+html.light #logo-container img {
+  background: #07131E;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Mobile bottom nav */
+html.light .sa-bottom-nav {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-top-color: #E2E8F0 !important;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+}
+html.light .sa-bottom-nav a {
+  color: #64748B !important;
+}
+html.light .sa-bottom-nav a.is-active {
+  color: #047857 !important;
+  background: #ECFDF5 !important;
 }
 
 html.light #desktop-nav button.text-neon-green {
@@ -683,3 +705,165 @@ html.light #app-footer .bg-\[\#131722\]\/30 {
   background-color: #F8FAFC !important;
   border-color: #E2E8F0 !important;
 }
+
+/* ==========================================================================
+   PAGE SPECIFIC LIGHT MODE OVERRIDES
+   ========================================================================== */
+
+/* Outlined buttons & pills */
+html.light button.border-white\/15,
+html.light a.border-white\/15,
+html.light button.border-white\/10,
+html.light a.border-white\/10 {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light button.border-white\/15:hover,
+html.light a.border-white\/15:hover,
+html.light button.border-white\/10:hover,
+html.light a.border-white\/10:hover {
+  background-color: #F8FAFC !important;
+  border-color: #059669 !important;
+  color: #047857 !important;
+}
+
+/* Specific borders */
+html.light .border-\[\#2A2E39\],
+html.light .border-\[\#20394B\],
+html.light .border-\[\#1b3140\] {
+  border-color: #E2E8F0 !important;
+}
+
+/* Membership View in Light Mode */
+html.light #membership-view aside {
+  background-color: #FFFFFF !important;
+  border-color: #A7F3D0 !important;
+  box-shadow: 0 10px 30px -5px rgba(5, 150, 105, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03) !important;
+}
+
+html.light #membership-view article.bg-\[\#0C211D\],
+html.light #membership-view [class*="bg-[#0C211D]"] {
+  background-color: #F0FDF4 !important;
+  border-color: #86EFAC !important;
+}
+
+html.light #membership-view article.bg-\[\#0C211D\] h2,
+html.light #membership-view [class*="bg-[#0C211D]"] h2,
+html.light #membership-view article.bg-\[\#0C211D\] li,
+html.light #membership-view [class*="bg-[#0C211D]"] li {
+  color: #14532D !important;
+}
+
+html.light #membership-view article.bg-\[\#21171E\],
+html.light #membership-view [class*="bg-[#21171E]"] {
+  background-color: #FFF1F2 !important;
+  border-color: #FECDD3 !important;
+}
+
+html.light #membership-view article.bg-\[\#21171E\] h2,
+html.light #membership-view [class*="bg-[#21171E]"] h2,
+html.light #membership-view article.bg-\[\#21171E\] li,
+html.light #membership-view [class*="bg-[#21171E]"] li {
+  color: #9F1239 !important;
+}
+
+html.light #membership-view input:not([type="checkbox"]) {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light #membership-view input::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* VIP Library in Light Mode */
+html.light #viplibrary-view .sticky.top-0 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+
+html.light #viplibrary-view .divide-\[\#1F2937\] > * {
+  border-color: #F1F5F9 !important;
+}
+
+html.light #viplibrary-view input,
+html.light #viplibrary-view select {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light #viplibrary-view tr.bg-\[\#0B0E14\] {
+  background-color: #F8FAFC !important;
+}
+
+html.light #viplibrary-view tr.bg-\[\#1F2937\]\/20 {
+  background-color: #F1F5F9 !important;
+}
+
+html.light #viplibrary-view tr.bg-\[\#1F2937\]\/40 {
+  background-color: #E2E8F0 !important;
+}
+
+html.light #viplibrary-view .prose {
+  color: #334155 !important;
+}
+
+html.light #viplibrary-view .prose h2,
+html.light #viplibrary-view .prose h3,
+html.light #viplibrary-view .prose h4 {
+  color: #0F172A !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+
+html.light #viplibrary-view .prose p,
+html.light #viplibrary-view .prose li {
+  color: #334155 !important;
+}
+
+html.light #viplibrary-view .prose strong {
+  color: #0F172A !important;
+}
+
+html.light #viplibrary-view .prose blockquote {
+  background-color: #F8FAFC !important;
+  border-left-color: #059669 !important;
+  color: #1E293B !important;
+}
+
+/* Vault in Light Mode */
+html.light #vault-view input {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+
+html.light #vault-view [id^="doc-card-"] {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+html.light #vault-view [id^="doc-card-"]:hover {
+  border-color: #059669 !important;
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.1);
+}
+
+html.light #pdf-viewer-overlay {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+html.light #pdf-viewer-overlay > div {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.light #pdf-viewer-overlay .border-b {
+  border-bottom-color: #E2E8F0 !important;
+  background-color: #F8FAFC !important;
+}
+
