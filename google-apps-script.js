@@ -88,21 +88,25 @@ const YESNO_MAP = {
 // MAIN HANDLER - doGet
 // =====================================================================
 function doGet(e) {
-  const action = e.parameter.action;
+  const params = (e && e.parameter) || {};
+  const action = params.action;
   
   if (action === 'getArticles') {
-    return handleGetArticles();
+    return handleGetArticles(params.passkey);
+  }
+
+  if (action === 'getArticle') {
+    return handleGetArticle(params.id, params.passkey);
   }
   
   if (action === 'verifyPasskey') {
-    const passkey = e.parameter.passkey;
-    return handleVerifyPasskey(passkey);
+    return handleVerifyPasskey(params.passkey);
   }
   
   return jsonResponse({
     status: "ok",
     service: "QuantAudit Apps Script Backend & Database",
-    version: "1.2",
+    version: "1.3",
     timestamp: new Date().toISOString(),
   });
 }
@@ -121,6 +125,37 @@ function doPost(e) {
       return jsonResponse({ status: "error", message: "Invalid JSON" });
     }
 
+    // A0. Xử lý kết quả tự đánh giá Sáu ô
+    if (data.source === 'sauo') {
+      const sauO = getOrCreateSheetByName('SAU_O', [
+        'Thời gian', 'Tên', 'Zalo', 'Quy mô tài khoản', 'Số ô điền',
+        'Ô1 Lối đánh', 'Ô2 Chỗ vào', 'Ô3 Chỗ thoát',
+        'Ô4 Nhịp', 'Ô5 Giờ', 'Ô6 Số lệnh', 'Nguồn'
+      ]);
+      sauO.appendRow([
+        data.thoi_gian || new Date(), data.ten || '', data.zalo || '',
+        data.quy_mo || '', data.so_o_dien || '',
+        data.o1_loi_danh || '', data.o2_cho_vao || '', data.o3_cho_thoat || '',
+        data.o4_nhip || '', data.o5_gio || '', data.o6_so_lenh || '', data.nguon || ''
+      ]);
+      return jsonResponse({ ok: true });
+    }
+
+    // A1. Ghi yêu cầu tham gia thành viên
+    if (data.source === 'member_interest') {
+      if (!data.name || !data.contact || data.consent !== true) {
+        return jsonResponse({ status: 'error', message: 'Thiếu thông tin liên hệ hoặc sự đồng ý.' });
+      }
+      const members = getOrCreateSheetByName('Leads_ThanhVien', [
+        'Thời gian', 'Nguồn', 'Tên', 'Liên hệ', 'Gói thành viên', 'Đồng ý', 'Trạng thái'
+      ]);
+      members.appendRow([
+        new Date(), 'member_interest', data.name || '', data.contact || '',
+        '50 USD tháng đầu; 100 USD từ tháng thứ hai', 'Có', 'Chờ xác nhận chuyển khoản'
+      ]);
+      return jsonResponse({ ok: true });
+    }
+
     // A. Xử lý Lead Thư viện (Vault)
     if (data.source === 'library_vault') {
       var _ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -134,9 +169,9 @@ function doPost(e) {
       return jsonResponse({ ok: true });
     }
 
-    // B. Xử lý lưu Bài viết (CMS)
+    // B. Xử lý lưu Bài viết (CMS) - Bắt buộc quyền Quản trị (Admin)
     if (data.action === 'saveArticle') {
-      return handleSaveArticle(data.id, data.articleContent);
+      return handleSaveArticle(data.id, data.articleContent, data.passkey);
     }
 
     // C. Xử lý xác thực Passkey VIP qua POST (nếu dùng)
@@ -225,18 +260,127 @@ function doPost(e) {
 }
 
 // =====================================================================
-// NEW FUNCTIONS - Articles & Passkeys Database Management
+// NEW FUNCTIONS - Articles & Passkeys Database Management (Secured)
 // =====================================================================
 
-// Lấy tất cả bài viết từ sheet "articles"
-function handleGetArticles() {
+// Xác thực passkey nội bộ từ sheet "passkeys" (Không tạo passkey mặc định)
+function validatePasskeyAuth(passkey) {
+  if (!passkey || typeof passkey !== 'string') {
+    return {
+      valid: false,
+      role: null,
+      message: "Chưa cung cấp mã xác thực (passkey)."
+    };
+  }
+
+  const cleanPasskey = passkey.trim();
+  if (cleanPasskey === "") {
+    return {
+      valid: false,
+      role: null,
+      message: "Mã xác thực không được để trống."
+    };
+  }
+
+  const sheet = getOrCreateSheetByName('passkeys', ['passkey', 'role', 'status', 'expiry', 'description', 'updatedAt']);
+  const data = sheet.getDataRange().getValues();
+  let matchedRow = null;
+
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] && data[i][0].toString().trim() === cleanPasskey) {
+      matchedRow = {
+        passkey: data[i][0].toString().trim(),
+        role: data[i][1] ? data[i][1].toString().trim().toLowerCase() : 'vip',
+        status: data[i][2] ? data[i][2].toString().trim().toLowerCase() : 'active',
+        expiry: data[i][3],
+        description: data[i][4] || ""
+      };
+      break;
+    }
+  }
+
+  if (!matchedRow) {
+    return {
+      valid: false,
+      role: null,
+      message: "Passkey không hợp lệ hoặc đã bị thu hồi."
+    };
+  }
+
+  if (matchedRow.status !== 'active') {
+    return {
+      valid: false,
+      role: null,
+      message: "Passkey này đã bị tạm khóa."
+    };
+  }
+
+  if (matchedRow.expiry) {
+    const expiryStr = matchedRow.expiry.toString().trim();
+    if (expiryStr !== "" && expiryStr.toLowerCase() !== "lifetime") {
+      const expiryDate = new Date(matchedRow.expiry);
+      const currentDate = new Date();
+      expiryDate.setHours(23, 59, 59, 999);
+
+      if (isNaN(expiryDate.getTime())) {
+        console.warn("Định dạng ngày hết hạn không hợp lệ: " + matchedRow.expiry);
+      } else if (currentDate > expiryDate) {
+        return {
+          valid: false,
+          role: null,
+          message: "Passkey này đã hết hạn sử dụng."
+        };
+      }
+    }
+  }
+
+  return {
+    valid: true,
+    role: matchedRow.role,
+    message: "Xác thực thành công!"
+  };
+}
+
+// Kiểm tra tính hợp lệ của Passkey từ client
+function handleVerifyPasskey(passkey) {
   try {
+    const auth = validatePasskeyAuth(passkey);
+    return jsonResponse({
+      success: true,
+      valid: auth.valid,
+      role: auth.role,
+      message: auth.message
+    });
+  } catch (err) {
+    return jsonResponse({
+      success: false,
+      valid: false,
+      message: "Lỗi xác thực passkey: " + err.toString()
+    });
+  }
+}
+
+// Lấy tất cả bài viết từ sheet "articles" (Bắt buộc xác thực quyền VIP hoặc Admin)
+function handleGetArticles(passkey) {
+  try {
+    const auth = validatePasskeyAuth(passkey);
+    if (!auth.valid) {
+      return jsonResponse({
+        success: false,
+        authenticated: false,
+        message: "Từ chối truy cập: Cần passkey VIP hoặc Quản trị viên hợp lệ để tải nội dung bài viết.",
+        data: {}
+      });
+    }
+
     const sheet = getOrCreateSheetByName('articles', ['id', 'articleContent', 'updatedAt']);
     const data = sheet.getDataRange().getValues();
     
     if (data.length <= 1) {
       return jsonResponse({
         success: true,
+        authenticated: true,
+        role: auth.role,
         data: {}
       });
     }
@@ -254,6 +398,8 @@ function handleGetArticles() {
     
     return jsonResponse({
       success: true,
+      authenticated: true,
+      role: auth.role,
       data: articles
     });
   } catch (err) {
@@ -264,96 +410,75 @@ function handleGetArticles() {
   }
 }
 
-// Kiểm tra tính hợp lệ của Passkey từ sheet "passkeys"
-function handleVerifyPasskey(passkey) {
-  try {
-    if (!passkey) {
-      return jsonResponse({
-        success: true,
-        valid: false,
-        message: "Chưa nhập passkey."
-      });
-    }
-    
-    const cleanPasskey = passkey.trim();
-    const sheet = getOrCreateSheetByName('passkeys', ['passkey', 'role', 'status', 'expiry', 'description', 'updatedAt']);
-    
-    checkAndInitDefaultPasskeys(sheet);
-    
-    const data = sheet.getDataRange().getValues();
-    let matchedRow = null;
-    
-    for (let i = 1; i < data.length; i++) {
-      if (data[i][0] && data[i][0].toString().trim() === cleanPasskey) {
-        matchedRow = {
-          passkey: data[i][0].toString().trim(),
-          role: data[i][1] ? data[i][1].toString().trim().toLowerCase() : 'vip',
-          status: data[i][2] ? data[i][2].toString().trim().toLowerCase() : 'active',
-          expiry: data[i][3],
-          description: data[i][4] || ""
-        };
-        break;
-      }
-    }
-    
-    if (!matchedRow) {
-      return jsonResponse({
-        success: true,
-        valid: false,
-        message: "Passkey không hợp lệ hoặc đã bị thu hồi."
-      });
-    }
-    
-    if (matchedRow.status !== 'active') {
-      return jsonResponse({
-        success: true,
-        valid: false,
-        message: "Passkey này đã bị tạm khóa."
-      });
-    }
-    
-    if (matchedRow.expiry) {
-      const expiryStr = matchedRow.expiry.toString().trim();
-      if (expiryStr !== "" && expiryStr.toLowerCase() !== "lifetime") {
-        const expiryDate = new Date(matchedRow.expiry);
-        const currentDate = new Date();
-        
-        expiryDate.setHours(23, 59, 59, 999);
-        
-        if (isNaN(expiryDate.getTime())) {
-          console.warn("Định dạng ngày hết hạn không hợp lệ: " + matchedRow.expiry);
-        } else if (currentDate > expiryDate) {
-          return jsonResponse({
-            success: true,
-            valid: false,
-            message: "Passkey này đã hết hạn sử dụng."
-          });
-        }
-      }
-    }
-    
-    return jsonResponse({
-      success: true,
-      valid: true,
-      role: matchedRow.role,
-      message: "Xác thực thành công!"
-    });
-    
-  } catch (err) {
-    return jsonResponse({
-      success: false,
-      message: "Lỗi xác thực passkey: " + err.toString()
-    });
-  }
-}
-
-// Lưu bài viết
-function handleSaveArticle(id, articleContent) {
+// Lấy một bài viết cụ thể theo ID (Bắt buộc xác thực quyền VIP hoặc Admin)
+function handleGetArticle(id, passkey) {
   try {
     if (!id) {
       return jsonResponse({
         success: false,
         message: "Thiếu ID chiến lược."
+      });
+    }
+
+    const auth = validatePasskeyAuth(passkey);
+    if (!auth.valid) {
+      return jsonResponse({
+        success: false,
+        authenticated: false,
+        message: "Từ chối truy cập: Cần passkey VIP hợp lệ để xem bài viết này."
+      });
+    }
+
+    const sheet = getOrCreateSheetByName('articles', ['id', 'articleContent', 'updatedAt']);
+    const data = sheet.getDataRange().getValues();
+    let foundContent = null;
+
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][0] && data[i][0].toString().trim() === id.trim()) {
+        foundContent = data[i][1] || "";
+        break;
+      }
+    }
+
+    if (foundContent === null) {
+      return jsonResponse({
+        success: false,
+        notFound: true,
+        message: "Không tìm thấy nội dung bài viết cho chiến lược này."
+      });
+    }
+
+    return jsonResponse({
+      success: true,
+      authenticated: true,
+      role: auth.role,
+      id: id.trim(),
+      articleContent: foundContent
+    });
+  } catch (err) {
+    return jsonResponse({
+      success: false,
+      message: "Lỗi tải bài viết: " + err.toString()
+    });
+  }
+}
+
+// Lưu bài viết (Bắt buộc quyền Quản trị viên - Admin)
+function handleSaveArticle(id, articleContent, passkey) {
+  try {
+    if (!id) {
+      return jsonResponse({
+        success: false,
+        message: "Thiếu ID chiến lược."
+      });
+    }
+
+    // Bắt buộc xác thực quyền Admin
+    const auth = validatePasskeyAuth(passkey);
+    if (!auth.valid || auth.role !== 'admin') {
+      return jsonResponse({
+        success: false,
+        message: "Từ chối truy cập: Thao tác lưu bài viết yêu cầu quyền Quản trị viên (Admin) hợp lệ."
       });
     }
     
@@ -402,16 +527,6 @@ function getOrCreateSheetByName(name, headers) {
     sheet.setFrozenRows(1);
   }
   return sheet;
-}
-
-// Khởi tạo passkey mặc định nếu trống
-function checkAndInitDefaultPasskeys(sheet) {
-  const data = sheet.getDataRange().getValues();
-  if (data.length <= 1) {
-    const now = new Date();
-    sheet.appendRow(['SA_ADMIN_2026', 'admin', 'active', 'lifetime', 'Master Admin Passkey mặc định', now]);
-    sheet.appendRow(['VIP', 'vip', 'active', 'lifetime', 'VIP Passkey mặc định', now]);
-  }
 }
 
 // =====================================================================

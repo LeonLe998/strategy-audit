@@ -1,518 +1,601 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 import { 
-  Zap, 
-  TrendingDown, 
-  TrendingUp, 
   ArrowRight, 
-  Cpu, 
-  FileText, 
-  ShieldAlert as DangerIcon,
-  CheckCircle,
-  HelpCircle as HelpIcon
+  Check, 
+  BookOpen, 
+  ShieldCheck, 
+  Sparkles, 
+  TrendingDown, 
+  Clock,
+  ArrowUpRight,
+  Target
 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-
-const HolographicDashboard = () => {
-  return (
-    <div className="relative w-full h-[350px] md:h-[400px] flex items-center justify-center transform scale-90 md:scale-100 mt-8 md:mt-0">
-      {/* Center Main Card (z-20) */}
-      <motion.div 
-        animate={{ y: [0, -15, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-        className="absolute z-20 w-64 md:w-72 bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_0_40px_rgba(0,255,163,0.1)] p-6 flex flex-col items-center"
-      >
-         <div className="w-full h-24 mb-6 flex items-end space-x-2 border-b border-white/10 pb-2">
-            <div className="w-1/5 bg-[#00FFA3]/40 h-[20%] rounded-t-sm"></div>
-            <div className="w-1/5 bg-[#00FFA3]/60 h-[40%] rounded-t-sm"></div>
-            <div className="w-1/5 bg-[#00FFA3]/80 h-[60%] rounded-t-sm"></div>
-            <div className="w-1/5 bg-[#00FFA3] h-[80%] rounded-t-sm shadow-[0_0_15px_#00FFA3]"></div>
-            <div className="w-1/5 bg-[#00FFA3] h-[100%] rounded-t-sm shadow-[0_0_20px_#00FFA3]"></div>
-         </div>
-         <p className="text-white font-bold text-center tracking-wide text-sm md:text-base">WFO Optimization Complete</p>
-      </motion.div>
-
-      {/* Top Right Card (z-30) */}
-      <motion.div 
-        animate={{ y: [0, -10, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0 }}
-        className="absolute z-30 top-4 md:top-8 right-0 md:right-10 bg-[#0B0E14]/80 backdrop-blur-xl border border-[#00FFA3]/40 rounded-xl shadow-2xl p-3 md:p-4 flex items-center space-x-3"
-      >
-         <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#00FFA3] shadow-[0_0_10px_#00FFA3] animate-pulse"></div>
-         <p className="text-[#00FFA3] font-bold text-xs md:text-sm tracking-widest uppercase">Alpha Score: 1.95</p>
-      </motion.div>
-
-      {/* Bottom Left Card (z-10) */}
-      <motion.div 
-        animate={{ y: [0, -12, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute z-10 bottom-4 md:bottom-8 left-0 md:left-10 bg-[#0B0E14]/80 backdrop-blur-xl border border-coral-red/40 rounded-xl shadow-2xl p-3 md:p-4"
-      >
-         <p className="text-coral-red font-bold text-xs md:text-sm tracking-widest uppercase">Max Drawdown: 2.1% (Safe)</p>
-      </motion.div>
-    </div>
-  );
-};
-
 
 interface HomeProps {
   setActiveTab: (tab: string) => void;
 }
 
 export default function Home({ setActiveTab }: HomeProps) {
-  // Calculator States
-  const [winRate, setWinRate] = useState<number>(55);
-  const [riskReward, setRiskReward] = useState<number>(1.5);
-  const [riskPerTrade, setRiskPerTrade] = useState<number>(1);
-  const [initialCapital, setInitialCapital] = useState<number>(100000);
+  const [libraryStats, setLibraryStats] = useState<{ tong: number; da_chay: number; gop: number; chua: number } | null>(null);
+  const [activeCompareTab, setActiveCompareTab] = useState<'before' | 'after'>('after');
 
-  // Math calculations
-  const { ev, isPositiveEv, simData } = useMemo(() => {
-    // Math Expectation (EV) = (WinRate * RewardRatio) - (LossRate * 1)
-    // RewardRatio is Reward / Risk, loss cost is 1 (the unit of risk)
-    const winRatio = winRate / 100;
-    const lossRatio = 1 - winRatio;
-    const computedEv = (winRatio * riskReward) - lossRatio;
-    const isPositive = computedEv > 0;
+  useEffect(() => {
+    let isCurrent = true;
+    fetch('/data/thuvien_data/thu_vien_index.json')
+      .then((response) => {
+        if (!response.ok) throw new Error('Không tải được danh mục chiến lược');
+        return response.json();
+      })
+      .then((data) => {
+        if (isCurrent) {
+          setLibraryStats({ tong: data.tong, da_chay: data.da_chay, gop: data.gop, chua: data.chua });
+        }
+      })
+      .catch(() => undefined);
 
-    // Generate simulated dynamic equity curve (30 trades) based on math parameters
-    const data = [];
-    let currentEquity = initialCapital;
-    data.push({ trade: 0, equity: Math.round(currentEquity), status: 'Start' });
+    return () => { isCurrent = false; };
+  }, []);
 
-    // Seeded randomness for reproducibility in presentation
-    let seed = 42;
-    const pseudorandom = () => {
-      const x = Math.sin(seed++) * 10000;
-      return x - Math.floor(x);
-    };
-
-    for (let i = 1; i <= 30; i++) {
-      const randValue = pseudorandom();
-      const isWin = randValue < winRatio;
-      const profitDollar = initialCapital * (riskPerTrade / 100) * riskReward;
-      const lossDollar = initialCapital * (riskPerTrade / 100);
-
-      if (isWin) {
-        currentEquity += profitDollar;
-      } else {
-        currentEquity -= lossDollar;
-      }
-
-      data.push({
-        trade: i,
-        equity: Math.round(currentEquity),
-        status: isWin ? 'Win' : 'Loss'
-      });
-    }
-
-    return {
-      ev: parseFloat(computedEv.toFixed(3)),
-      isPositiveEv: isPositive,
-      simData: data
-    };
-  }, [winRate, riskReward, riskPerTrade, initialCapital]);
+  const goToSixBoxes = () => {
+    window.location.assign('/sauo?trang-chu');
+  };
 
   return (
-    <div id="home-view" className="space-y-20 pb-20">
-      
-      {/* 1. Hero Section */}
-      <section id="hero-section" className="relative pt-10 md:pt-16 pb-12 overflow-hidden">
-        {/* Soft atmospheric gradient */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neon-green/10 via-transparent to-transparent pointer-events-none"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 relative z-10 text-center lg:text-left">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center space-x-2 bg-coral-red/10 border border-coral-red/20 px-4 py-1.5 rounded-full text-xs font-mono text-coral-red font-bold uppercase tracking-widest mb-6"
-              >
-                <DangerIcon className="w-3.5 h-3.5" />
-                <span>90% TRADER CÓ KIẾN THỨC VẪN THUA LỖ. TỐI ƯU HỆ THỐNG CHÍNH LÀ VŨ KHÍ BẬC NHẤT.</span>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-4xl md:text-6xl font-display font-bold tracking-tight text-white leading-tight md:leading-none"
-              >
-                Chúng tôi kiểm toán, ép xung và <br />
-                <span className="text-neon-green font-extrabold relative">
-                  tối ưu hóa Walk-Forward
-                  <span className="absolute -bottom-1 left-0 w-full h-[3px] bg-neon-green/30"></span>
-                </span>{" "}
-                chiến lược của bạn.
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="mt-6 text-gray-400 text-lg max-w-2xl font-sans font-light"
-              >
-                Ngừng giao dịch theo linh cảm hay tối ưu hóa bừa bãi. Strategy Audit áp dụng chuẩn mực của các Quỹ Định Lượng chuyên nghiệp để đưa hệ thống của bạn vượt qua thử thách WFO.
-              </motion.p>
+    <div id="home-view" className="pb-24">
+      {/* ═════════════════ HERO SECTION ═════════════════ */}
+      <section className="px-5 pb-16 pt-8 md:pb-24 md:pt-16">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-neon-green/30 bg-neon-green/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-neon-green backdrop-blur-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon-green opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-neon-green"></span>
+              </span>
+              Phòng Kiểm Định Chiến Lược · Đo Trước Khi Tin
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <HolographicDashboard />
-            </motion.div>
+            <h1 className="mt-5 max-w-3xl font-display text-4xl font-extrabold leading-[1.15] text-white md:text-5xl lg:text-6xl">
+              Học xong một phương pháp,
+              <span className="mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-neon-green via-emerald-400 to-teal-300">
+                làm sao biết nó có kỳ vọng dương?
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-300 md:text-lg">
+              Đa số trader đốt tiền thật vì tin vào vài lệnh thắng quá khứ hoặc lý thuyết suông. 
+              <strong className="text-white font-semibold"> Strategy Audit </strong> giúp bạn chạy mô phỏng hàng ngàn lệnh trên dữ liệu lịch sử để biết xác suất thắng, mức sụt giảm (Drawdown) và kỳ vọng thực tế trước khi mạo hiểm một đồng vốn.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3.5 sm:flex-row">
+              <button 
+                id="hero-btn-sauo"
+                onClick={goToSixBoxes} 
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-neon-green px-6 py-4 font-bold text-black shadow-[0_0_25px_rgba(0,255,163,0.35)] transition-all duration-200 hover:brightness-110 hover:shadow-[0_0_35px_rgba(0,255,163,0.5)] active:scale-[0.98]"
+              >
+                <span>Bắt đầu tự rà soát 6 ô</span>
+                <span className="text-xs bg-black/20 px-2 py-0.5 rounded font-mono">3 phút · Free</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <button 
+                id="hero-btn-library"
+                onClick={() => setActiveTab('viplibrary')} 
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-4 font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:border-neon-green/60 hover:bg-white/10 active:scale-[0.98]"
+              >
+                <span>Xem 300 ca đo thực tế</span>
+                <ArrowUpRight className="h-4 w-4 text-neon-green" />
+              </button>
+            </div>
+
+            {/* Quick trust metrics */}
+            <div className="mt-6 flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-gray-400">
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-neon-green" /> Không cần tải phần mềm
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-neon-green" /> Không cần chia sẻ bí kíp
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-neon-green" /> 100% dựa trên bằng chứng dữ liệu
+              </span>
+            </div>
           </div>
 
-          {/* Core steps widgets */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
-            {[
-              { num: "01", title: "Mô tả chiến lược", desc: "Nhập quy tắc vào lệnh (EMA, RSI, PA...) và thông số quản lý vốn trong 5 phút.", icon: Cpu },
-              { num: "02", title: "Chạy WFO Kiểm Định", desc: "Hệ thống chia nhỏ dữ liệu quá khứ thành từng nhóm, chạy tối ưu Walk-Forward chống overfitting.", icon: Zap },
-              { num: "03", title: "Nhận Báo Cáo PDF", desc: "Báo cáo chi tiết định lượng: Kỳ vọng toán học, Risk of Ruin, khả năng vượt quỹ (Prop Firm).", icon: FileText }
-            ].map((step, idx) => {
-              const Icon = step.icon;
-              return (
-                <motion.div
-                  key={step.num}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 + idx * 0.1 }}
-                  className="bg-[#131722]/80 backdrop-blur-md border border-[#1F2937] hover:border-neon-green/40 duration-300 p-6 rounded-2xl text-left flex flex-col justify-between h-44"
+          {/* Interactive Contrast Card: Cảm tính vs Đo kiểm */}
+          <div className="relative rounded-3xl border border-white/15 bg-gradient-to-b from-[#131722] to-[#0d1017] p-6 shadow-2xl md:p-7">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-neon-green" />
+                <span className="text-xs font-bold uppercase tracking-wider text-gray-200">Sự thật phũ phàng</span>
+              </div>
+              <div className="flex rounded-lg bg-black/50 p-1 border border-white/10 text-xs">
+                <button
+                  onClick={() => setActiveCompareTab('before')}
+                  className={`rounded-md px-3 py-1 font-medium transition ${
+                    activeCompareTab === 'before'
+                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <span className="text-3xl font-mono text-neon-green font-bold opacity-30 group-hover:opacity-100">{step.num}</span>
-                    <Icon className="w-5 h-5 text-neon-green/80" />
+                  Cảm tính
+                </button>
+                <button
+                  onClick={() => setActiveCompareTab('after')}
+                  className={`rounded-md px-3 py-1 font-medium transition ${
+                    activeCompareTab === 'after'
+                      ? 'bg-neon-green/20 text-neon-green border border-neon-green/40 font-bold'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Sau khi đo kiểm
+                </button>
+              </div>
+            </div>
+
+            {activeCompareTab === 'before' ? (
+              <div className="mt-5 space-y-4 animate-fadeIn">
+                <div className="rounded-xl border border-rose-500/20 bg-rose-950/20 p-4">
+                  <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
+                    <TrendingDown className="h-4 w-4" />
+                    <span>Ảo tưởng khi mới học phương pháp</span>
                   </div>
-                  <div>
-                    <h3 className="text-white text-base font-bold mb-1">{step.title}</h3>
-                    <p className="text-gray-400 text-xs leading-relaxed">{step.desc}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-gray-300">
+                    "Thấy video Youtube vào lệnh đẹp, thắng liên tiếp 3 lệnh. Nghĩ đây là chén thánh, vội nạp tiền thật và tăng volume."
+                  </p>
+                </div>
+
+                <div className="space-y-2.5 text-xs text-gray-300">
+                  <div className="flex items-start gap-2.5">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-bold">✕</span>
+                    <p>Không biết tỷ lệ thắng thật qua 1.000 lệnh chỉ có 34%.</p>
                   </div>
-                </motion.div>
-              );
-            })}
+                  <div className="flex items-start gap-2.5">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-bold">✕</span>
+                    <p>Bất ngờ dính chuỗi 6 lệnh thua liên tiếp → hoảng loạn dời Stop Loss, gồng lỗ.</p>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-500/20 text-rose-400 text-[10px] font-bold">✕</span>
+                    <p>Cháy tài khoản sau 3 tháng mà không biết do phương pháp sai hay do mình thiếu may mắn.</p>
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-rose-950/40 border border-rose-500/30 p-3 text-center">
+                  <span className="text-xs font-semibold text-rose-300">Hậu quả: Mất tiền thật, mất thời gian, rơi vào vòng lặp đổi phương pháp liên tục.</span>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 space-y-4 animate-fadeIn">
+                <div className="rounded-xl border border-neon-green/30 bg-neon-green/10 p-4">
+                  <div className="flex items-center gap-2 text-neon-green font-bold text-sm">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>Thấu hiểu bằng dữ liệu định lượng (Audit)</span>
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-gray-300">
+                    "Chạy 1.500 lệnh qua 5 năm lịch sử (bao gồm cả Out-of-Sample). Nhìn rõ các năm lời/lỗ và rủi ro sụt giảm tối đa."
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded-lg bg-[#0B0E14] p-2.5 border border-white/5">
+                    <p className="text-[10px] text-gray-400">Win Rate</p>
+                    <p className="text-sm font-bold text-white mt-0.5">38.2%</p>
+                  </div>
+                  <div className="rounded-lg bg-[#0B0E14] p-2.5 border border-white/5">
+                    <p className="text-[10px] text-gray-400">Kỳ vọng (EV)</p>
+                    <p className="text-sm font-bold text-neon-green mt-0.5">+0.32 R</p>
+                  </div>
+                  <div className="rounded-lg bg-[#0B0E14] p-2.5 border border-white/5">
+                    <p className="text-[10px] text-gray-400">Max DD</p>
+                    <p className="text-sm font-bold text-amber-400 mt-0.5">-14.5%</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5 text-xs text-gray-300">
+                  <div className="flex items-start gap-2.5">
+                    <Check className="h-4 w-4 shrink-0 text-neon-green mt-0.5" />
+                    <p>Gặp chuỗi 5 lệnh thua vẫn bình thản vì biết trong 5 năm từng có chuỗi thua 7 lệnh bình thường.</p>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <Check className="h-4 w-4 shrink-0 text-neon-green mt-0.5" />
+                    <p>Biết rõ khung giờ nào hệ thống chạy tốt, lúc nào nên tắt máy đứng ngoài bảo toàn vốn.</p>
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-neon-green/10 border border-neon-green/30 p-3 text-center">
+                  <span className="text-xs font-semibold text-neon-green">Lợi thế: Tự tin giao dịch có kỷ luật vì đã thấy bức tranh toàn cảnh bằng số liệu.</span>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-5 border-t border-white/10 pt-4 flex items-center justify-between text-xs text-gray-400">
+              <span>Khoảng trống quan trọng nhất:</span>
+              <span className="font-semibold text-white">HỌC → <span className="text-neon-green font-bold">ĐO</span> → THỰC HÀNH</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═════════════════ SHOCKING STATS SECTION ═════════════════ */}
+      <section className="border-y border-white/10 bg-[#10141d]/80 px-5 py-14 md:py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center max-w-3xl mx-auto">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-neon-green">
+              Bằng chứng từ phòng kiểm định
+            </p>
+            <h2 className="mt-3 font-display text-3xl font-extrabold text-white md:text-4xl">
+              Sự thật về 242 phương pháp đã được đo
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-gray-300 md:text-base">
+              Chúng tôi đưa 242 chiến lược phổ biến trên thị trường (Breakout, SMC, FVG, RSI Divergence, EMA Cross...) vào kiểm định định lượng qua nhiều năm dữ liệu lịch sử. Kết quả làm nhiều người giật mình:
+            </p>
           </div>
 
-          {/* Action and Slots info */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-12 space-y-4"
-          >
+          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+            {/* Box 1: 78% CHÁT */}
+            <div className="relative rounded-2xl border border-rose-500/30 bg-gradient-to-b from-rose-950/20 to-[#131722] p-6 text-left">
+              <div className="flex items-center justify-between">
+                <span className="rounded-md bg-rose-500/20 px-2.5 py-1 text-xs font-bold text-rose-400">
+                  CHÁT · 188 / 242
+                </span>
+                <span className="text-3xl font-display font-black text-rose-400">78%</span>
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-white">Thua lỗ hoặc âm kỳ vọng</h3>
+              <p className="mt-2 text-xs leading-relaxed text-gray-400">
+                Khi tính đúng phí giao dịch, trượt giá và chạy qua các năm biến động, 78% phương pháp nổi tiếng trên mạng đều đốt cụt vốn về dài hạn.
+              </p>
+              <div className="mt-4 pt-4 border-t border-rose-500/20 text-[11px] font-medium text-rose-300/80">
+                ⚠️ Nếu chưa đo, bạn rất có thể đang dùng tiền thật cho một phương pháp nằm trong 78% này.
+              </div>
+            </div>
+
+            {/* Box 2: 16% TÌNH HUỐNG */}
+            <div className="relative rounded-2xl border border-amber-500/30 bg-gradient-to-b from-amber-950/20 to-[#131722] p-6 text-left">
+              <div className="flex items-center justify-between">
+                <span className="rounded-md bg-amber-500/20 px-2.5 py-1 text-xs font-bold text-amber-400">
+                  TÌNH HUỐNG · 39 / 242
+                </span>
+                <span className="text-3xl font-display font-black text-amber-400">16%</span>
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-white">Chỉ chạy được ở pha hẹp</h3>
+              <p className="mt-2 text-xs leading-relaxed text-gray-400">
+                Phương pháp chỉ có lãi trong một chu kỳ thuận lợi (chỉ trend mạnh hoặc chỉ sideway). Khi thị trường đổi pha, tài khoản bị sụt giảm nghiêm trọng.
+              </p>
+              <div className="mt-4 pt-4 border-t border-amber-500/20 text-[11px] font-medium text-amber-300/80">
+                💡 Cần quy tắc bộ lọc điều kiện thị trường rõ ràng trước khi bấm lệnh.
+              </div>
+            </div>
+
+            {/* Box 3: 6% CHẤT */}
+            <div className="relative rounded-2xl border border-neon-green/40 bg-gradient-to-b from-neon-green/10 to-[#131722] p-6 text-left shadow-[0_0_30px_rgba(0,255,163,0.1)]">
+              <div className="flex items-center justify-between">
+                <span className="rounded-md bg-neon-green/20 px-2.5 py-1 text-xs font-bold text-neon-green">
+                  CHẤT · 15 / 242
+                </span>
+                <span className="text-3xl font-display font-black text-neon-green">6%</span>
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-white">Có lợi thế thống kê thật</h3>
+              <p className="mt-2 text-xs leading-relaxed text-gray-300">
+                Đạt tiêu chuẩn khắt khe: sống sót qua giai đoạn Out-of-Sample, kỳ vọng dương ổn định qua nhiều năm, mức sụt giảm trong tầm kiểm soát.
+              </p>
+              <div className="mt-4 pt-4 border-t border-neon-green/20 text-[11px] font-medium text-neon-green">
+                ✨ Số ít chiến lược xứng đáng để bạn dành vốn và kỷ luật theo đuổi.
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10 text-center">
             <button
-              onClick={() => setActiveTab('audit')}
-              className="px-8 py-4 rounded-xl bg-neon-green text-black font-display font-medium text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(0,255,163,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer inline-flex items-center space-x-2"
+              onClick={() => setActiveTab('viplibrary')}
+              className="inline-flex items-center gap-2 rounded-xl bg-neon-green/15 border border-neon-green/40 px-6 py-3.5 text-sm font-bold text-neon-green hover:bg-neon-green hover:text-black transition"
             >
-              <span>Kiểm toán chiến lược của bạn ngay</span>
-              <ArrowRight className="w-4 h-4 text-black" />
+              <span>Xem danh sách {libraryStats ? `${libraryStats.tong} chiến lược (${libraryStats.da_chay} đã kiểm định)` : '300 chiến lược'} trong thư viện</span>
+              <ArrowRight className="h-4 w-4" />
             </button>
-
-            {/* Capacity Slot Notice */}
-            <div className="flex items-center justify-center space-x-2 text-xs font-mono text-gray-500 bg-[#131722]/40 border border-[#1F2937]/50 max-w-sm mx-auto px-4 py-2 rounded-lg">
-              <span className="w-2 h-2 rounded-full bg-coral-red animate-pulse"></span>
-              <span>Năng lực máy chủ giới hạn: Xử lý tối đa 50 chiến lược/tuần.</span>
-              <span className="text-coral-red font-bold">Còn trống: 07 slots</span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* 2. Reality Check Comparison */}
-      <section id="reality-check-section" className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <span className="text-xs uppercase tracking-widest font-mono text-neon-green font-bold bg-neon-green/10 px-3 py-1 rounded">Thức Tỉnh (Reality Check)</span>
-          <h2 className="text-2xl md:text-4xl font-display font-bold mt-3 text-white">Tư Duy Cảm Tính vs Tư Duy Định Lượng</h2>
-          <p className="text-gray-400 text-sm mt-3 max-w-2xl mx-auto">
-            Chiến lược không cần "vẽ hoàn hảo" trên biểu đồ quá khứ, nó cần kiếm được tiền ở tương lai. Việc bạn ngồi tinh chỉnh thông số liên tục cho khớp với lịch sử (Curve-fitting) chỉ kéo bạn gần hơn đến cháy quỹ.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Strategy A (Feeling/Overfit) */}
-          <div className="bg-[#131722]/60 backdrop-blur-md border border-coral-red/20 hover:border-coral-red/40 transition-all duration-300 rounded-2xl p-8 relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute top-0 left-0 w-full h-1 bg-coral-red"></div>
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono font-bold bg-coral-red/10 text-coral-red px-2 py-0.5 rounded uppercase">Thủ Công & Lãng Phí</span>
-                <TrendingDown className="w-5 h-5 text-coral-red" />
-              </div>
-              <h3 className="text-xl font-display font-bold text-white mb-2">Chiến Lược A: Backtest Thủ Công</h3>
-              <p className="text-gray-400 text-xs mb-6 font-sans leading-relaxed">
-                Backtest bằng cách thủ công replay tua lại nến để mất vài tuần để thu thập đủ 100 lệnh và lãng phí hàng tháng trời chỉ để thử nghiệm đúng 1 kịch bản.
-              </p>
-
-              <div className="space-y-3.5 border-t border-[#1F2937] pt-6 text-sm">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Phương pháp thực thi</span>
-                  <span className="text-coral-red font-bold">Thao tác thủ công dậm chân tại chỗ</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Thời gian tiêu hoang</span>
-                  <span className="text-coral-red font-bold">Vài tuần đến vài tháng trời</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Số lượng cấu hình test</span>
-                  <span className="text-coral-red font-bold">Chỉ đúng 1 kịch bản đơn độc</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 bg-coral-red/5 border border-coral-red/10 p-3.5 rounded-lg text-xs text-coral-red leading-relaxed font-sans">
-              <strong>Hạn chế cốt lõi:</strong> Bạn tốn quá nhiều thời gian vô ích để thu thập mẫu số liệu quá nhỏ, dễ nản chí và chịu rủi ro overfitting cực kỳ cao.
-            </div>
-          </div>
-
-          {/* Strategy B (Quant/WFO) */}
-          <div className="bg-[#131722]/60 backdrop-blur-md border border-neon-green/20 hover:border-neon-green/45 transition-all duration-300 rounded-2xl p-8 relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute top-0 left-0 w-full h-1 bg-neon-green"></div>
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono font-bold bg-neon-green/10 text-neon-green px-2 py-0.5 rounded uppercase">Quét Đa Biến Tự Động</span>
-                <TrendingUp className="w-5 h-5 text-neon-green" />
-              </div>
-              <h3 className="text-xl font-display font-bold text-white mb-2">Chiến Lược B: Strategy Audit</h3>
-              <p className="text-gray-400 text-xs mb-6 font-sans leading-relaxed">
-                Hệ thống Strategy Audit sẽ chạy quét toàn bộ dữ liệu đồng loạt ở hàng trăm cấu hình thông số khác nhau để tìm ra top các cấu hình mang lại Winrate cao nhất, top các cấu hình lợi nhuận tốt nhất.
-              </p>
-
-              <div className="space-y-3.5 border-t border-[#1F2937] pt-6 text-sm">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Phương pháp thực thi</span>
-                  <span className="text-neon-green font-bold">Quét dữ liệu đa chiều thông minh</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Thời gian tiêu hoang</span>
-                  <span className="text-neon-green font-bold">Tối ưu tức thì chuẩn xác</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-400">Số lượng cấu hình test</span>
-                  <span className="text-neon-green font-bold">Hàng trăm cấu hình đồng thời</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 bg-neon-green/5 border border-neon-green/10 p-3.5 rounded-lg text-xs text-neon-green leading-relaxed font-sans">
-              <strong>Thế mạnh định lượng:</strong> Nhanh chóng chỉ ra đâu là vùng thông số mang lại Winrate cao nhất và lợi nhuận tốt nhất cho hệ thống giao dịch của bạn.
-            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Interactive Math Expectation & Risk of Ruin Simulator */}
-      <section id="simulator-section" className="max-w-7xl mx-auto px-4">
-        <div className="bg-[#131722]/40 border border-[#1F2937]/80 rounded-3xl p-6 md:p-10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-neon-green/5 rounded-full blur-[100px] pointer-events-none"></div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Controls */}
-            <div className="lg:col-span-5 space-y-6">
-              <div>
-                <span className="text-xs font-mono font-bold text-neon-green tracking-wider uppercase">Alpha Engine Simulator</span>
-                <h2 className="text-xl md:text-3xl font-display font-bold text-white mt-2">Tính toán và Mô phỏng alpha quỹ</h2>
-                <p className="text-gray-400 text-xs mt-2 font-sans leading-relaxed">
-                  Trực tiếp điều chỉnh các tham số hệ thống để mô phỏng biểu đồ tăng trường của 30 lệnh tiếp theo và tính Kỳ Vọng Toán Học (Expected Value) thực tế.
+      {/* ═════════════════ 3 CRITICAL QUESTIONS (SELF-TEST) ═════════════════ */}
+      <section className="px-5 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1fr] items-center">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-neon-green">Tự kiểm tra nhanh</p>
+              <h2 className="mt-3 font-display text-3xl font-extrabold text-white md:text-4xl">
+                Phương pháp của bạn có trả lời được 3 câu hỏi này?
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-gray-300 md:text-base">
+                Nếu bạn đang giao dịch tiền thật nhưng chưa thể trả lời chính xác 3 câu hỏi sau bằng số liệu, bạn đang đánh cược với xác suất chống lại mình:
+              </p>
+
+              <div className="mt-8 space-y-4">
+                <div className="rounded-xl border border-white/10 bg-[#131722]/80 p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-neon-green font-mono">01</span>
+                    <h3 className="text-sm font-semibold text-white">Quy tắc có đủ rõ để người lạ bấm y hệt bạn?</h3>
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-gray-400 pl-10">
+                    Nếu câu trả lời là "tùy cảm nhận thị trường" hay "thấy nến đẹp thì vào", bạn chưa có một hệ thống, bạn chỉ có linh cảm ngẫu hứng.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-[#131722]/80 p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-neon-green font-mono">02</span>
+                    <h3 className="text-sm font-semibold text-white">Chuỗi thua dài nhất (Max Consec Losses) là bao nhiêu lệnh?</h3>
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-gray-400 pl-10">
+                    Nếu chưa đo, khi gặp chuỗi 6 lệnh thua bạn sẽ nghi ngờ bản thân, hủy kỷ luật và gồng lỗ. Người có số liệu sẽ biết chuỗi đó hoàn toàn bình thường.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-[#131722]/80 p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-neon-green font-mono">03</span>
+                    <h3 className="text-sm font-semibold text-white">Mức sụt giảm tài khoản lớn nhất (Max Drawdown) là bao nhiêu %?</h3>
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-gray-400 pl-10">
+                    Tài khoản của bạn có chịu nổi một đợt rút vốn 25% trong 3 tháng không? Nếu không biết trước con số này, tâm lý bạn sẽ gãy trước khi hệ thống kịp phục hồi.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Box right side */}
+            <div className="rounded-3xl border border-neon-green/30 bg-gradient-to-br from-[#131722] via-[#0d1017] to-[#10141d] p-7 md:p-9 shadow-xl">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neon-green/20 text-neon-green">
+                  <Target className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-bold text-white">Bắt đầu bằng bước nhỏ nhất</h3>
+                  <p className="text-xs text-gray-400">Không cần toán cao cấp · 3 phút hoàn thành</p>
+                </div>
+              </div>
+
+              <p className="mt-6 text-sm leading-relaxed text-gray-300">
+                Bài kiểm tra <strong className="text-white">"Sáu Ô"</strong> được thiết kế để bạn tự rà soát phương pháp của mình:
+              </p>
+
+              <div className="mt-4 space-y-2.5 text-xs text-gray-300">
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-neon-green"></span>
+                  <span>Ô 1: Lối đánh (Phá vỡ, Hồi quy hay Theo xu hướng?)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-neon-green"></span>
+                  <span>Ô 2: Chỗ vào (Tín hiệu kích hoạt lệnh cụ thể là gì?)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-neon-green"></span>
+                  <span>Ô 3: Chỗ thoát (Cắt lỗ ở đâu, chốt lời ra sao?)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-neon-green"></span>
+                  <span>Ô 4-6: Nhịp lệnh, khung giờ và tần suất giao dịch</span>
+                </div>
+              </div>
+
+              <div className="mt-8 border-t border-white/10 pt-6">
+                <button
+                  onClick={goToSixBoxes}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-neon-green py-4 px-6 font-bold text-black hover:brightness-110 transition shadow-[0_0_20px_rgba(0,255,163,0.3)]"
+                >
+                  <span>Tự làm bài kiểm tra 6 ô ngay</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <p className="mt-3 text-center text-xs text-gray-400">
+                  Trả lời xong bạn sẽ nhận được điểm rà soát và biết ô nào đang bị bỏ trống.
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="space-y-5 border-t border-[#1F2937] pt-5">
-                {/* Account capital size */}
-                <div>
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-gray-400 font-medium">Quy mô vốn tài khoản (USD)</span>
-                    <span className="text-white font-mono font-semibold">${initialCapital.toLocaleString()}</span>
-                  </div>
-                  <input 
-                    type="range"
-                    min="10000"
-                    max="300000"
-                    step="10000"
-                    value={initialCapital}
-                    onChange={(e) => setInitialCapital(Number(e.target.value))}
-                    className="w-full accent-neon-green cursor-pointer h-1.5 bg-[#0B0E14] rounded-lg"
-                  />
-                </div>
+      {/* ═════════════════ 3-STEP ROADMAP SECTION ═════════════════ */}
+      <section className="border-t border-white/10 bg-[#10141d]/70 px-5 py-16 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-neon-green">Lộ trình thực tế</p>
+            <h2 className="mt-3 font-display text-3xl font-extrabold text-white md:text-4xl">
+              Từ người mới đến trader dựa trên dữ liệu
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-gray-400">
+              Không cần học toán phức tạp. Bạn đi từng bước có hướng dẫn rõ ràng:
+            </p>
+          </div>
 
-                {/* Winrate */}
-                <div>
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-gray-400 font-medium">Tỷ lệ thắng (Win Rate %)</span>
-                    <span className="text-neon-green font-mono font-bold">{winRate}%</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <input 
-                      type="range"
-                      min="10"
-                      max="90"
-                      step="1"
-                      value={winRate}
-                      onChange={(e) => setWinRate(Number(e.target.value))}
-                      className="w-full accent-neon-green cursor-pointer h-1.5 bg-[#0B0E14] rounded-lg"
-                    />
-                  </div>
-                </div>
-
-                {/* Risk:Reward ratio */}
-                <div>
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-gray-400 font-medium">Tỷ lệ Lợi nhuận/Rủi ro (R:R Ratio)</span>
-                    <span className="text-neon-green font-mono font-bold">1 : {riskReward}</span>
-                  </div>
-                  <input 
-                    type="range"
-                    min="0.3"
-                    max="5.0"
-                    step="0.1"
-                    value={riskReward}
-                    onChange={(e) => setRiskReward(Number(e.target.value))}
-                    className="w-full accent-neon-green cursor-pointer h-1.5 bg-[#0B0E14] rounded-lg"
-                  />
-                </div>
-
-                {/* Risk per trade */}
-                <div>
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-gray-400 font-medium">Rủi ro tối đa mỗi lệnh (% tài khoản)</span>
-                    <span className="text-coral-red font-mono font-bold">{riskPerTrade}%</span>
-                  </div>
-                  <input 
-                    type="range"
-                    min="0.5"
-                    max="5.0"
-                    step="0.1"
-                    value={riskPerTrade}
-                    onChange={(e) => setRiskPerTrade(Number(e.target.value))}
-                    className="w-full accent-neon-green cursor-pointer h-1.5 bg-[#0B0E14] rounded-lg"
-                  />
-                  <span className="text-[10px] text-gray-500 block mt-1 leading-normal">
-                    *Mức rủi ro an toàn cho quỹ prop firm thường là 0.5% - 1%. Tăng trên 3% rủi ro cháy tài khoản sẽ bùng nổ cực cao do chuỗi thua.
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {/* Step 1 */}
+            <div className="relative rounded-2xl border border-white/10 bg-[#131722]/90 p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold font-mono text-neon-green px-2 py-1 rounded bg-neon-green/10 border border-neon-green/30">
+                    BƯỚC 01
                   </span>
+                  <Clock className="h-4 w-4 text-gray-500" />
                 </div>
+                <h3 className="mt-4 text-lg font-bold text-white">Tự rà soát 6 ô</h3>
+                <p className="mt-2 text-xs leading-relaxed text-gray-400">
+                  Trả lời sáu câu hỏi bằng ngôn ngữ tự nhiên. Bạn sẽ thấy ngay quy tắc nào đã rõ ràng, và ô nào bạn đang đánh bừa theo cảm xúc.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                <span className="text-xs text-neon-green font-medium">Miễn phí · ~3 phút</span>
+                <button onClick={goToSixBoxes} className="text-xs font-bold text-white hover:text-neon-green inline-flex items-center gap-1">
+                  Làm ngay <ArrowRight className="h-3 w-3" />
+                </button>
               </div>
             </div>
 
-            {/* Right Display Board & Chart */}
-            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-              {/* Alpha Card */}
-              <div id="ev-card-output" className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-[#0B0E14] border border-[#1F2937] p-4 rounded-xl text-center shadow-[inset_0_0_20px_rgba(0,255,163,0.02)]">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Lợi Nhuận Kỳ Vọng</span>
-                  <span className={`text-2xl font-mono font-bold font-display ${isPositiveEv ? 'text-neon-green' : 'text-coral-red'}`}>
-                    {ev > 0 ? `+${ev}` : ev}
+            {/* Step 2 */}
+            <div className="relative rounded-2xl border border-white/10 bg-[#131722]/90 p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold font-mono text-neon-green px-2 py-1 rounded bg-neon-green/10 border border-neon-green/30">
+                    BƯỚC 02
                   </span>
+                  <BookOpen className="h-4 w-4 text-gray-500" />
                 </div>
-                <div className="bg-[#0B0E14] border border-[#1F2937] p-4 rounded-xl text-center">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Trung bình Thắng (Avg Win)</span>
-                  <span className="text-xl text-white font-mono font-bold">
-                    +${(initialCapital * (riskPerTrade / 100) * riskReward).toLocaleString()}
-                  </span>
-                </div>
-                <div className="bg-[#0B0E14] border border-[#1F2937] p-4 rounded-xl text-center">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest block mb-1">Trung bình Thua (Avg Loss)</span>
-                  <span className="text-xl text-coral-red font-mono font-bold">
-                    -${(initialCapital * (riskPerTrade / 100)).toLocaleString()}
-                  </span>
-                </div>
+                <h3 className="mt-4 text-lg font-bold text-white">Đối chiếu Thư viện 300 ca đo</h3>
+                <p className="mt-2 text-xs leading-relaxed text-gray-400">
+                  Tra cứu phương pháp bạn đang quan tâm (hoặc dạng tương tự). Xem số liệu kiểm định thực tế qua 5 năm: Winrate, EV, số lệnh và các năm thua lỗ.
+                </p>
               </div>
-
-              {/* Status Message */}
-              <div id="ev-message-output">
-                {isPositiveEv ? (
-                  <div className="bg-neon-green/5 border border-neon-green/20 p-4 rounded-2xl flex items-start space-x-3 text-xs text-neon-green leading-relaxed">
-                    <CheckCircle className="w-5 h-5 shrink-0 text-neon-green" />
-                    <div>
-                      <strong className="font-bold">✅ HỆ THỐNG CÓ ALPHA:</strong> Kỳ vọng toán học (EV) Dương. Tuy nhiên, để đảm bảo đây không phải là ảo giác của bẫy Khớp Đường Cong (Curve-fitting), bạn vẫn cần chạy kiểm toán WFO.
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-coral-red/5 border border-coral-red/20 p-4 rounded-2xl flex items-start space-x-3 text-xs text-coral-red leading-relaxed">
-                    <DangerIcon className="w-5 h-5 shrink-0 text-coral-red" />
-                    <div>
-                      <strong className="font-bold">⚠️ CẢNH BÁO:</strong> Kỳ vọng toán học (EV) đang ÂM. Xác suất cháy quỹ (Risk of Ruin) &gt; 85%. Hệ thống của bạn sẽ sụp đổ, cần tối ưu đa biến ngay lập tức!
-                    </div>
-                  </div>
-                )}
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                <span className="text-xs text-gray-300 font-medium">300 chiến lược có sẵn</span>
+                <button onClick={() => setActiveTab('viplibrary')} className="text-xs font-bold text-white hover:text-neon-green inline-flex items-center gap-1">
+                  Mở thư viện <ArrowRight className="h-3 w-3" />
+                </button>
               </div>
+            </div>
 
-              {/* Equity Chart */}
-              <div className="bg-[#0B0E14] border border-[#1F2937] p-4 rounded-2xl h-56 flex flex-col justify-between">
-                <div className="flex items-center justify-between pointer-events-none mb-1">
-                  <span className="text-[10px] font-mono tracking-wider uppercase text-gray-500">Mô phỏng 30 lệnh giao dịch (Out-of-sample)</span>
-                  <span className="text-[10px] font-mono font-bold text-neon-green uppercase">Live Equity Curve</span>
+            {/* Step 3 */}
+            <div className="relative rounded-2xl border border-white/10 bg-[#131722]/90 p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold font-mono text-neon-green px-2 py-1 rounded bg-neon-green/10 border border-neon-green/30">
+                    BƯỚC 03
+                  </span>
+                  <ShieldCheck className="h-4 w-4 text-gray-500" />
                 </div>
-                <div className="w-full h-44">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={simData} margin={{ top: 5, right: 5, left: 10, bottom: 5 }}>
-                      <defs>
-                        <linearGradient id="colorEquity" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor={isPositiveEv ? '#00FFA3' : '#FF3366'} stopOpacity={0.2}/>
-                          <stop offset="95%" stopColor={isPositiveEv ? '#00FFA3' : '#FF3366'} stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <XAxis dataKey="trade" stroke="#4b5563" fontSize={9} fontStyle="JetBrains Mono" tickLine={false} />
-                      <YAxis 
-                        stroke="#4b5563" 
-                        fontSize={9} 
-                        fontStyle="JetBrains Mono" 
-                        domain={['dataMin - 1000', 'dataMax + 1000']}
-                        tickFormatter={(v) => `$${(v/1000).toFixed(0)}k`}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <Tooltip 
-                        contentStyle={{ backgroundColor: '#131722', border: '1px solid #1F2937', borderRadius: '8px' }}
-                        labelStyle={{ color: '#9ca3af', fontSize: '10px', fontFamily: 'JetBrains Mono' }}
-                        itemStyle={{ color: '#fff', fontSize: '11px', fontFamily: 'JetBrains Mono' }}
-                        formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Equity']}
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="equity" 
-                        stroke={isPositiveEv ? '#00FFA3' : '#FF3366'} 
-                        strokeWidth={2}
-                        fillOpacity={1} 
-                        fill="url(#colorEquity)" 
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+                <h3 className="mt-4 text-lg font-bold text-white">Đồng hành & Đo kiểm chuyên sâu</h3>
+                <p className="mt-2 text-xs leading-relaxed text-gray-400">
+                  Đưa phương pháp riêng của bạn vào quy trình kiểm định In-Sample và Out-of-Sample. Nhận báo cáo định lượng để tự tin giao dịch hoặc dừng lại kịp lúc.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                <span className="text-xs text-gray-300 font-medium">Chương trình thành viên</span>
+                <button onClick={() => setActiveTab('membership')} className="text-xs font-bold text-white hover:text-neon-green inline-flex items-center gap-1">
+                  Xem chi tiết <ArrowRight className="h-3 w-3" />
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. Bottom Action CTA */}
-      <section id="banner-action-bottom" className="max-w-7xl mx-auto px-4 text-center">
-        <div className="bg-gradient-to-r from-neon-green/5 via-coral-red/5 to-transparent border border-[#1F2937] p-8 md:p-12 rounded-3xl max-w-4xl mx-auto flex flex-col items-center">
-          <HelpIcon className="w-12 h-12 text-neon-green/80 mb-4 animate-bounce" />
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-white uppercase">Chiến lược của bạn đã đủ định lượng chưa?</h2>
-          <p className="text-gray-400 text-sm mt-3 max-w-lg">
-            Đừng để tài khoản quỹ bốc hơi vì cảm tính thêm một ngày nào nữa. Gửi ngay logic hệ thống để nhận báo cáo ép xung WFO chuyên sâu.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 w-full max-w-md">
-            <button 
-              onClick={() => setActiveTab('audit')}
-              className="w-full sm:w-auto px-6 py-3.5 bg-neon-green text-black font-semibold text-xs rounded-xl tracking-wider uppercase shadow-[0_0_15px_rgba(0,255,163,0.2)] hover:scale-[1.01] active:scale-[0.99] transition duration-200 cursor-pointer"
-            >
-              Đưa chiến lược lên hệ thống định lượng ngay
-            </button>
-            <button 
-              onClick={() => setActiveTab('vault')}
-              className="w-full sm:w-auto px-6 py-3.5 bg-transparent text-gray-300 font-semibold text-xs rounded-xl tracking-wider uppercase border border-[#1F2937] hover:border-gray-500 transition duration-200 cursor-pointer"
-            >
-              Xem Thư viện tài liệu
-            </button>
+      {/* ═════════════════ METHODOLOGY PREVIEW (SERVICES TEASER) ═════════════════ */}
+      <section className="px-5 py-16 md:py-20">
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-neon-green">Quy chuẩn định lượng</p>
+            <h2 className="mt-3 font-display text-3xl font-extrabold text-white md:text-4xl">
+              Vì sao backtest thông thường hay bị lừa?
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-gray-300">
+              Nhiều người thử vài tham số trên biểu đồ thấy lãi đậm, nhưng đem đánh tiền thật thì cháy. Đó là cái bẫy <strong className="text-white">"Khớp quá mức" (Overfitting)</strong>.
+            </p>
+
+            <div className="mt-6 space-y-3.5 text-xs text-gray-300">
+              <div className="flex gap-3">
+                <Check className="h-4 w-4 shrink-0 text-neon-green mt-0.5" />
+                <div>
+                  <strong className="text-white">Tách dữ liệu In-Sample & Out-of-Sample:</strong> Dùng một giai đoạn để xây dựng quy tắc, và một giai đoạn độc lập mà phương pháp chưa từng nhìn thấy để kiểm chứng.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Check className="h-4 w-4 shrink-0 text-neon-green mt-0.5" />
+                <div>
+                  <strong className="text-white">Đo lường Kỳ vọng toán học (EV):</strong> Không chỉ nhìn Winrate. Một phương pháp thắng 70% nhưng mỗi lần thua mất 3 lần thắng vẫn là phương pháp âm kỳ vọng.
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Check className="h-4 w-4 shrink-0 text-neon-green mt-0.5" />
+                <div>
+                  <strong className="text-white">Kiểm tra trượt giá và chi phí sàn:</strong> Mô phỏng sát điều kiện giao dịch thực tế nhất, tránh ảo tưởng trên giấy.
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <button 
+                onClick={() => setActiveTab('services')} 
+                className="inline-flex items-center gap-2 text-sm font-bold text-neon-green hover:underline"
+              >
+                Xem chi tiết cách một báo cáo kiểm định được thực hiện <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/15 bg-[#131722] p-6 text-xs text-gray-300 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <span className="font-bold text-white text-sm">Báo cáo mẫu · SEA004</span>
+              <span className="rounded bg-neon-green/20 text-neon-green px-2 py-0.5 text-[10px] font-mono">ĐẠT CHUẨN</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-[#0B0E14] p-3">
+                <p className="text-gray-500 text-[10px]">Cỡ mẫu kiểm định (OOS)</p>
+                <p className="text-base font-bold text-white mt-1">1.520 lệnh</p>
+              </div>
+              <div className="rounded-lg bg-[#0B0E14] p-3">
+                <p className="text-gray-500 text-[10px]">Lãi TB mỗi lệnh (EV)</p>
+                <p className="text-base font-bold text-neon-green mt-1">+0.38 R</p>
+              </div>
+              <div className="rounded-lg bg-[#0B0E14] p-3">
+                <p className="text-gray-500 text-[10px]">Tỷ lệ năm dương</p>
+                <p className="text-base font-bold text-white mt-1">4 / 5 năm</p>
+              </div>
+              <div className="rounded-lg bg-[#0B0E14] p-3">
+                <p className="text-gray-500 text-[10px]">Độ tin cậy mẫu</p>
+                <p className="text-base font-bold text-teal-300 mt-1">Đủ mẫu 95%</p>
+              </div>
+            </div>
+            <p className="text-[11px] text-gray-400 italic">
+              *Mỗi báo cáo trong Strategy Audit đều chỉ rõ ưu điểm, nhược điểm và giới hạn mà dữ liệu lịch sử chưa phản ánh.
+            </p>
           </div>
         </div>
       </section>
 
+      {/* ═════════════════ FINAL CALL TO ACTION ═════════════════ */}
+      <section className="px-5 pb-16 pt-6 md:pb-24">
+        <div className="mx-auto max-w-6xl rounded-3xl border border-neon-green/30 bg-gradient-to-br from-neon-green/15 via-[#131722] to-[#0B0E14] p-8 md:p-14 shadow-2xl">
+          <div className="max-w-3xl">
+            <span className="inline-block rounded-full bg-neon-green/20 border border-neon-green/40 px-3 py-1 text-xs font-bold uppercase tracking-wider text-neon-green">
+              Bắt đầu ngay hôm nay
+            </span>
+            <h2 className="mt-4 font-display text-3xl font-extrabold text-white md:text-5xl leading-tight">
+              Đừng để tiền thật làm vật thí nghiệm cho phương pháp chưa đo.
+            </h2>
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-gray-300 md:text-base">
+              Chỉ mất 3 phút với 6 câu hỏi đơn giản để bạn biết phương pháp của mình đang thiếu quy tắc nào. Hoặc xem ngay 300 ca đo để học cách người khác kiểm định.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3.5 sm:flex-row">
+              <button 
+                onClick={goToSixBoxes} 
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-neon-green px-7 py-4 font-bold text-black shadow-[0_0_25px_rgba(0,255,163,0.35)] transition hover:brightness-110 active:scale-[0.98]"
+              >
+                <span>Tự rà soát 6 ô miễn phí</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <button 
+                onClick={() => setActiveTab('viplibrary')} 
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-4 font-semibold text-white hover:border-neon-green/50 hover:bg-white/10 transition active:scale-[0.98]"
+              >
+                <span>Mở thư viện 300 chiến lược</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              <a 
+                href="https://t.me/strategyaudit" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-neon-green/30 px-5 py-4 text-sm font-semibold text-neon-green hover:bg-neon-green/10 transition"
+              >
+                Vào Telegram hỏi đáp <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+
+            <p className="mt-6 text-xs text-gray-400">
+              Strategy Audit cung cấp phân tích định lượng và giáo dục dựa trên dữ liệu lịch sử; không phải tín hiệu đầu tư hay cam kết lợi nhuận.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

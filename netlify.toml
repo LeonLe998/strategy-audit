@@ -2,7 +2,15 @@
   command = "npm run build"
   publish = "dist"
 
+# Chặn truy cập hoặc tải trực tiếp file markdown VIP riêng tư
+[[redirects]]
+  from = "/data/vip_articles/*"
+  to = "/vip"
+  status = 302
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+

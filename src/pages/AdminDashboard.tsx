@@ -91,20 +91,10 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
         }
       } catch (err) {
         console.error("Lỗi xác thực qua Google Sheet:", err);
-        // Fallback sang local admin key đề phòng lỗi kết nối nhưng URL vẫn cấu hình đúng
-        if (adminKey === 'SA_ADMIN_2026') {
-          setIsAuthenticated(true);
-        } else {
-          setErrorMsg('Lỗi kết nối Server Sheet. Hoặc sai mật khẩu Master Key.');
-        }
+        setErrorMsg('Không thể kết nối đến máy chủ xác thực. Vui lòng kiểm tra đường truyền và thử lại.');
       }
     } else {
-      // Fallback nếu chưa cấu hình GAS
-      if (adminKey === 'SA_ADMIN_2026') {
-        setIsAuthenticated(true);
-      } else {
-        setErrorMsg('Sai mật khẩu Master Key.');
-      }
+      setErrorMsg('Hệ thống chưa được cấu hình địa chỉ máy chủ xác thực API.');
     }
     setIsVerifying(false);
   };
@@ -156,6 +146,7 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
           },
           body: JSON.stringify({
             action: 'saveArticle',
+            passkey: adminKey,
             id: editingStrategy.id,
             articleContent: articleContent
           })
@@ -165,9 +156,15 @@ export default function AdminDashboard({ setActiveTab }: AdminDashboardProps) {
           savedOnGAS = true;
         } else {
           console.error("Lưu trên Google Sheets thất bại:", data.message);
+          alert("Lỗi lưu trên máy chủ: " + (data.message || 'Không có quyền truy cập'));
+          setIsSaving(false);
+          return;
         }
       } catch (err) {
         console.error("Lỗi khi kết nối GAS:", err);
+        alert("Lỗi kết nối máy chủ. Bài viết chưa được lưu lên Google Sheets.");
+        setIsSaving(false);
+        return;
       }
     }
     

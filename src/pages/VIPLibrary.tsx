@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Key, Star,
-  X, BookOpen, Search, AlertTriangle, CheckCircle, XCircle, Info
+  Star,
+  X, BookOpen, Search, AlertTriangle, CheckCircle, XCircle, Info, Key
 } from 'lucide-react';
 import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import ReactMarkdown from 'react-markdown';
@@ -20,6 +20,12 @@ const VERDICT_COLORS: Record<string, string> = {
   'TÌNH HUỐNG': '#BA7517',
   'CHÁT': '#E24B4A',
   'CHƯA KIỂM ĐỊNH': '#6B7280'
+};
+const VERDICT_LABELS: Record<string, string> = {
+  'CHẤT': 'Đạt tiêu chí',
+  'TÌNH HUỐNG': 'Phụ thuộc tình huống',
+  'CHÁT': 'Chưa đạt',
+  'CHƯA KIỂM ĐỊNH': 'Chưa kiểm định'
 };
 
 const IsometricBar = (props: any) => {
@@ -85,30 +91,51 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
   const [filterHo, setFilterHo] = useState<string>('All');
   const [filterVerdict, setFilterVerdict] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
   const [selectedStrategyIndex, setSelectedStrategyIndex] = useState<any | null>(null);
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
 
-  const fetchArticles = async () => {
+  const fetchArticles = async (activeKey?: string) => {
     const currentGasUrl = getGasApiUrl();
+    const authKey = (activeKey !== undefined ? activeKey : localStorage.getItem('quant_vip_passkey')) || '';
+    
+    // Chỉ tải bài viết chuyên sâu khi có passkey
+    if (!authKey) {
+      setAdminArticles({});
+      return;
+    }
+
     if (currentGasUrl) {
       try {
-        const res = await fetch(`${currentGasUrl}?action=getArticles`);
+        const res = await fetch(`${currentGasUrl}?action=getArticles&passkey=${encodeURIComponent(authKey)}`);
         const data = await res.json();
         if (data.success && data.data) {
           setAdminArticles(data.data);
           localStorage.setItem('quant_admin_strategies', JSON.stringify(data.data));
           return;
+        } else if (data.authenticated === false) {
+          // Passkey không hợp lệ hoặc đã bị thu hồi từ máy chủ
+          setIsAuthenticated(false);
+          localStorage.removeItem('quant_vip_passkey');
+          localStorage.removeItem('quant_vip_auth_v2');
+          localStorage.removeItem('quant_vip_role');
+          setAdminArticles({});
         }
       } catch (err) {
-        console.error("Lỗi khi tải bài viết từ Google Sheets:", err);
+        console.error("Lỗi khi tải bài viết từ máy chủ:", err);
       }
     }
     
-    // Fallback load local
+    // Fallback load local cache nếu có và đã xác thực
     const localData = localStorage.getItem('quant_admin_strategies');
-    if (localData) {
-      setAdminArticles(JSON.parse(localData));
+    if (localData && localStorage.getItem('quant_vip_passkey')) {
+      try {
+        setAdminArticles(JSON.parse(localData));
+      } catch {
+        setAdminArticles({});
+      }
     }
   };
 
@@ -119,58 +146,76 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
       localStorage.setItem('quant_device_id', deviceId);
     }
     
-    if (localStorage.getItem('quant_vip_auth_v2') === 'true') {
-      setIsAuthenticated(true);
-    }
+    // Xác thực lại với máy chủ thay vì tin tưởng mù quáng vào cờ localStorage
+    const savedPasskey = localStorage.getItem('quant_vip_passkey');
+    const currentGasUrl = getGasApiUrl();
 
-    fetchArticles();
-    // Đồng bộ lại mỗi 10 giây nếu cấu hình Google Sheets
-    const interval = setInterval(fetchArticles, 10000);
+    if (savedPasskey && currentGasUrl) {
+      fetch(`${currentGasUrl}?action=verifyPasskey&passkey=${encodeURIComponent(savedPasskey)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.valid) {
+            setIsAuthenticated(true);
+            localStorage.setItem('quant_vip_auth_v2', 'true');
+            localStorage.setItem('quant_vip_role', data.role || 'vip');
+            fetchArticles(savedPasskey);
+          } else {
+            // Passkey đã hết hạn hoặc bị xóa trên server
+            setIsAuthenticated(false);
+            localStorage.removeItem('quant_vip_passkey');
+            localStorage.removeItem('quant_vip_auth_v2');
+            localStorage.removeItem('quant_vip_role');
+          }
+        })
+        .catch(() => {
+          if (localStorage.getItem('quant_vip_auth_v2') === 'true' && savedPasskey) {
+            setIsAuthenticated(true);
+            fetchArticles(savedPasskey);
+          }
+        });
+    } else {
+      setIsAuthenticated(false);
+      localStorage.removeItem('quant_vip_passkey');
+      localStorage.removeItem('quant_vip_auth_v2');
+    }
 
     fetch('/data/thuvien_data/thu_vien_index.json')
       .then(res => res.json())
       .then(data => setIndexData(data))
       .catch(err => console.error(err));
-
-    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterHo, filterVerdict, searchQuery]);
 
   const handleVerifyPasskey = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passkey.trim() === '') return;
+    const cleanKey = passkey.trim();
+    if (cleanKey === '') return;
     setIsVerifying(true);
     setErrorMsg('');
 
     const currentGasUrl = getGasApiUrl();
     if (currentGasUrl) {
       try {
-        const res = await fetch(`${currentGasUrl}?action=verifyPasskey&passkey=${encodeURIComponent(passkey)}`);
+        const res = await fetch(`${currentGasUrl}?action=verifyPasskey&passkey=${encodeURIComponent(cleanKey)}`);
         const data = await res.json();
         if (data.success && data.valid) {
           setIsAuthenticated(true);
+          localStorage.setItem('quant_vip_passkey', cleanKey);
           localStorage.setItem('quant_vip_auth_v2', 'true');
           localStorage.setItem('quant_vip_role', data.role || 'vip');
+          await fetchArticles(cleanKey);
         } else {
           setErrorMsg(data.message || 'Passkey không hợp lệ hoặc đã bị thu hồi.');
         }
       } catch (err) {
         console.error("Lỗi kết nối API xác thực:", err);
-        // Fallback sang local key đề phòng mất kết nối nhưng đã cấu hình
-        if (passkey === 'ADMIN' || passkey === 'VIP') {
-          setIsAuthenticated(true);
-          localStorage.setItem('quant_vip_auth_v2', 'true');
-        } else {
-          setErrorMsg('Lỗi kết nối API xác thực. Vui lòng thử lại sau.');
-        }
+        setErrorMsg('Không thể kết nối đến máy chủ xác thực. Vui lòng kiểm tra đường truyền và thử lại.');
       }
     } else {
-      // Fallback khi chưa cấu hình GAS
-      if (passkey === 'ADMIN' || passkey === 'VIP') {
-        setIsAuthenticated(true);
-        localStorage.setItem('quant_vip_auth_v2', 'true');
-      } else {
-        setErrorMsg('Passkey không hợp lệ hoặc đã bị thu hồi.');
-      }
+      setErrorMsg('Hệ thống chưa được cấu hình máy chủ xác thực API.');
     }
     setIsVerifying(false);
   };
@@ -278,6 +323,11 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
   });
 
   const hoOptions = Array.from(new Set((indexData?.danh_sach || []).map((s: any) => s.ho)));
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / pageSize));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageItems = filteredList.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const firstItem = filteredList.length === 0 ? 0 : (safePage - 1) * pageSize + 1;
+  const lastItem = Math.min(safePage * pageSize, filteredList.length);
 
   return (
     <div className="pb-24 pt-6 max-w-7xl mx-auto px-4 space-y-12 relative z-10">
@@ -300,33 +350,32 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
         </div>
         <div className="inline-flex items-center space-x-2 bg-[#FFD700]/10 border border-[#FFD700]/30 px-4 py-2 rounded-full text-[#FFD700] text-xs font-bold font-mono tracking-widest uppercase mb-2">
           <Star className="w-4 h-4 fill-current" />
-          <span>VIP Exclusive Access</span>
+          <span>Danh mục 300 chiến lược</span>
         </div>
         <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-tight">
-          Thư Viện <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-[#FFD700]">300 Chiến Lược</span> Giao Dịch
+          Tra cứu thư viện <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-green to-[#FFD700]">300 chiến lược</span>
         </h1>
-        <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-          Kiểm định trên 22 năm dữ liệu: xây trên 2004–2018, so với vào lệnh ngẫu nhiên, đổi tham số ±30%, rồi chấm điểm trên kỳ thi thật 2019–2023 — dữ liệu chiến lược chưa từng thấy, chỉ chạm một lần, đã trừ phí giao dịch.
-          <br /><span className="text-[#1D9E75] font-bold">Cập nhật 08/2026 — kỳ thi lần 2 trên 02/2024→07/2026: 15/15 chiến lược CHẤT vẫn giữ vững, 29/38 TÌNH HUỐNG giữ vững. Verdict gốc không đổi.</span>
+        <p className="mx-auto max-w-3xl text-gray-300 text-sm md:text-base leading-relaxed">
+          Tìm theo tên hoặc nhóm, rồi xem kết quả và giới hạn của từng mục. Thư viện ghi rõ mục đã kiểm định, bản đối xứng và mục chưa đủ dữ liệu.
         </p>
 
         {indexData && (
-          <div className="bg-[#131722] border border-[#1F2937] p-6 rounded-2xl flex flex-wrap justify-center gap-6 shadow-xl">
+          <div className="hidden sm:flex bg-[#131722] border border-[#1F2937] p-6 rounded-2xl flex-wrap justify-center gap-6 shadow-xl">
             <div className="text-center">
               <p className="text-3xl font-display font-bold" style={{ color: VERDICT_COLORS['CHẤT'] }}>{indexData.verdict_da_chay['CHẤT']}</p>
-              <p className="text-xs text-gray-400 font-bold font-mono uppercase mt-1">CHẤT</p>
+              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Đạt tiêu chí</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-display font-bold" style={{ color: VERDICT_COLORS['TÌNH HUỐNG'] }}>{indexData.verdict_da_chay['TÌNH HUỐNG']}</p>
-              <p className="text-xs text-gray-400 font-bold font-mono uppercase mt-1">TÌNH HUỐNG</p>
+              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Phụ thuộc tình huống</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-display font-bold" style={{ color: VERDICT_COLORS['CHÁT'] }}>{indexData.verdict_da_chay['CHÁT']}</p>
-              <p className="text-xs text-gray-400 font-bold font-mono uppercase mt-1">CHÁT</p>
+              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Chưa đạt</p>
             </div>
             <div className="text-center border-l border-[#1F2937] pl-6">
               <p className="text-3xl font-display font-bold text-gray-300">{indexData.gop}</p>
-              <p className="text-xs text-gray-400 font-bold font-mono uppercase mt-1">Bản đối xứng</p>
+              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Biến thể đối ứng</p>
             </div>
             <div className="text-center">
               <p className="text-3xl font-display font-bold text-gray-500">{indexData.chua}</p>
@@ -335,55 +384,83 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
           </div>
         )}
 
-        <div className="bg-[#0B0E14] border border-coral-red/30 p-5 rounded-xl text-left border-l-4 border-l-coral-red">
+        <p className="hidden sm:block mx-auto max-w-3xl text-xs leading-5 text-gray-500">
+          Đây là nhãn kết luận trong bộ dữ liệu, không phải dự báo tương lai. “R” biểu thị kết quả theo đơn vị rủi ro của mỗi lệnh; bấm vào một chiến lược để xem cách tính và giới hạn.
+        </p>
+
+        {indexData && <p className="sm:hidden text-xs text-gray-400">{indexData.da_chay} hồ sơ có kết quả kiểm định · bấm vào từng mục để xem cách đo và giới hạn.</p>}
+
+        <div className="hidden sm:block bg-[#0B0E14] border border-coral-red/30 p-5 rounded-xl text-left border-l-4 border-l-coral-red">
           <p className="text-sm text-gray-300 leading-relaxed italic">
-            "Chỉ 6% chiến lược sống sót kỳ thi thật — và tất cả đều thuộc nhóm đi theo quán tính trung hạn khung H4. Toàn bộ chiến lược Smart Money/ICT viral, scalping khung nhỏ, bắt đỉnh đáy: không cái nào đậu ở dạng quy tắc máy móc."
+            "15 trong 242 chiến lược đã kiểm định được xếp loại Đạt tiêu chí trong bộ dữ liệu hiện tại. Mở từng mục để xem kết quả cụ thể, cách đo và giới hạn."
           </p>
         </div>
       </section>
 
       {/* Main Content */}
       <section className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-[#131722] p-4 rounded-xl border border-[#1F2937]">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-[#131722] p-4 rounded-xl border border-[#1F2937]">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input 
               type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Tìm tên hoặc ID chiến lược..." 
+              aria-label="Tìm chiến lược theo tên hoặc mã"
+              placeholder="Tìm theo tên hoặc mã chiến lược..." 
               className="w-full bg-[#0B0E14] border border-[#1F2937] rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-neon-green transition-colors"
             />
           </div>
           <div className="flex flex-wrap gap-3 w-full md:w-auto">
-            <select value={filterHo} onChange={e => setFilterHo(e.target.value)} className="bg-[#0B0E14] border border-[#1F2937] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none">
-              <option value="All">Tất cả Nhóm (Họ)</option>
+            <select aria-label="Lọc theo nhóm chiến lược" value={filterHo} onChange={e => setFilterHo(e.target.value)} className="bg-[#0B0E14] border border-[#1F2937] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none">
+              <option value="All">Tất cả nhóm</option>
               {hoOptions.map((ho: any) => <option key={ho} value={ho}>{ho}</option>)}
             </select>
-            <select value={filterVerdict} onChange={e => setFilterVerdict(e.target.value)} className="bg-[#0B0E14] border border-[#1F2937] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none">
-              <option value="All">Tất cả Verdict</option>
-              <option value="CHẤT">CHẤT</option>
-              <option value="TÌNH HUỐNG">TÌNH HUỐNG</option>
-              <option value="CHÁT">CHÁT</option>
-              <option value="CHƯA KIỂM ĐỊNH">CHƯA KIỂM ĐỊNH</option>
+            <select aria-label="Lọc theo kết luận" value={filterVerdict} onChange={e => setFilterVerdict(e.target.value)} className="bg-[#0B0E14] border border-[#1F2937] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none">
+              <option value="All">Tất cả kết quả</option>
+              <option value="CHẤT">Đạt tiêu chí</option>
+              <option value="TÌNH HUỐNG">Phụ thuộc tình huống</option>
+              <option value="CHÁT">Chưa đạt</option>
+              <option value="CHƯA KIỂM ĐỊNH">Chưa kiểm định</option>
             </select>
           </div>
         </div>
 
-        <div className="bg-[#131722] border border-[#1F2937] rounded-2xl overflow-hidden shadow-xl">
+        <div className="mb-3 flex flex-col gap-2 px-1 text-sm text-gray-400 sm:flex-row sm:items-center sm:justify-between">
+          <span>Hiển thị {firstItem}–{lastItem} trong {filteredList.length} kết quả</span>
+          <span className="text-xs">Chọn một mục để xem dữ liệu, điều kiện và giới hạn</span>
+        </div>
+        <div className="md:hidden space-y-3">
+          {pageItems.map((strat: any) => (
+            <button key={strat.id} type="button" disabled={strat.trang_thai === 'chua_kiem_dinh'} onClick={() => openReport(strat)} className="w-full rounded-2xl border border-[#1F2937] bg-[#131722] p-4 text-left transition hover:border-neon-green/50 disabled:opacity-60">
+              <span className="flex items-start justify-between gap-3">
+                <span><span className="block font-semibold text-white">{strat.ten}</span><span className="mt-1 block font-mono text-xs text-gray-500">{strat.id} · {strat.ho} · {strat.tf}</span></span>
+                    <span className="shrink-0 rounded-full border px-2 py-1 text-[10px] font-bold" style={{ color: VERDICT_COLORS[strat.verdict], borderColor: `${VERDICT_COLORS[strat.verdict]}55`, backgroundColor: `${VERDICT_COLORS[strat.verdict]}15` }}>{VERDICT_LABELS[strat.verdict] || strat.verdict}</span>
+              </span>
+              <span className="mt-4 grid grid-cols-3 gap-2 border-t border-white/5 pt-3 text-xs">
+                <span className="text-gray-500">Kỳ kiểm định <b className={`mt-1 block text-sm ${strat.oos_ev > 0 ? 'text-[#1D9E75]' : 'text-[#E24B4A]'}`}>{strat.oos_ev !== undefined ? (strat.oos_ev > 0 ? `+${strat.oos_ev} R` : `${strat.oos_ev} R`) : '—'}</b></span>
+                <span className="text-gray-500">Số năm lãi <b className="mt-1 block text-sm text-gray-200">{strat.oos_years || '—'}</b></span>
+                <span className="text-gray-500">Số lệnh <b className="mt-1 block text-sm text-gray-200">{strat.oos_n || '—'}</b></span>
+              </span>
+              {strat.trang_thai !== 'chua_kiem_dinh' && <span className="mt-3 block text-xs font-semibold text-neon-green">Xem dữ liệu và giới hạn →</span>}
+            </button>
+          ))}
+          {filteredList.length === 0 && <p className="rounded-xl border border-[#1F2937] p-8 text-center text-sm text-gray-400">Không tìm thấy chiến lược phù hợp. Thử bỏ bớt bộ lọc.</p>}
+        </div>
+        <div className="hidden md:block bg-[#131722] border border-[#1F2937] rounded-2xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-[#0B0E14] text-gray-300 text-xs font-bold uppercase font-mono tracking-wider border-b border-[#1F2937]">
                   <th className="py-4 px-6 font-medium">Chiến Lược</th>
                   <th className="py-4 px-6 font-medium">Nhóm / TF</th>
-                  <th className="py-4 px-6 font-medium">Verdict</th>
-                  <th className="py-4 px-6 font-medium">Kỳ thi thật (R)</th>
-                  <th className="py-4 px-6 font-medium">Thi lần 2 (24-26)</th>
+                  <th className="py-4 px-6 font-medium">Kết luận</th>
+                  <th className="py-4 px-6 font-medium">Kiểm định 2019–23 (R)</th>
+                  <th className="py-4 px-6 font-medium">Kiểm tra bổ sung 24–26 (R)</th>
                   <th className="py-4 px-6 font-medium">Năm lãi</th>
                   <th className="py-4 px-6 font-medium">Số lệnh</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#1F2937]">
-                {filteredList.map((strat: any) => {
+                {pageItems.map((strat: any) => {
                   const hasArticle = adminArticles[strat.id]?.articleContent;
                   return (
                   <tr 
@@ -400,7 +477,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                       <div className="flex items-center space-x-2 mt-1">
                         <span className="text-xs text-gray-400 font-mono bg-[#0B0E14] px-1.5 py-0.5 rounded border border-gray-800">{strat.id}</span>
                         {strat.trang_thai === 'gop' && (
-                          <span className="text-xs text-gray-400 italic">Bản đối xứng của {strat.goc}</span>
+                          <span className="text-xs text-gray-400 italic">Biến thể đối ứng của {strat.goc}</span>
                         )}
                         {strat.trang_thai === 'chua_kiem_dinh' && (
                           <span className="text-xs text-coral-red">{strat.ly_do}</span>
@@ -420,7 +497,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                           borderColor: `${VERDICT_COLORS[strat.verdict]}40`
                         }}
                       >
-                        {strat.verdict}
+                        {VERDICT_LABELS[strat.verdict] || strat.verdict}
                       </span>
                     </td>
                     <td className="py-4 px-6">
@@ -459,6 +536,11 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
             </table>
           </div>
         </div>
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#131722] px-4 py-3">
+          <button type="button" disabled={safePage <= 1} onClick={() => setCurrentPage(safePage - 1)} className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white hover:border-neon-green/50 disabled:cursor-not-allowed disabled:opacity-40">← Trước</button>
+          <span className="text-sm text-gray-400">Trang {safePage} / {totalPages}</span>
+          <button type="button" disabled={safePage >= totalPages} onClick={() => setCurrentPage(safePage + 1)} className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white hover:border-neon-green/50 disabled:cursor-not-allowed disabled:opacity-40">Tiếp →</button>
+        </div>
       </section>
 
       {/* MODAL CHI TIẾT */}
@@ -485,7 +567,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                       className="text-xs font-bold px-2 py-1 rounded border uppercase tracking-wider"
                       style={{ color: VERDICT_COLORS[selectedReport.verdict], borderColor: VERDICT_COLORS[selectedReport.verdict], backgroundColor: `${VERDICT_COLORS[selectedReport.verdict]}10` }}
                     >
-                      {selectedReport.verdict}
+                      {VERDICT_LABELS[selectedReport.verdict] || selectedReport.verdict}
                     </span>
                     {selectedReport.OOS2 && selectedReport.OOS2.status && selectedReport.OOS2.status !== 'không lệnh' && (
                        <span 
@@ -535,8 +617,8 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                 </div>
 
                 {/* Bảng so sánh 2 giai đoạn */}
-                <div className="bg-[#0B0E14] border border-[#1F2937] rounded-xl overflow-hidden">
-                  <table className="w-full text-left text-sm">
+                <div className="bg-[#0B0E14] border border-[#1F2937] rounded-xl overflow-x-auto">
+                  <table className="w-full min-w-[640px] text-left text-sm">
                     <thead>
                       <tr className="bg-[#131722] text-gray-400 font-mono text-xs uppercase border-b border-[#1F2937]">
                         <th className="py-3 px-4">Giai đoạn</th>

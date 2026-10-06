@@ -118,22 +118,51 @@ export default function Pricing({ setActiveTab }: PricingProps) {
   ];
 
   return (
-    <div id="pricing-view" className="space-y-24 pb-20 pt-6">
+    <div id="pricing-view" className="space-y-14 pb-20 pt-6">
       
       {/* HEADER */}
       <section className="text-center max-w-4xl mx-auto px-4">
-        <span className="text-xs uppercase tracking-widest font-mono text-neon-green font-bold bg-neon-green/10 px-3 py-1 rounded">Pricing Plans</span>
-        <h1 className="text-3xl md:text-5xl font-display font-bold mt-4 text-white">Bảng Giá Dịch Vụ Định Lượng</h1>
+        <span className="text-xs uppercase tracking-widest font-mono text-neon-green font-bold bg-neon-green/10 px-3 py-1 rounded">Bảng Phí & Gói Dịch Vụ</span>
+        <h1 className="text-3xl md:text-5xl font-display font-bold mt-4 text-white">Minh bạch giữa Thành viên & Dịch vụ riêng</h1>
         <p className="text-gray-400 text-sm mt-3.5 leading-relaxed max-w-2xl mx-auto">
-          Lựa chọn linh hoạt giữa việc kiểm toán trả phí theo lần (Pay-per-Audit) hoặc đồng hành tối ưu hóa dài hạn (Subscription).
+          Strategy Audit có 2 hình thức riêng biệt: <strong>(1) Gói Thành viên Cộng đồng</strong> để học tập và truy cập toàn bộ Thư viện VIP 300+, hoặc <strong>(2) Dịch vụ Kiểm định Độc lập Riêng tư</strong> dành cho quỹ và nhà phát triển phương pháp riêng.
         </p>
       </section>
 
-      {/* SECTION 1: PAY-PER-AUDIT */}
+      {/* TRACK 1: COMMUNITY MEMBERSHIP (MAIN FOCUS) */}
+      <section className="mx-auto max-w-6xl px-4">
+        <div className="relative overflow-hidden rounded-3xl border-2 border-neon-green/40 bg-gradient-to-br from-neon-green/15 via-[#131722] to-[#0B0E14] p-8 md:p-10 shadow-[0_0_30px_rgba(0,255,163,0.1)]">
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-neon-green/20 px-3 py-1 text-xs font-bold text-neon-green">
+                <Sparkles className="h-3.5 w-3.5" /> GÓI CHÍNH THỨC CỘNG ĐỒNG
+              </div>
+              <h2 className="mt-3 text-2xl md:text-3xl font-display font-bold text-white">Thành Viên Strategy Audit</h2>
+              <p className="mt-2 text-base font-semibold text-neon-green">
+                $50 USD tháng đầu tiên · $100 USD/tháng từ tháng thứ hai
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-gray-300 max-w-2xl">
+                Truy cập toàn bộ 300+ báo cáo kiểm định chuyên sâu trong Thư viện VIP, tham gia nhóm trao đổi riêng tư cùng Leon và cộng đồng, thảo luận các ca kiểm định thực tế hàng tuần. Thanh toán chuyển khoản trực tiếp, xác nhận thủ công, không tự động trừ tiền.
+              </p>
+            </div>
+            <button 
+              onClick={() => setActiveTab('membership')} 
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-neon-green px-8 py-4 font-bold text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(0,255,163,0.3)] transition-transform shrink-0"
+            >
+              Xem chi tiết gói Thành viên <MessageCircle className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* TRACK 2: BESPOKE PRIVATE AUDITS */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">1. Dịch Vụ Audit Lẻ (Pay-per-Audit)</h2>
-          <p className="text-gray-400 text-sm">Kiểm định chất lượng chiến lược một lần duy nhất với báo cáo chi tiết.</p>
+          <span className="text-xs uppercase tracking-wider font-mono text-gray-400">Dành cho Nhà phát triển, Quỹ & Prop Trader</span>
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-white mt-1 mb-3">Dịch vụ kiểm định phương pháp riêng (Bespoke Audit)</h2>
+          <p className="text-gray-400 text-sm max-w-2xl mx-auto">
+            Nếu bạn có một thuật toán, EA hoặc bộ quy tắc giao dịch độc quyền cần chạy kiểm định độc lập trên máy chủ riêng của Strategy Audit (bảo mật NDA tuyệt đối).
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {auditPlans.map((plan) => (
@@ -172,7 +201,7 @@ export default function Pricing({ setActiveTab }: PricingProps) {
       {/* SECTION 2: SUBSCRIPTION */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">2. Dịch Vụ Thuê Bao (Subscription)</h2>
+          <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-3">Thuê bao dịch vụ kiểm định</h2>
           <p className="text-gray-400 text-sm">Tối ưu hóa liên tục, đồng hành dài hạn cùng chiến lược của bạn.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">

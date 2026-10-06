@@ -26,3 +26,12 @@ dist-ssr
 # Temporary unzipped folders
 vip_articles_pack.zip
 vip_articles_pack/
+
+# Sensitive secrets & credentials
+passkeys.txt
+*.env
+*.env.*
+!*.env.example
+
+# Design mocks & prototypes
+stitch_fintech_web_redesign/

@@ -4,7 +4,7 @@
 
 ## Tóm tắt 30 giây
 
-- Chạy máy móc suốt 22 năm (6694 lệnh, đã trừ phí): **cộng dồn -1149R**. Rủi ro 1 triệu mỗi lệnh thì kết quả của hơn hai thập kỷ kiên trì là mất ~1149 triệu.
+- Chạy máy móc suốt 22 năm (6.637 lệnh, đã trừ phí): **cộng dồn -1149R**. Rủi ro 1 triệu mỗi lệnh thì kết quả của hơn hai thập kỷ kiên trì là mất ~1149 triệu.
 - Tỷ lệ thắng thật: **~26%**; chuỗi thua dài nhất **21 lệnh liên tiếp** (2015).
 - Đường vốn tạo đỉnh từ 2004-06 và **tới nay chưa quay lại** — ai theo nó từ đó vẫn đang chờ hòa vốn.
 

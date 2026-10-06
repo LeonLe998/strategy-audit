@@ -6,16 +6,19 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './components/Navbar';
-import Home from './components/Home';
-import Services from './components/Services';
+import Home from './components/HomeStitch';
+import Services from './components/ServicesRedesign';
 import Vault from './components/Vault';
 import Pricing from './components/Pricing';
 import IntakeWizard from './pages/IntakeWizard';
 import VIPLibrary from './pages/VIPLibrary';
 import AdminDashboard from './pages/AdminDashboard';
-import SauO from './pages/SauO';
-import AmbientBackground from './components/AmbientBackground';
-import CustomCursor from './components/CustomCursor';
+import MembershipPage from './pages/MembershipPage';
+import SauO from './pages/SauOStitch';
+import AmbientBackground from './components/SoftBackdrop';
+import BottomNavigation from './components/BottomNavigation';
+import SmoothScroll from './components/SmoothScroll';
+import ScrollProgressBar from './components/ScrollProgressBar';
 
 interface RouteInfo {
   tab: string;
@@ -53,6 +56,9 @@ function parseCurrentRoute(): RouteInfo {
   }
 
   const pLower = pathname.toLowerCase();
+  if (pLower === '/membership' || pLower === '/thanh-vien') {
+    return { tab: 'membership', subId: null, isSauO: false };
+  }
   if (pLower === '/services' || pLower === '/dich-vu') {
     return { tab: 'services', subId: null, isSauO: false };
   }
@@ -87,6 +93,8 @@ function getPathForRoute(tab: string, subId?: string | null): string {
       return '/services';
     case 'pricing':
       return '/pricing';
+    case 'membership':
+      return '/membership';
     case 'audit':
       return '/audit';
     case 'admin':
@@ -114,6 +122,13 @@ export default function App() {
         window.history.pushState(null, '', newPath);
       }
     }
+    if (typeof window !== 'undefined' && tab !== routeInfo.tab) {
+      if ((window as any).__lenis) {
+        (window as any).__lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    }
     setRouteInfo({
       tab,
       subId,
@@ -136,14 +151,20 @@ export default function App() {
 
   // Nếu đang ở đường dẫn /sauo, hiển thị trang Sáu Ô độc lập (chuẩn phễu mobile)
   if (routeInfo.isSauO || activeTab === 'sauo') {
-    return <SauO />;
+    return (
+      <SmoothScroll>
+        <ScrollProgressBar />
+        <SauO />
+      </SmoothScroll>
+    );
   }
 
   return (
-    <div id="quant-app-container" className="min-h-screen bg-[#0B0E14] text-gray-300 relative font-sans antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white dark:selection:bg-neon-green dark:selection:text-black transition-colors duration-300">
+    <SmoothScroll>
+      <div id="quant-app-container" className="min-h-screen bg-[#061624] text-gray-300 relative font-sans antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white dark:selection:bg-neon-green dark:selection:text-black transition-colors duration-300">
       
-      {/* Interactive Mouse Tracking Dot & Spring Halo */}
-      <CustomCursor />
+      {/* Top Reading Scroll Progress Indicator */}
+      <ScrollProgressBar />
 
       {/* Dynamic Animated Quant Ambient Background */}
       <AmbientBackground />
@@ -152,7 +173,7 @@ export default function App() {
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Primary body view holder with smooth route animations */}
-      <main id="app-main-content" className="relative z-10 pt-24 min-h-[calc(100vh-16rem)]">
+      <main id="app-main-content" className={`relative z-10 ${activeTab === 'home' ? 'pt-16' : 'pt-24'} min-h-[calc(100vh-16rem)]`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -180,6 +201,7 @@ export default function App() {
             )}
             {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
             {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
+            {activeTab === 'membership' && <MembershipPage setActiveTab={setActiveTab} />}
             {activeTab === 'audit' && (
               <div className="max-w-4xl mx-auto px-4 mt-8">
                 <IntakeWizard selectedPackage={null} />
@@ -189,8 +211,10 @@ export default function App() {
         </AnimatePresence>
       </main>
 
+      <BottomNavigation activeTab={activeTab} />
+
       {/* Premium Footer */}
-      <footer id="app-footer" className="relative z-20 border-t border-[#1F2937]/50 bg-[#0B0E14] py-12 mt-12 text-xs text-gray-500">
+      <footer id="app-footer" className="relative z-20 border-t border-[#20394B] bg-[#061624] py-12 mt-12 text-xs text-gray-500">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
@@ -200,14 +224,14 @@ export default function App() {
               <span className="text-[9px] font-mono border border-[#1F2937] px-1.5 py-0.5 rounded text-gray-400">v1.2</span>
             </div>
             <p className="max-w-md text-gray-400 font-sans font-light leading-relaxed">
-              Tối ưu hóa bền vững hệ thống giao dịch thuật toán. Sử dụng đo lường WFO (Walk-Forward Optimization) và Monte Carlo để bộc lộ Alpha đích thực của chiến lược.
+              Strategy Audit giúp bạn kiểm tra phương pháp giao dịch bằng dữ liệu, hiểu kết quả và biết nên tìm hiểu bước nào tiếp theo.
             </p>
           </div>
 
           <div className="space-y-4 md:text-right">
             <div className="text-gray-400 leading-relaxed font-sans space-y-1">
-              <p className="font-bold text-white text-xs">Hỗ trợ &amp; Điều phối trực tiếp:</p>
-              <p>Lê Vĩnh Phú (Leon) • Zalo: <span className="text-neon-green font-mono">05.6666.5511</span></p>
+              <p className="font-bold text-white text-xs">Hỗ trợ:</p>
+              <p><a className="text-neon-green hover:text-white" href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Nhắn Strategy Audit trên Telegram</a></p>
               <p className="text-[10px] text-gray-500">Tài liệu bản quyền thuộc về Strategy Audit © {new Date().getFullYear()} - Không chia sẻ trái phép.</p>
             </div>
           </div>
@@ -216,11 +240,12 @@ export default function App() {
         {/* Global Risk Disclaimer Box */}
         <div className="max-w-7xl mx-auto px-4 mt-8 pt-8 border-t border-[#1F2937]/30">
           <div className="bg-[#131722]/30 border border-[#1F2937]/30 p-4 rounded-xl text-[10px] leading-relaxed text-gray-600 font-sans">
-            <strong className="text-gray-400 font-bold">Tuyên bố rủi ro toán học:</strong> Giao dịch tài chính (Forex, Crypto, cổ phiếu) luôn tiềm ẩn rủi ro khớp thua khốc liệt. Kết quả Walk-Forward Optimization trong quá khứ chỉ mang tính tham chiếu xác suất thống kê khoa học và không cam kết đảm bảo lợi nhuận tương lai. Chúng tôi cung cấp giải pháp kiểm toán tối ưu toán phần, tuyệt đối không mời chào ủy thác đầu tư hay kêu gọi rót vốn.
+            <strong className="text-gray-400 font-bold">Lưu ý:</strong> Giao dịch tài chính có rủi ro thua lỗ. Kết quả kiểm tra dựa trên dữ liệu quá khứ và không bảo đảm kết quả trong tương lai. Strategy Audit cung cấp nội dung giáo dục và phân tích dữ liệu, không phải tín hiệu giao dịch hay khuyến nghị đầu tư cá nhân.
           </div>
         </div>
       </footer>
 
-    </div>
+      </div>
+    </SmoothScroll>
   );
 }

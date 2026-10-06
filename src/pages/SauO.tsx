@@ -99,7 +99,7 @@ export default function SauO() {
   // Cập nhật title và meta tags khi trang mount
   useEffect(() => {
     const originalTitle = document.title;
-    document.title = "Sáu ô — hệ thống giao dịch của bạn đang trống chỗ nào?";
+    document.title = "Sáu ô — quy tắc nào còn cần làm rõ?";
 
     const updateMeta = (nameOrProperty: string, isProp: boolean, content: string) => {
       const selector = isProp ? `meta[property="${nameOrProperty}"]` : `meta[name="${nameOrProperty}"]`;
@@ -113,7 +113,7 @@ export default function SauO() {
       meta.content = content;
     };
 
-    updateMeta("description", false, "Sáu câu hỏi, ba phút, không cần biết thuật ngữ nào. Xem hệ thống giao dịch của bạn đang trống ô nào — dựa trên 242 chiến lược đã kiểm định trên 22 năm dữ liệu vàng.");
+    updateMeta("description", false, "Sáu câu hỏi, khoảng ba phút, không cần biết thuật ngữ nào. Tự rà soát các quy tắc giao dịch và xem chỗ nào còn cần làm rõ.");
     updateMeta("og:title", true, "Bạn điền được mấy trên sáu ô?");
     updateMeta("og:description", true, "Sáu câu hỏi để biết bạn đang có một phương pháp — hay đã có một hệ thống.");
     updateMeta("og:type", true, "website");
@@ -199,19 +199,19 @@ export default function SauO() {
   const dai = diem <= 2
     ? {
         c: "red",
-        t: "Bạn đang giao dịch bằng cảm giác.",
-        s: "Không phải lời chê — gần như ai cũng bắt đầu ở đây. Nhưng khi thua, bạn sẽ không biết mình sai ở đâu, nên lần sau vẫn sai y hệt."
+        t: "Bạn mới mô tả được một phần cách giao dịch.",
+        s: "Các ô còn trống là gợi ý để bạn làm rõ quy tắc. Điểm này chỉ đếm số câu trả lời đủ rõ, không kết luận phương pháp có hiệu quả hay không."
       }
     : diem <= 4
     ? {
         c: "amber",
-        t: "Bạn có một phương pháp, chưa có một hệ thống.",
-        s: "Thường là đủ ba ô về giá, trống ba ô về thời gian. Đây là chỗ đông người nhất — và cũng là chỗ dễ sửa nhất."
+        t: "Bạn đã mô tả được một số quy tắc.",
+        s: "Hãy xem những ô còn trống như các câu hỏi cần trả lời trước khi bạn có thể kiểm tra phương pháp một cách nhất quán."
       }
     : {
         c: "mint",
-        t: "Bạn có một hệ thống. Và nó đo được.",
-        s: "Viết ra được nghĩa là đem đi kiểm chứng được — trên dữ liệu thật, nhiều năm, để biết nó từng ăn hay chưa."
+        t: "Bạn đã mô tả được phần lớn quy tắc.",
+        s: "Viết rõ quy tắc giúp việc kiểm tra nhất quán hơn. Bài tự đánh giá này chưa xác nhận lợi thế hay kết quả giao dịch của phương pháp."
       };
 
   const trongTG = [3, 4, 5].filter(i => !daDien(i)).length;
@@ -284,10 +284,10 @@ export default function SauO() {
         {/* ═════════ MÀN MỞ (0) ═════════ */}
         {man === 0 && (
           <section className="sauo-screen on" id="s0">
-            <h1>Sáu ô — <em>bạn điền được mấy ô?</em></h1>
+            <h1>Sáu ô — <em>quy tắc nào còn cần làm rõ?</em></h1>
             <p>
               Không phải bài kiểm tra, và không có câu nào đúng sai. Sáu câu hỏi về{" "}
-              <b>những gì bạn vẫn đang làm</b> — để nhìn ra hệ thống của bạn đang trống chỗ nào.
+              <b>những gì bạn vẫn đang làm</b> — để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu.
             </p>
             <p>Khoảng 3 phút. <b>Không cần biết một thuật ngữ nào.</b></p>
             <p className="small">
@@ -407,26 +407,32 @@ export default function SauO() {
             <div className="note" id="noteBox">
               {trongTG >= 2 ? (
                 <>
-                  <b>Bạn trống {trongTG} trên 3 ô về thời gian.</b> Chuyện này lặp lại ở gần như tất cả
-                  mọi người — vì đó là phần không khoá học nào dạy. Trong 242 chiến lược tụi mình đã đo,
-                  nhóm có yếu tố thời gian cho tỷ lệ đậu <b>gấp bốn lần</b> nhóm chỉ có yếu tố giá.
+                  <b>Bạn đang để trống {trongTG} trên 3 ô về thời gian.</b> Hãy ghi rõ nhịp lệnh, thời điểm giao dịch
+                  và lúc bạn chọn đứng ngoài. Bài này không so sánh hiệu suất giữa các nhóm chiến lược.
                 </>
               ) : (
                 <>
-                  <b>Bạn viết được cả phần thời gian.</b> Hiếm — phần lớn người làm bài này trống cả ba ô đó.
-                  Hệ thống của bạn đủ rõ để đem đi kiểm chứng trên dữ liệu thật.
+                  <b>Bạn đã mô tả được phần lớn các ô về thời gian.</b> Bước tiếp theo là giữ nguyên quy tắc
+                  và kiểm tra chúng trên dữ liệu phù hợp; phần tự đánh giá này chưa xác nhận kết quả.
                 </>
               )}
             </div>
 
+            <div className="note" style={{ textAlign: 'left' }}>
+              <b>Bước tiếp theo — chọn cách bạn muốn tìm hiểu thêm</b>
+              <div className="row" style={{ marginTop: '12px' }}>
+                <a className="go" href="/vip">Xem 300 chiến lược</a>
+                <a className="ghost" href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Vào Telegram</a>
+              </div>
+              <p className="small" style={{ marginTop: '10px' }}>Muốn xem hình thức đồng hành và chi phí? <a href="/membership">Xem trang thành viên</a>.</p>
+            </div>
+
             <h2 style={{ font: '800 20px/1.3 sans-serif', margin: '18px 0 6px' }}>
-              Gửi cho mình — mình đo giúp bạn
+              Muốn được trao đổi về câu trả lời của bạn?
             </h2>
             <p className="small">
-              Mình có sẵn kết quả kiểm định của <b>242 chiến lược</b> trên <b>22 năm</b>{" "}
-              dữ liệu vàng. Rất nhiều khả năng thứ bạn đang dùng đã nằm sẵn trong đó, và mình nói cho
-              bạn biết nó từng ăn hay chưa — kèm chỗ hệ thống của bạn đang trống.
-              Miễn phí, không kèm điều kiện.
+              Để lại cách liên hệ nếu muốn Strategy Audit phản hồi về phần bạn mô tả. Kết quả này chưa phải
+              kiểm định riêng cho chiến lược của bạn và không phải khuyến nghị giao dịch.
             </p>
 
             <label htmlFor="ten">Tên của bạn</label>
@@ -501,14 +507,12 @@ export default function SauO() {
                 ✓
               </div>
               <div className="big">Nhận được rồi</div>
-              <p>Mình sẽ đọc và nhắn lại cho bạn qua Zalo. Thường trong vòng 48 tiếng.</p>
+              <p>Phần tự đánh giá đã hoàn tất. Nếu bạn để lại thông tin, hãy nhắn qua Telegram để xác nhận yêu cầu hoặc hỏi thêm về kết quả.</p>
               <div className="note" style={{ textAlign: 'left' }}>
-                <b>Trong lúc chờ:</b> chụp lại màn hình kết quả của bạn. Ô nào để trống chính là
-                việc cần làm tiếp theo — và nó thường là ba ô về thời gian.
+                <b>Trong lúc chờ:</b> lưu lại kết quả và ghi rõ các quy tắc còn thiếu. Khi mô tả được nhất quán,
+                bạn có thể tìm hiểu cách kiểm tra chúng bằng dữ liệu lịch sử.
               </div>
-              <p className="small">
-                Chưa thấy mình nhắn lại? Nhắn thẳng Zalo <b>05.6666.5511</b> — Lê Vĩnh Phú.
-              </p>
+              <p className="small">Cần hỏi ngay? <a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Nhắn Strategy Audit trên Telegram</a>.</p>
             </div>
           </section>
         )}
@@ -516,7 +520,7 @@ export default function SauO() {
 
       <footer className="sauo-footer">
         STRATEGY AUDIT · kiểm định chiến lược bằng dữ liệu, không bằng niềm tin<br />
-        Zalo 05.6666.5511 · Chăm sóc 090.3188.663
+        Hỗ trợ: <a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Telegram @strategyaudit</a>
       </footer>
     </div>
   );

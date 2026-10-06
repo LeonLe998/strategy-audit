@@ -122,7 +122,7 @@ const IntakeWizard: React.FC<IntakeWizardProps> = ({ selectedPackage }) => {
     if (!emailRegex.test(formData.q2.trim())) return "Email không đúng định dạng (vd: name@domain.com).";
 
     if (!formData.q2_2.trim()) return "Vui lòng nhập Số điện thoại.";
-    const phoneRegex = /^[0-9\-\+\s]{8,15}$/;
+    const phoneRegex = /^[0-9\-+\s]{8,15}$/;
     if (!phoneRegex.test(formData.q2_2.trim())) return "Số điện thoại không hợp lệ (chỉ nhập từ 8-15 số, cho phép dấu +).";
 
     if (!formData.q4.trim()) return "Vui lòng nhập kích thước tài khoản.";
