@@ -314,6 +314,28 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
     return (b.oos_ev || -999) - (a.oos_ev || -999);
   });
 
+  // Khóa scroll nền khi mở modal báo cáo và hỗ trợ phím Escape
+  useEffect(() => {
+    if (selectedReport) {
+      (window as any).__lenis?.stop();
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          closeReport();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+        (window as any).__lenis?.start();
+      };
+    }
+  }, [selectedReport]);
+
   const hoOptions = Array.from(new Set((indexData?.danh_sach || []).map((s: any) => s.ho)));
   const totalPages = Math.max(1, Math.ceil(filteredList.length / pageSize));
   const safePage = Math.min(currentPage, totalPages);
@@ -541,7 +563,11 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
       {/* MODAL CHI TIẾT */}
       <AnimatePresence>
         {selectedReport && selectedStrategyIndex && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            id="vip-modal-container"
+            data-lenis-prevent="true"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 overscroll-contain"
+          >
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
@@ -549,10 +575,14 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
             ></motion.div>
             
             <motion.div 
+              id="vip-report-modal"
+              data-lenis-prevent="true"
+              tabIndex={0}
+              onWheel={(e) => e.stopPropagation()}
               initial={{ opacity: 0, y: 20, scale: 0.95 }} 
               animate={{ opacity: 1, y: 0, scale: 1 }} 
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              className="bg-[#131722] border border-[#1F2937] rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl"
+              className="bg-[#131722] border border-[#1F2937] rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl overscroll-contain focus:outline-none"
             >
               <div className="sticky top-0 bg-[#131722]/95 backdrop-blur-md border-b border-[#1F2937] p-6 flex justify-between items-start z-20">
                 <div>

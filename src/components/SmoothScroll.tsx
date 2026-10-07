@@ -18,6 +18,19 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       gestureOrientation: 'vertical',
       smoothWheel: true,
       touchMultiplier: 1.6,
+      allowNestedScroll: true,
+      prevent: (node) => {
+        if (!node || typeof (node as any).closest !== 'function') return false;
+        return (
+          node.hasAttribute('data-lenis-prevent') ||
+          Boolean(node.closest('[data-lenis-prevent]')) ||
+          Boolean(node.closest('#vip-modal-container')) ||
+          Boolean(node.closest('#vip-report-modal')) ||
+          Boolean(node.closest('#pdf-viewer-overlay')) ||
+          Boolean(node.closest('.overflow-y-auto')) ||
+          Boolean(node.closest('.overflow-auto'))
+        );
+      },
     });
     lenisRef.current = lenis;
 

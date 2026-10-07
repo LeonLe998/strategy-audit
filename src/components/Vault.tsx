@@ -149,6 +149,28 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
     }
   }, [initialDocId]);
 
+  // Khóa scroll nền khi xem tài liệu PDF và hỗ trợ phím Escape
+  useEffect(() => {
+    if (activeDocId) {
+      (window as any).__lenis?.stop();
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          closeDocument();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener('keydown', handleKeyDown);
+        (window as any).__lenis?.start();
+      };
+    }
+  }, [activeDocId]);
+
   const openDocument = (id: string) => {
     setIsUnlocked(true);
     setActiveDocId(id);
@@ -346,13 +368,15 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             id="pdf-viewer-overlay"
-            className="fixed inset-0 z-50 bg-[#0B0E14]/95 flex items-center justify-center p-4 backdrop-blur-md"
+            data-lenis-prevent="true"
+            className="fixed inset-0 z-50 bg-[#0B0E14]/95 flex items-center justify-center p-4 backdrop-blur-md overscroll-contain"
           >
             <motion.div 
+              data-lenis-prevent="true"
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-[#131722] border border-[#1F2937] rounded-3xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+              className="bg-[#131722] border border-[#1F2937] rounded-3xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.8)] overscroll-contain"
             >
               {/* Modal controls header */}
               <div className="px-6 py-4 border-b border-[#1F2937] flex items-center justify-between shrink-0">
@@ -381,7 +405,9 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
               {/* Printable Document Body Container */}
               <div 
                 id="printable-pdf-content" 
-                className="flex-1 overflow-y-auto p-6 md:p-12 space-y-10 selection:bg-neon-green selection:text-black font-sans bg-white text-[#111827] print:p-12 print:bg-white"
+                data-lenis-prevent="true"
+                onWheel={(e) => e.stopPropagation()}
+                className="flex-1 overflow-y-auto p-6 md:p-12 space-y-10 selection:bg-neon-green selection:text-black font-sans bg-white text-[#111827] print:p-12 print:bg-white overscroll-contain"
               >
                 {/* PDF Header cover stamp details */}
                 <div className="border-b border-gray-200 pb-8 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">

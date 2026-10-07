@@ -624,6 +624,13 @@ html.light table tbody tr:hover {
 }
 
 /* Modals & Dialogs */
+#vip-report-modal,
+#printable-pdf-content,
+[data-lenis-prevent] {
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
 html.light .bg-black\/80,
 html.light .bg-black\/90 {
   background-color: rgba(15, 23, 42, 0.45) !important;
