@@ -706,6 +706,16 @@ html.light #app-footer .bg-\[\#131722\]\/30 {
   border-color: #E2E8F0 !important;
 }
 
+html.light a[href*="zalo.me"] {
+  background-color: #EFF6FF !important;
+  border-color: #BFDBFE !important;
+  color: #1D4ED8 !important;
+}
+html.light a[href*="zalo.me"]:hover {
+  background-color: #DBEAFE !important;
+  color: #1E40AF !important;
+}
+
 /* ==========================================================================
    PAGE SPECIFIC LIGHT MODE OVERRIDES
    ========================================================================== */

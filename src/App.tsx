@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Phone, MessageCircle } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Home from './components/HomeStitch';
 import Services from './components/ServicesRedesign';
@@ -215,7 +216,8 @@ export default function App() {
 
       {/* Premium Footer */}
       <footer id="app-footer" className="relative z-20 border-t border-[#20394B] bg-[#061624] py-12 mt-12 text-xs text-gray-500">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+          {/* Cột 1: Giới thiệu & Bản quyền */}
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
               <span className="font-display font-bold text-sm tracking-widest text-white uppercase">
@@ -226,14 +228,58 @@ export default function App() {
             <p className="max-w-md text-gray-400 font-sans font-light leading-relaxed">
               Strategy Audit giúp bạn kiểm tra phương pháp giao dịch bằng dữ liệu, hiểu kết quả và biết nên tìm hiểu bước nào tiếp theo.
             </p>
+            <p className="text-[10px] text-gray-500">
+              Bản quyền thuộc về Strategy Audit © {new Date().getFullYear()} - Không chia sẻ trái phép.
+            </p>
           </div>
 
-          <div className="space-y-4 md:text-right">
-            <div className="text-gray-400 leading-relaxed font-sans space-y-1">
-              <p className="font-bold text-white text-xs">Hỗ trợ:</p>
-              <p><a className="text-neon-green hover:text-white" href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Nhắn Strategy Audit trên Telegram</a></p>
-              <p className="text-[10px] text-gray-500">Tài liệu bản quyền thuộc về Strategy Audit © {new Date().getFullYear()} - Không chia sẻ trái phép.</p>
+          {/* Cột 2: Hotline & Người phụ trách */}
+          <div className="space-y-2.5">
+            <p className="font-bold text-white text-xs uppercase tracking-wider">Hỗ trợ & Liên hệ trực tiếp:</p>
+            <div className="text-gray-400 leading-relaxed font-sans space-y-2">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-neon-green shrink-0" />
+                <span>Hotline / SĐT:</span>
+                <a href="tel:0566665511" className="text-neon-green font-mono font-bold hover:underline text-sm tracking-wide">
+                  05.6666.5511
+                </a>
+              </div>
+              <div className="flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 text-neon-green shrink-0" />
+                <span>Zalo liên hệ:</span>
+                <a href="https://zalo.me/0566665511" target="_blank" rel="noopener noreferrer" className="text-neon-green font-mono font-bold hover:underline text-sm tracking-wide">
+                  05.6666.5511
+                </a>
+              </div>
+              <p className="pt-0.5 text-gray-400">
+                Cố vấn chuyên môn: <span className="text-white font-medium">Lê Vĩnh Phú (Leon)</span>
+              </p>
             </div>
+          </div>
+
+          {/* Cột 3: Kênh tương tác & Telegram */}
+          <div className="space-y-3 md:text-right">
+            <p className="font-bold text-white text-xs uppercase tracking-wider">Kênh trao đổi:</p>
+            <div className="flex flex-wrap md:justify-end gap-2 text-xs">
+              <a 
+                href="https://zalo.me/0566665511" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#0068FF]/15 border border-[#0068FF]/30 text-[#38bdf8] hover:bg-[#0068FF]/25 font-semibold transition"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>Chat Zalo</span>
+              </a>
+              <a 
+                href="https://t.me/strategyaudit" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-neon-green/10 border border-neon-green/30 text-neon-green hover:bg-neon-green/20 font-semibold transition"
+              >
+                <span>Telegram: @strategyaudit</span>
+              </a>
+            </div>
+            <p className="text-[11px] text-gray-400">Phản hồi và tư vấn kỹ thuật trong 24h làm việc</p>
           </div>
         </div>
 
