@@ -13,7 +13,8 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 - Giao diện trên bản đồ: điểm, thanh tiến độ, ô nhiệm vụ, bản đồ nhỏ (bấm để đi tới), lời dẫn của Leon, thanh công cụ 4 nhánh phụ (đang khoá "Sắp mở"). Chữ nằm trong `WORLD` ở `src/content/journey.ts`.
 - `src/game/JourneyStages.tsx`: nội dung chơi Màn 1–2 tách ra để bản 2D và 3D dùng chung.
 - Nút Game 3D trên menu giờ mở bản đồ này, thay cho thế giới quant cũ. `components/Game3D/World3D` cũ vẫn còn ở khung hero trang chủ.
-- Dung lượng: bản đồ 8,6 KB gzip + three.js 149 KB gzip, chỉ tải khi bấm mở.
+- Dung lượng: bản đồ 14,7 KB gzip + three.js 149 KB gzip, chỉ tải khi bấm mở.
+- Nâng hình (27/10, Leon chốt không cần model ngoài): 6 vật mốc dựng lại theo bộ hình LM-01…06 Gemini (bệ đá viền sáng; LM-03 làm đúng 6 ô lục giác + cổng khoá; LM-04 mặt trước là 242 ngăn kéo tô màu CHẤT/TÌNH HUỐNG/CHÁT thật). Thêm bloom, đổ bóng, tone mapping ACES, nền trời quầng xanh, lưới đáy, đảo xa làm phông, vòng phù văn lục giác, đèn đầu cầu. Đo trên khung hẹp ~90 fps.
 
 **Việc cho Leon / Gemini / Antigravity**
 - `docs/THANH_PHAN_HINH_ANH.md`: danh sách ảnh và model cần tạo, kèm luật cấm, thông số, prompt. Asset nào xong thì code thay vào theo mã.

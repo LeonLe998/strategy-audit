@@ -2,6 +2,8 @@
 
 *Leon · Strategy Audit · 27/10/2026*
 
+> **Cập nhật 27/10:** Leon chốt chưa cần model 3D từ ngoài. Sáu vật mốc đã được dựng bằng code theo bộ hình LM-01…06. File này giữ lại để dùng khi muốn nâng tiếp: Đợt 1 (icon, Leon dẫn đường, nền) vẫn đáng làm.
+
 File này liệt kê mọi hình ảnh và model mà bản đồ đảo cần. Leon đưa từng mục cho Gemini tạo. Khung bản đồ đã chạy được bằng khối dựng sẵn trong code (`src/game/world/JourneyWorld3D.tsx`), nên mỗi asset làm xong thì thay vào từng cái một, không phải chờ đủ bộ.
 
 ---

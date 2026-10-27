@@ -1,12 +1,17 @@
 /**
  * Thế giới 3D của hành trình: 6 đảo nổi = 6 màn, nối bằng cầu. Chỉ nạp khi người chơi bấm mở (React.lazy).
  * Trạng thái màn, điểm và nội dung chơi lấy từ useJourney + JourneyStages, giống trang 2D.
- * Cầu tới một đảo chỉ đi được khi màn đó đã mở. Hình khối dựng bằng code; ảnh/model từ Gemini thay dần theo
- * docs/THANH_PHAN_HINH_ANH.md. Không nến, không mũi tên tăng, không vàng thỏi, không đồng xu.
+ * Cầu tới một đảo chỉ đi được khi màn đó đã mở. Toàn bộ hình khối dựng bằng code (không tải model),
+ * vật mốc theo bộ hình LM-01…06 trong docs/THANH_PHAN_HINH_ANH.md. Có bloom + đổ bóng.
+ * Không nến, không mũi tên tăng, không vàng thỏi, không đồng xu.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import confetti from 'canvas-confetti';
 import { useJourney } from '../useJourney';
 import { useLibrarySummary } from '../useLibraryCards';
@@ -21,11 +26,11 @@ const COLOR = {
   glow: 0x00486b,
   line: 0x3df2ff,
   accent: 0x2bffea,
-  grass: 0x1e6f62,
-  grassDone: 0x249080,
+  grass: 0x145247,
+  grassDone: 0x1a6a5c,
   grassLocked: 0x2e3743,
-  dirt: 0x3b3230,
-  rock: 0x252b38,
+  dirt: 0x46383a,
+  rock: 0x2c3446,
   tree: 0x1b5e52,
   locked: 0x3a4656,
   situational: 0x1f6f8b,
@@ -91,7 +96,8 @@ const glow = (color: number, intensity = 0.6) =>
 interface IsleObjects {
   grass: THREE.MeshStandardMaterial;
   rim: THREE.LineBasicMaterial;
-  landmark: THREE.MeshStandardMaterial[];
+  rune: THREE.MeshBasicMaterial;
+  landmark: THREE.Material[];
   beam: THREE.Mesh;
 }
 interface BridgeObjects {
@@ -100,98 +106,237 @@ interface BridgeObjects {
 }
 type Spin = (t: number) => void;
 
-/** Mỗi màn một vật mốc riêng đặt giữa đảo */
-function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.MeshStandardMaterial[], library: { current: THREE.InstancedMesh | null }): Spin {
+const STONE = 0x2b3647;
+
+/** Khối đá có viền sáng mảnh — kiểu bệ đá trong bộ hình vật mốc */
+function stone(mats: THREE.Material[], geo: THREE.BufferGeometry, edgeOpacity = 0.35) {
+  const m = flat(STONE, { transparent: true });
+  const lm = new THREE.LineBasicMaterial({ color: COLOR.line, transparent: true, opacity: edgeOpacity });
+  mats.push(m, lm);
+  const mesh = new THREE.Mesh(geo, m);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), lm));
+  return mesh;
+}
+/** Khối phát sáng (bloom làm loé) */
+function lit(mats: THREE.Material[], geo: THREE.BufferGeometry, color: number, intensity = 1) {
+  const m = glow(color, intensity);
+  mats.push(m);
+  const mesh = new THREE.Mesh(geo, m);
+  mesh.castShadow = true;
+  return mesh;
+}
+/** Khung viền sáng quanh một khối (lá bài, bảng) */
+function frame(mats: THREE.Material[], geo: THREE.BufferGeometry, color: number) {
+  const lm = new THREE.LineBasicMaterial({ color, transparent: true });
+  mats.push(lm);
+  return new THREE.LineSegments(new THREE.EdgesGeometry(geo), lm);
+}
+
+/** Mỗi màn một vật mốc đặt trên mặt đảo, gốc ở mặt cỏ. Quay 45° để mặt chính hướng về máy quay. */
+function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.Material[], library: { current: THREE.InstancedMesh | null }): Spin {
+  group.rotation.y = Math.PI / 4;
   switch (id) {
     case 'khai-niem': {
-      // Viên tinh thể câu hỏi
-      const core = glow(COLOR.accent, 0.7);
-      const shell = glow(COLOR.line, 0.9);
-      shell.wireframe = true;
-      mats.push(core, shell);
-      const a = new THREE.Mesh(new THREE.OctahedronGeometry(0.55), core);
-      const b = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 0), shell);
-      group.add(a, b);
+      // Trạm khởi hành: ba bệ Học · Đo · Thực hành quanh viên tinh thể câu hỏi
+      const pedestal = (x: number, z: number, r: number, h: number) => {
+        const p = stone(mats, new THREE.CylinderGeometry(r, r * 1.12, h, 8));
+        p.position.set(x, h / 2, z);
+        group.add(p);
+        return h;
+      };
+      // Học: cuốn sách mở
+      const hb = pedestal(-1.15, 0.35, 0.42, 0.42);
+      const pageMat = flat(0xd6e2ee, { emissive: 0x3df2ff, emissiveIntensity: 0.15, transparent: true });
+      mats.push(pageMat);
+      [-1, 1].forEach((k) => {
+        const page = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.42), pageMat);
+        page.position.set(-1.15 + k * 0.15, hb + 0.05, 0.35);
+        page.rotation.z = k * -0.18;
+        page.castShadow = true;
+        group.add(page);
+      });
+      // Đo: mặt đồng hồ có kim
+      const hg = pedestal(0, -1.0, 0.42, 0.55);
+      const dial = stone(mats, new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20));
+      dial.rotation.x = Math.PI / 2;
+      dial.position.set(0, hg + 0.36, -1.0);
+      const face = lit(mats, new THREE.TorusGeometry(0.27, 0.025, 6, 32), COLOR.line, 1.3);
+      face.position.set(0, hg + 0.36, -0.95);
+      const needle = lit(mats, new THREE.BoxGeometry(0.03, 0.24, 0.02), COLOR.accent, 1.4);
+      needle.geometry.translate(0, 0.1, 0);
+      needle.position.set(0, hg + 0.33, -0.94);
+      group.add(dial, face, needle);
+      // Thực hành: bàn nhỏ có đèn
+      const hd = pedestal(1.15, 0.35, 0.45, 0.45);
+      const desk = stone(mats, new THREE.BoxGeometry(0.62, 0.05, 0.42));
+      desk.position.set(1.15, hd + 0.28, 0.35);
+      group.add(desk);
+      [[-0.26, -0.17], [0.26, -0.17], [-0.26, 0.17], [0.26, 0.17]].forEach(([dx, dz]) => {
+        const leg = stone(mats, new THREE.BoxGeometry(0.04, 0.26, 0.04), 0.15);
+        leg.position.set(1.15 + dx, hd + 0.13, 0.35 + dz);
+        group.add(leg);
+      });
+      const lamp = lit(mats, new THREE.SphereGeometry(0.06, 10, 8), COLOR.accent, 2);
+      lamp.position.set(1.32, hd + 0.42, 0.25);
+      group.add(lamp);
+      // Giữa: tinh thể câu hỏi trên bệ thấp
+      pedestal(0, 0.25, 0.5, 0.22);
+      const ring = lit(mats, new THREE.TorusGeometry(0.42, 0.03, 6, 32), COLOR.line, 1.2);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(0, 0.24, 0.25);
+      const crystal = lit(mats, new THREE.OctahedronGeometry(0.32), COLOR.accent, 1.6);
+      crystal.scale.y = 1.6;
+      group.add(ring, crystal);
       return (t) => {
-        a.rotation.y = t * 0.8;
-        b.rotation.set(t * 0.2, -t * 0.4, 0);
-        group.position.y = group.userData.baseY + Math.sin(t * 1.5) * 0.12;
+        crystal.position.set(0, 1.05 + Math.sin(t * 1.6) * 0.1, 0.25);
+        crystal.rotation.y = t * 0.9;
+        needle.rotation.z = Math.sin(t * 0.8) * 0.9;
       };
     }
     case 'vi-sao-kiem-dinh': {
-      // Ba lá bài xoè quạt
-      const cards: THREE.Mesh[] = [];
+      // Phòng thi: bục đá, ba lá bài viền sáng xoè quạt, con dấu
+      const slab = stone(mats, new THREE.BoxGeometry(2.6, 0.28, 1.7));
+      slab.position.y = 0.14;
+      group.add(slab);
+      const cards: THREE.Group[] = [];
       [-1, 0, 1].forEach((k) => {
-        const m = glow(k === 1 ? COLOR.accent : COLOR.line, k === 1 ? 0.75 : 0.35);
-        mats.push(m);
-        const card = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.1, 0.04), m);
-        card.position.set(k * 0.55, 0, k * -0.05);
-        card.rotation.z = -k * 0.25;
-        cards.push(card);
-        group.add(card);
+        const g = new THREE.Group();
+        const geo = new THREE.BoxGeometry(0.72, 1.05, 0.05);
+        const fill = new THREE.MeshStandardMaterial({ color: 0x0b2236, emissive: COLOR.glow, emissiveIntensity: 0.5, transparent: true });
+        mats.push(fill);
+        const card = new THREE.Mesh(geo, fill);
+        card.castShadow = true;
+        g.add(card, frame(mats, geo, k === 1 ? COLOR.accent : COLOR.line));
+        g.position.set(k * 0.62, 0.95, -0.25 - Math.abs(k) * 0.08);
+        g.rotation.set(0, -k * 0.22, -k * 0.12);
+        cards.push(g);
+        group.add(g);
       });
-      group.rotation.y = Math.PI / 4;
-      return (t) => cards.forEach((c, i) => (c.position.y = Math.sin(t * 1.5 + i) * 0.08));
+      const stampBase = stone(mats, new THREE.CylinderGeometry(0.22, 0.26, 0.14, 16));
+      stampBase.position.set(0.8, 0.35, 0.45);
+      const stem = stone(mats, new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8), 0.15);
+      stem.position.set(0.8, 0.57, 0.45);
+      const knob = lit(mats, new THREE.SphereGeometry(0.11, 12, 10), COLOR.line, 0.9);
+      knob.position.set(0.8, 0.76, 0.45);
+      group.add(stampBase, stem, knob);
+      return (t) => cards.forEach((c, i) => (c.position.y = 0.95 + Math.sin(t * 1.4 + i) * 0.06));
     }
     case 'sau-o': {
-      // Tổ ong sáu ô lục giác, sáng dần từng ô
-      const cells: THREE.Mesh[] = [];
-      for (let i = 0; i < 6; i++) {
-        const m = glow(COLOR.line, 0.4);
-        mats.push(m);
-        const cell = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.14, 6), m);
-        cell.rotation.x = Math.PI / 2;
-        cell.position.set((i % 3) * 0.72 - 0.72 + (i < 3 ? 0 : 0.36), i < 3 ? 0.33 : -0.3, 0);
-        cells.push(cell);
-        group.add(cell);
-      }
-      group.rotation.y = Math.PI / 4;
+      // Tổ ong: sáu ô lục giác rỗng có khe sáng, cổng khoá ở mép bệ
+      const base = stone(mats, new THREE.CylinderGeometry(1.75, 1.85, 0.24, 6));
+      base.position.y = 0.12;
+      group.add(base);
+      const slots: THREE.MeshStandardMaterial[] = [];
+      const cells = [
+        [-0.62, -0.32], [0, -0.32], [0.62, -0.32],
+        [-0.31, 0.22], [0.31, 0.22], [0.93, 0.22],
+      ];
+      cells.forEach(([x, z]) => {
+        const cell = stone(mats, new THREE.CylinderGeometry(0.33, 0.33, 0.5, 6));
+        cell.position.set(x - 0.15, 0.49, z);
+        const slotMat = glow(COLOR.line, 0.3);
+        mats.push(slotMat);
+        slots.push(slotMat);
+        const slot = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.02, 6), slotMat);
+        slot.position.set(x - 0.15, 0.75, z);
+        group.add(cell, slot);
+      });
+      // Cổng khoá: hai cột + xà + ổ khoá lục giác
+      [-0.32, 0.32].forEach((dx) => {
+        const post = stone(mats, new THREE.BoxGeometry(0.12, 0.75, 0.12));
+        post.position.set(dx - 0.2, 0.6, 1.25);
+        group.add(post);
+      });
+      const lintel = stone(mats, new THREE.BoxGeometry(0.82, 0.12, 0.16));
+      lintel.position.set(-0.2, 1.0, 1.25);
+      const lock = lit(mats, new THREE.CylinderGeometry(0.13, 0.13, 0.05, 6), COLOR.accent, 1.4);
+      lock.rotation.x = Math.PI / 2;
+      lock.position.set(-0.2, 0.6, 1.25);
+      group.add(lintel, lock);
       return (t) => {
-        const lit = Math.floor(t * 1.2) % 7;
-        cells.forEach((c, i) => ((c.material as THREE.MeshStandardMaterial).emissiveIntensity = i < lit ? 0.95 : 0.25));
+        const on = Math.floor(t * 1.2) % 7;
+        slots.forEach((m, i) => (m.emissiveIntensity = i < on ? 1.6 : 0.3));
       };
     }
     case 'thu-vien': {
-      // Bức tường hồ sơ: mỗi khối là một chiến lược đã đo, tô màu theo kết quả khi dữ liệu về
-      const m = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x0a1a24, roughness: 0.4, transparent: true });
+      // Toà lưu trữ: mặt trước là tường ngăn kéo hồ sơ, tô màu theo kết quả thư viện khi dữ liệu về
+      const step = stone(mats, new THREE.BoxGeometry(2.4, 0.12, 1.6), 0.2);
+      step.position.y = 0.06;
+      const body = stone(mats, new THREE.BoxGeometry(2.1, 1.55, 1.3));
+      body.position.y = 0.88;
+      const roof = stone(mats, new THREE.BoxGeometry(2.3, 0.14, 1.5));
+      roof.position.y = 1.72;
+      group.add(step, body, roof);
+      const m = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x05121b, roughness: 0.4, transparent: true });
       mats.push(m);
-      const wall = new THREE.InstancedMesh(new THREE.BoxGeometry(0.12, 0.12, 0.12), m, 300);
+      const wall = new THREE.InstancedMesh(new THREE.BoxGeometry(0.068, 0.068, 0.03), m, 300);
       wall.count = 0;
+      wall.position.set(0, 0.9, 0.66);
       library.current = wall;
-      const frame = flat(COLOR.rock);
-      const base = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.2, 0.5), frame);
-      base.position.y = -1.05;
-      group.add(wall, base);
-      group.rotation.y = Math.PI / 4;
+      group.add(wall);
       return () => undefined;
     }
     case 'kiem-diem': {
-      // Các vòng điểm xếp chồng
-      const rings: THREE.Mesh[] = [];
-      for (let i = 0; i < 3; i++) {
-        const m = glow(i === 2 ? COLOR.accent : COLOR.line, 0.55);
-        mats.push(m);
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.75 - i * 0.18, 0.05, 8, 40), m);
-        ring.position.y = i * 0.38 - 0.38;
-        ring.rotation.x = Math.PI / 2;
-        rings.push(ring);
+      // Trạm nhiệm vụ: cột tín hiệu, vòng sáng xoay, bảng nhiệm vụ
+      const base = stone(mats, new THREE.CylinderGeometry(0.62, 0.72, 0.22, 10));
+      base.position.y = 0.11;
+      const pillar = stone(mats, new THREE.CylinderGeometry(0.16, 0.2, 2.1, 10));
+      pillar.position.y = 1.27;
+      const orb = lit(mats, new THREE.SphereGeometry(0.24, 16, 12), COLOR.accent, 1.5);
+      orb.position.y = 2.5;
+      group.add(base, pillar, orb);
+      const rings: THREE.Mesh[] = [0.6, 0.48].map((r, i) => {
+        const ring = lit(mats, new THREE.TorusGeometry(r, 0.035, 6, 40), COLOR.line, 1.4);
+        ring.position.y = 1.55 + i * 0.4;
         group.add(ring);
-      }
-      return (t) => rings.forEach((r, i) => (r.rotation.z = t * (0.6 + i * 0.4) * (i % 2 ? -1 : 1)));
+        return ring;
+      });
+      const boardGeo = new THREE.BoxGeometry(0.62, 0.46, 0.05);
+      const board = stone(mats, boardGeo, 0);
+      board.position.set(0.55, 0.8, 0.35);
+      board.rotation.y = -0.3;
+      board.add(frame(mats, boardGeo, COLOR.line));
+      const post = stone(mats, new THREE.BoxGeometry(0.06, 0.6, 0.06), 0.15);
+      post.position.set(0.55, 0.3, 0.33);
+      group.add(board, post);
+      return (t) => {
+        rings[0].rotation.set(Math.PI / 2 + Math.sin(t) * 0.25, 0, t * 0.8);
+        rings[1].rotation.set(Math.PI / 2 - Math.sin(t) * 0.25, 0, -t * 1.1);
+      };
     }
     case 'chuyen-doi': {
-      // Cổng cuối hành trình
-      const frame = glow(COLOR.accent, 0.85);
-      const veil = glow(COLOR.glow, 0.9);
-      veil.opacity = 0.6;
-      veil.side = THREE.DoubleSide;
-      mats.push(frame, veil);
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.1, 12, 60), frame);
-      const disc = new THREE.Mesh(new THREE.CircleGeometry(1.12, 48), veil);
-      group.add(ring, disc);
-      group.rotation.y = Math.PI / 4;
-      group.position.y += 0.4;
-      return (t) => (veil.emissiveIntensity = 0.6 + Math.sin(t * 2) * 0.3);
+      // Cổng cuối: vòm đá, màn sáng, tinh thể quanh chân
+      const base = stone(mats, jitter(new THREE.CylinderGeometry(1.5, 1.65, 0.3, 9), 0.12, (y) => y > 0));
+      base.position.y = 0.15;
+      group.add(base);
+      [-0.95, 0.95].forEach((x) => {
+        const p = stone(mats, new THREE.BoxGeometry(0.32, 1.9, 0.36));
+        p.position.set(x, 1.25, 0);
+        group.add(p);
+      });
+      const arch = stone(mats, new THREE.TorusGeometry(0.95, 0.17, 6, 14, Math.PI));
+      arch.position.y = 2.2;
+      group.add(arch);
+      const veilMat = glow(COLOR.accent, 1.1);
+      veilMat.opacity = 0.55;
+      veilMat.side = THREE.DoubleSide;
+      veilMat.depthWrite = false;
+      mats.push(veilMat);
+      const veilRect = new THREE.Mesh(new THREE.PlaneGeometry(1.58, 1.9), veilMat);
+      veilRect.position.y = 1.25;
+      const veilTop = new THREE.Mesh(new THREE.CircleGeometry(0.79, 24, 0, Math.PI), veilMat);
+      veilTop.position.y = 2.2;
+      group.add(veilRect, veilTop);
+      [[-1.25, 0.5, 0.5], [1.2, 0.6, 0.4], [-0.7, 0.9, 0.35], [1.0, -0.6, 0.3]].forEach(([x, z, s]) => {
+        const c = lit(mats, new THREE.OctahedronGeometry(s), COLOR.line, 1.1);
+        c.scale.y = 1.8;
+        c.position.set(x, 0.3 + s * 0.9, z);
+        c.rotation.z = x * 0.15;
+        group.add(c);
+      });
+      return (t) => (veilMat.emissiveIntensity = 0.9 + Math.sin(t * 2) * 0.35);
     }
   }
 }
@@ -207,6 +352,7 @@ function buildIsland(i: number, scene: THREE.Scene, pickables: THREE.Object3D[])
   const topGeo = jitter(new THREE.CylinderGeometry(ISLAND_R, ISLAND_R - 0.2, 0.6, 12), 0.18, (y) => y > 0);
   const top = new THREE.Mesh(topGeo, grassMat);
   top.userData = { isle: i, top: true };
+  top.receiveShadow = true;
   root.add(top);
   pickables.push(top);
 
@@ -226,6 +372,13 @@ function buildIsland(i: number, scene: THREE.Scene, pickables: THREE.Object3D[])
   const rimMat = new THREE.LineBasicMaterial({ color: COLOR.line, transparent: true, opacity: 0.8 });
   const rim = new THREE.LineSegments(new THREE.EdgesGeometry(topGeo, 30), rimMat);
   root.add(rim);
+
+  // Vòng phù văn lục giác quanh vật mốc
+  const runeMat = new THREE.MeshBasicMaterial({ color: COLOR.line, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false });
+  const rune = new THREE.Mesh(new THREE.RingGeometry(2.05, 2.15, 6), runeMat);
+  rune.rotation.x = -Math.PI / 2;
+  rune.position.y = TOP + 0.02;
+  root.add(rune);
 
   // Cây + tinh thể quanh mép, tránh hướng có cầu
   const r = rng(i * 17 + 3);
@@ -248,13 +401,14 @@ function buildIsland(i: number, scene: THREE.Scene, pickables: THREE.Object3D[])
       const h = 0.7 + r() * 0.6;
       const tree = new THREE.Mesh(new THREE.ConeGeometry(0.32, h, 6), flat(COLOR.tree));
       tree.position.set(x, TOP + 0.15 + h / 2, z);
+      tree.castShadow = true;
       const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.2, 5), flat(COLOR.dirt));
       trunk.position.set(x, TOP + 0.1, z);
       root.add(tree, trunk);
     }
   }
   scene.add(root);
-  return { grass: grassMat, rim: rimMat };
+  return { grass: grassMat, rim: rimMat, rune: runeMat };
 }
 
 /** Cầu ván treo: bản đủ ván (đã mở) và bản gãy (đang khoá) */
@@ -278,6 +432,7 @@ function buildBridge(j: number, scene: THREE.Scene, pickables: THREE.Object3D[])
     plank.position.set(x, y, z);
     plank.rotation.y = yaw;
     plank.userData.bridge = j;
+    plank.receiveShadow = true;
     full.add(plank);
     pickables.push(plank);
     if (t < 0.22 || t > 0.85 || k % 4 === 0) {
@@ -290,8 +445,18 @@ function buildBridge(j: number, scene: THREE.Scene, pickables: THREE.Object3D[])
     railPts[0].push(new THREE.Vector3(x, y + 0.45, z).add(side));
     railPts[1].push(new THREE.Vector3(x, y + 0.45, z).sub(side));
   }
-  const railMat = glow(COLOR.line, 1.1);
-  railPts.forEach((pts) => full.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, 0.035, 5, false), railMat)));
+  const railMat = glow(COLOR.line, 0.55);
+  railPts.forEach((pts) => full.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, 0.028, 5, false), railMat)));
+  // Đèn đứng ở bốn góc đầu cầu
+  const postMat = flat(0x2b3647);
+  const bulbMat = glow(COLOR.accent, 1.3);
+  [railPts[0][0], railPts[1][0], railPts[0][n], railPts[1][n]].forEach((p) => {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.75, 6), postMat);
+    post.position.set(p.x, p.y - 0.12, p.z);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), bulbMat);
+    bulb.position.set(p.x, p.y + 0.3, p.z);
+    full.add(post, bulb);
+  });
   broken.visible = false;
   scene.add(full, broken);
   return { full, broken };
@@ -319,7 +484,7 @@ function paintLibrary(wall: THREE.InstancedMesh, verdict: Record<string, number>
   const mtx = new THREE.Matrix4();
   const col = new THREE.Color();
   list.forEach((hex, i) => {
-    mtx.makeTranslation(((i % cols) - (cols - 1) / 2) * 0.15, ((rows - 1) / 2) * 0.15 - Math.floor(i / cols) * 0.15, 0);
+    mtx.makeTranslation(((i % cols) - (cols - 1) / 2) * 0.085, ((rows - 1) / 2) * 0.085 - Math.floor(i / cols) * 0.085, 0);
     wall.setMatrixAt(i, mtx);
     wall.setColorAt(i, col.setHex(hex));
   });
@@ -340,6 +505,7 @@ function buildPlayer() {
   const pack = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.3, 0.12), flat(0x2a3d55));
   pack.position.set(0, 0.48, -0.2);
   g.add(body, head, visor, pack);
+  g.traverse((o) => (o.castShadow = true));
   return g;
 }
 
@@ -397,17 +563,61 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
       return;
     }
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    const small = window.innerWidth < 640;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.25 : 1.5));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.domElement.style.touchAction = 'none';
     mount.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(COLOR.bg);
-    scene.fog = new THREE.Fog(COLOR.bg, 30, 62);
+    // Nền trời: quầng xanh ở giữa, tối dần ra mép
+    const sky = document.createElement('canvas');
+    sky.width = sky.height = 512;
+    const ctx = sky.getContext('2d');
+    if (ctx) {
+      const grad = ctx.createRadialGradient(256, 200, 20, 256, 256, 380);
+      grad.addColorStop(0, '#0d3550');
+      grad.addColorStop(0.45, '#071a2c');
+      grad.addColorStop(1, '#040914');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+    }
+    const skyTex = new THREE.CanvasTexture(sky);
+    skyTex.colorSpace = THREE.SRGBColorSpace;
+    scene.background = skyTex;
+    scene.fog = new THREE.Fog(COLOR.bg, 32, 70);
+
+    // Lưới mờ phía dưới, như mặt sàn dữ liệu
+    const floor = new THREE.GridHelper(260, 130, COLOR.glow, COLOR.glow);
+    (floor.material as THREE.Material).transparent = true;
+    (floor.material as THREE.Material).opacity = 0.22;
+    floor.position.set(-15, -12, -15);
+    scene.add(floor);
+
+    // Đảo xa làm phông, không đi tới được
+    const far = rng(41);
+    for (let k = 0; k < 7; k++) {
+      const side = k % 2 ? 1 : -1;
+      const u = 4 + k * 6 + far() * 3;
+      const v = side * (13 + far() * 6);
+      const x = (-u + v) * S2;
+      const z = (-u - v) * S2;
+      const r = 1.2 + far() * 1.8;
+      const fy = -3.5 - far() * 4;
+      const cap = new THREE.Mesh(jitter(new THREE.CylinderGeometry(r, r * 0.9, 0.4, 9), 0.15, (yy) => yy > 0), flat(0x173a36));
+      cap.position.set(x, fy, z);
+      const under = new THREE.Mesh(jitter(new THREE.ConeGeometry(r * 0.9, r * 2.2, 9, 2), 0.3, () => false), flat(0x1a2030));
+      under.rotation.x = Math.PI;
+      under.position.set(x, fy - 0.2 - r * 1.1, z);
+      scene.add(cap, under);
+    }
 
     // Góc nhìn chéo kiểu isometric
-    const frustum = () => (mount.clientWidth < 640 ? 24 : 19);
+    const frustum = () => (mount.clientWidth < 640 ? 21 : 19);
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 200);
     const fitCamera = () => {
       const f = frustum();
@@ -420,11 +630,20 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
     };
     fitCamera();
 
-    scene.add(new THREE.HemisphereLight(0x9fe9ff, 0x0a1020, 0.9));
+    scene.add(new THREE.HemisphereLight(0x9fe9ff, 0x0a1020, 0.45));
     scene.add(new THREE.AmbientLight(0xffffff, 0.25));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.1);
-    sun.position.set(8, 14, 4);
-    scene.add(sun);
+    const sun = new THREE.DirectionalLight(0xfff4e6, 1.5);
+    const SUN_OFFSET = new THREE.Vector3(8, 14, 4);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
+    Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 1, far: 50 });
+    sun.shadow.bias = -0.0005;
+    sun.shadow.normalBias = 0.02;
+    scene.add(sun, sun.target);
+    // Ánh viền lạnh từ phía sau cho đảo nổi khối
+    const back = new THREE.DirectionalLight(0x3df2ff, 0.9);
+    back.position.set(-10, 6, -12);
+    scene.add(back);
 
     // Mưa dữ liệu: các hạt sáng rơi chậm phía sau
     const RAIN = 500;
@@ -455,11 +674,10 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
     const pickables: THREE.Object3D[] = [];
     const spins: Spin[] = [];
     ISLES.forEach((isle, i) => {
-      const { grass, rim } = buildIsland(i, scene, pickables);
+      const { grass, rim, rune } = buildIsland(i, scene, pickables);
       const group = new THREE.Group();
-      group.position.set(isle.c.x, isle.y + TOP + 1.5, isle.c.y);
-      group.userData.baseY = group.position.y;
-      const mats: THREE.MeshStandardMaterial[] = [];
+      group.position.set(isle.c.x, isle.y + TOP, isle.c.y);
+      const mats: THREE.Material[] = [];
       spins.push(buildLandmark(isle.id, group, mats, libraryWall));
       mats.forEach((m) => (m.userData.baseOpacity = m.opacity));
       scene.add(group);
@@ -468,12 +686,12 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
 
       const beam = new THREE.Mesh(
         new THREE.CylinderGeometry(0.6, 1.8, 12, 24, 1, true),
-        new THREE.MeshBasicMaterial({ color: COLOR.accent, transparent: true, opacity: 0.09, side: THREE.DoubleSide, depthWrite: false }),
+        new THREE.MeshBasicMaterial({ color: COLOR.accent, transparent: true, opacity: 0.05, side: THREE.DoubleSide, depthWrite: false }),
       );
       beam.position.set(isle.c.x, isle.y + 6, isle.c.y);
       beam.visible = false;
       scene.add(beam);
-      isleObjs.current[i] = { grass, rim, landmark: mats, beam };
+      isleObjs.current[i] = { grass, rim, rune, landmark: mats, beam };
     });
     pickables.forEach((o) => o.traverse((c) => c.userData.isle === undefined && (c.userData.isle = o.userData.isle)));
     BRIDGES.forEach((_, j) => (bridgeObjs.current[j] = buildBridge(j, scene, pickables)));
@@ -576,8 +794,16 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
     const onResize = () => {
       fitCamera();
       renderer.setSize(mount.clientWidth, mount.clientHeight);
+      composer.setSize(mount.clientWidth, mount.clientHeight);
+      bloom.resolution.set(mount.clientWidth / 2, mount.clientHeight / 2);
     };
     window.addEventListener('resize', onResize);
+
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(new THREE.Vector2(mount.clientWidth / 2, mount.clientHeight / 2), 0.6, 0.45, 0.85);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
 
     const UP = new THREE.Vector2(-S2, -S2);
     const RIGHT = new THREE.Vector2(S2, -S2);
@@ -660,14 +886,16 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
         p.needsUpdate = true;
       }
       isleObjs.current.forEach((o) => {
-        if (o.beam.visible) (o.beam.material as THREE.MeshBasicMaterial).opacity = 0.07 + Math.sin(t * 2.5) * 0.04;
+        if (o.beam.visible) (o.beam.material as THREE.MeshBasicMaterial).opacity = 0.045 + Math.sin(t * 2.5) * 0.02;
       });
 
       // Máy quay bám theo người chơi
       camTarget.lerp(pos, 0.08);
       camera.position.copy(camTarget).add(ISO);
       camera.lookAt(camTarget);
-      renderer.render(scene, camera);
+      sun.position.copy(camTarget).add(SUN_OFFSET);
+      sun.target.position.copy(camTarget);
+      composer.render();
 
       // Nhãn HTML bám theo vật mốc
       const w = mount.clientWidth;
@@ -695,6 +923,8 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
         const mat = mesh.material as THREE.Material | THREE.Material[] | undefined;
         (Array.isArray(mat) ? mat : mat ? [mat] : []).forEach((m) => m.dispose());
       });
+      skyTex.dispose();
+      composer.dispose();
       renderer.dispose();
       renderer.domElement.remove();
       isleObjs.current = [];
@@ -714,6 +944,8 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
       const locked = s.status === 'locked';
       o.grass.color.setHex(locked ? COLOR.grassLocked : s.status === 'done' ? COLOR.grassDone : COLOR.grass);
       o.rim.color.setHex(locked ? COLOR.locked : s.status === 'done' ? COLOR.accent : COLOR.line);
+      o.rune.color.setHex(locked ? COLOR.locked : s.status === 'done' ? COLOR.accent : COLOR.line);
+      o.rune.opacity = locked ? 0.25 : 0.6;
       o.landmark.forEach((m) => (m.opacity = locked ? 0.2 : (m.userData.baseOpacity ?? 1)));
       o.beam.visible = s.status === 'open';
       if (i > 0) {
@@ -876,8 +1108,8 @@ export default function JourneyWorld3D({ onExit }: { onExit: () => void }) {
       {/* Người dẫn đường */}
       {!active && ready && guideOpen && (
         <div data-world-guide className="absolute bottom-24 left-1/2 flex w-[min(92vw,30rem)] -translate-x-1/2 items-end gap-3 sm:bottom-6">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-[#2BFFEA] bg-[#00486b] font-bold">L</div>
-          <div className="relative flex-1 rounded-2xl border border-[#3df2ff]/40 bg-[#040914]/90 p-3 text-sm">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#2BFFEA] bg-[#00486b] font-bold sm:h-12 sm:w-12">L</div>
+          <div className="relative flex-1 rounded-2xl border border-[#3df2ff]/40 bg-[#040914]/90 p-2.5 text-xs sm:p-3 sm:text-sm">
             <p className="text-[10px] font-semibold text-[#3df2ff]">{WORLD.guideName}</p>
             <p className="text-gray-100">{WORLD.guide[cur.id]}</p>
             <button type="button" onClick={() => setGuideOpen(false)} className="absolute right-2 top-1 text-gray-500" aria-label="Đóng lời dẫn">×</button>
