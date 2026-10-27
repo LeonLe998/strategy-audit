@@ -4,6 +4,29 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 
 ---
 
+## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · GĐ1 phần logic
+
+**Xem thử:** `npm run dev` → http://localhost:5173/hanh-trinh (trang chủ chưa đổi).
+
+**Đã làm**
+- `src/game/journeyConfig.ts`: 6 màn, điểm thưởng (Màn 1 +10, Màn 2 +10, Sáu Ô +30), giá mở hồ sơ 25, tên điểm "Điểm Đo".
+- `src/game/journeyStore.ts`: trạng thái lưu localStorage (`sa_journey_v1`): màn đã qua, sổ điểm (mỗi việc chỉ cộng một lần), câu trả lời. Màn sau chỉ mở khi màn trước xong.
+- `src/game/useJourney.ts`: hook cho giao diện → `{ points, stages[{id, order, title, reward, status}], current, answers, ledger, completeStage(id), recordAnswer(key, value), award(key, delta, reason), reset() }`.
+- `src/game/useLibraryCards.ts`: đọc lá bài và phễu số từ dữ liệu công khai (đã lọc R/PF), không gõ số tay.
+- `src/content/journey.ts`: chữ Màn 1–2, **bản nháp chờ Leon duyệt**. Số cố định đã đối chiếu kho số: thí nghiệm thoát lệnh (39,42% / 48,22% / 25,45% / 38,03%), 4 trường phái 42 chiến lược · 22.938 lệnh · đậu 0, kỳ thi lần 2 15/15, nhóm Giờ giấc 4/22.
+- `src/lib/analytics.ts`: event GA4 `stage_view`, `stage_done`, `quiz_answer`, `card_guess`, `points_earn`.
+- `src/pages/JourneyPage.tsx`: **khung chưa style**, route `/hanh-trinh`. Lá bài Màn 2: IND002 (RSI-14), MTF014 (SMC FVG + CHoCH), SEA003 (Turn-of-month).
+
+**Đã thử trên trình duyệt:** chơi Màn 1 → Màn 2 → 20 điểm → Sáu Ô mở khoá; tải lại trang vẫn giữ tiến độ; đoán bài hiện đúng verdict + số từ dữ liệu.
+
+**Việc cho Stitch → Antigravity**
+- Thiết kế lại phần nhìn của `JourneyPage.tsx` (bản đồ 6 màn, thẻ bài, con dấu, ví điểm). **Giữ nguyên** các lời gọi `useJourney`, `useLibraryCards`, `funnel.*` và nội dung lấy từ `src/content/journey.ts`. Có sẵn thuộc tính `data-stage`, `data-status`, `data-card`, `data-flipped`, `data-stamp`, `data-points`… để bám vào khi style.
+- Muốn đổi chữ thì ghi yêu cầu ở đây, không sửa thẳng `src/content/`.
+
+**Chưa làm (GĐ2):** Màn 3 cổng Zalo + ví điểm trên server; Màn 4 mở hồ sơ bằng điểm. Trang chủ chưa chuyển sang bản đồ, chờ thiết kế Stitch.
+
+---
+
 ## 27/10/2026 · Claude · Chuẩn bị + GĐ0 (vá rủi ro)
 
 **Đã làm**

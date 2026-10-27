@@ -23,6 +23,7 @@ const Vault = lazy(() => import('./components/Vault'));
 const IntakeWizard = lazy(() => import('./pages/IntakeWizard'));
 const VIPLibrary = lazy(() => import('./pages/VIPLibrary'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const JourneyPage = lazy(() => import('./pages/JourneyPage'));
 
 const PageLoading = () => <div className="py-24 text-center text-sm text-gray-500">Đang tải…</div>;
 
@@ -77,6 +78,9 @@ function parseCurrentRoute(): RouteInfo {
   if (pLower === '/audit' || pLower === '/bat-dau' || pLower === '/kiem-dinh' || pLower === '/wizard') {
     return { tab: 'audit', subId: null, isSauO: false };
   }
+  if (pLower === '/hanh-trinh' || pLower === '/journey') {
+    return { tab: 'journey', subId: null, isSauO: false };
+  }
   if (pLower === '/admin') {
     return { tab: 'admin', subId: null, isSauO: false };
   }
@@ -110,6 +114,8 @@ function getPathForRoute(tab: string, subId?: string | null): string {
       return '/audit';
     case 'admin':
       return '/admin';
+    case 'journey':
+      return '/hanh-trinh';
     case 'sauo':
       return '/sauo';
     case 'vault':
@@ -236,6 +242,7 @@ export default function App() {
               />
             )}
             {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
+            {activeTab === 'journey' && <JourneyPage />}
             {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
             {activeTab === 'membership' && <MembershipPage setActiveTab={setActiveTab} />}
             {activeTab === 'audit' && (
