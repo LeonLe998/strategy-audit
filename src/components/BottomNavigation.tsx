@@ -1,7 +1,7 @@
-import { BookOpen, ClipboardCheck, Home, Users } from 'lucide-react';
+import { BookOpen, ClipboardCheck, Map as MapIcon, Users } from 'lucide-react';
 
 const destinations = [
-  { id: 'home', href: '/', label: 'Trang chủ', icon: Home },
+  { id: 'home', href: '/', label: 'Bản đồ', icon: MapIcon },
   { id: 'sauo', href: '/sauo', label: 'Sáu Ô', icon: ClipboardCheck },
   { id: 'viplibrary', href: '/vip', label: 'Thư viện', icon: BookOpen },
   { id: 'membership', href: '/membership', label: 'Thành viên', icon: Users },

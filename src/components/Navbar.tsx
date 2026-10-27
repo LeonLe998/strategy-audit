@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Activity, BookOpen, Users, ClipboardCheck, FileCode, Gamepad2, Settings } from 'lucide-react';
+import { Activity, BookOpen, Users, ClipboardCheck, FileCode, Gamepad2, Settings, Map as MapIcon } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 interface NavbarProps {
@@ -40,7 +40,8 @@ export default function Navbar({
   }, []);
 
   const navItems = [
-    { id: 'home', label: 'Vì sao cần đo?', icon: Activity },
+    { id: 'home', label: 'Bản đồ', icon: MapIcon },
+    { id: 'about', label: 'Vì sao cần đo?', icon: Activity },
     { id: 'sauo', label: 'Tự kiểm tra 6 ô', icon: ClipboardCheck },
     { id: 'viplibrary', label: '300 chiến lược', icon: BookOpen },
     { id: 'membership', label: 'Thành viên', icon: Users },

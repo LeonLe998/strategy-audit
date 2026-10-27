@@ -4,7 +4,22 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 
 ---
 
-## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · Bản đồ đảo 3D
+## 28/10/2026 · Claude · nhánh `claude/gd1-journey` · Trang chủ là sảnh bản đồ đảo
+
+Leon chốt: bản đồ không còn là game đi bộ 6 màn, chỉ là cửa vào cho người mới nhìn toàn cảnh rồi dẫn vào các trang.
+
+**Xem thử:** http://localhost:5173/ (lần đầu có vòng giới thiệu; xoá `sa_hub_tour_v1` trong localStorage để xem lại, hoặc bấm "Xem lại vòng giới thiệu").
+
+- `src/game/world/IslandHub3D.tsx` (thay `JourneyWorld3D.tsx`): 6 đảo xếp hình rắn, máy ngang 3×2, máy dọc 2×3. Lần đầu: máy quay lướt toàn cảnh rồi dừng ở từng đảo kèm một câu (bỏ qua được, Esc cũng bỏ qua), xong thì dừng ở toàn cảnh. Bấm đảo, bảng tên, nút "Vào trang này" hoặc menu thì máy quay sà xuống đảo rồi chuyển trang.
+- Đảo → trang: Bắt đầu ở đây → `/hanh-trinh` (Màn 1–2) · Vì sao cần đo → `/gioi-thieu` · Tự kiểm 6 ô → `/sauo` · Thư viện 300 → `/vip` · Tài liệu → `/vault` · Thành viên → `/membership`. Chữ ở `HUB` trong `src/content/journey.ts`.
+- Bỏ: nhân vật đi bộ, W A S D, cầu khoá, bảng nhiệm vụ, thanh "Sắp mở", bản đồ nhỏ. Điểm Đo chỉ hiện khi đã có điểm.
+- Trang chủ cuộn cũ chuyển sang `/gioi-thieu` (bản đọc). Máy không chạy được WebGL thì `/` hiện bản đọc.
+- Nối các trang về bản đồ: Navbar có mục "Bản đồ", thanh dưới điện thoại đổi "Trang chủ" → "Bản đồ", trang Sáu Ô có link "Bản đồ" ở thanh trên và thanh bên. Bỏ nút "Chơi trên bản đồ đảo 3D" ở trang hành trình và nút Game 3D trên menu.
+- GA4 thêm `hub_tour` (done/skip/replay) và `hub_island` (đảo nào, bấm từ đâu).
+- Đã thử trên khung điện thoại (vòng giới thiệu, bấm đảo → /vip, về bản đồ) và khung 1280 (chụp mờ, bố cục 3×2 vừa khung). Chưa thử máy thật.
+- Chưa làm: ô "Bước tiếp theo" cuối mỗi trang; làm xong Sáu Ô chưa tự ghi điểm/qua màn.
+
+## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · Bản đồ đảo 3D (đã thay bằng sảnh ở trên)
 
 **Xem thử:** http://localhost:5173/hanh-trinh?3d, hoặc bấm nút "Chơi trên bản đồ đảo 3D" trên trang hành trình, hoặc nút Game 3D trên menu.
 

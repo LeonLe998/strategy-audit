@@ -126,30 +126,74 @@ export const STAGE2 = {
   cta: 'Qua màn 3 · Sáu Ô',
 };
 
-// ───────────────────── Thế giới 3D · chữ trên bản đồ đảo ─────────────────────
+// ───────────────────── Sảnh bản đồ đảo · trang chủ ─────────────────────
 
-export const WORLD = {
-  title: 'Hành trình Đo trước khi tin',
-  guideName: 'Leon',
-  /** Lời dẫn đường theo màn đang mở */
-  guide: {
-    'khai-niem': 'Chào bạn! Đi tới hòn đảo có cột sáng để bắt đầu. Ở đó có một câu hỏi: theo bạn, điều gì quan trọng nhất khi xây một hệ thống giao dịch?',
-    'vi-sao-kiem-dinh': 'Cầu đã sáng. Qua đảo thứ hai, bạn sẽ đoán thử ba cách đánh quen thuộc: cách nào qua được bài kiểm tra?',
-    'sau-o': 'Đảo Sáu Ô: trả lời sáu ô về cách bạn đang trade, mình chỉ ra chỗ nên đem đi đo trước.',
-    'thu-vien': 'Đây là thư viện. Mỗi ô sáng trên tường là một chiến lược đã đo. Dùng Điểm Đo để mở hồ sơ bạn quan tâm.',
-    'kiem-diem': 'Muốn mở thêm hồ sơ thì cần thêm điểm. Đảo này có những cách kiếm thêm.',
-    'chuyen-doi': 'Cuối đường là toàn bộ thư viện dành cho thành viên.',
-  },
-  /** Nhiệm vụ của từng màn. Ô cuối luôn là "qua màn". */
-  quests: {
-    'khai-niem': ['Trả lời câu hỏi đầu tiên', 'Qua Màn 1'],
-    'vi-sao-kiem-dinh': ['Đoán đủ 3 lá bài', 'Qua Màn 2'],
-    'sau-o': ['Làm bài Sáu Ô', 'Qua Màn 3'],
-    'thu-vien': ['Mở một hồ sơ bằng Điểm Đo', 'Qua Màn 4'],
-    'kiem-diem': ['Kiếm thêm điểm', 'Qua Màn 5'],
-    'chuyen-doi': ['Xem gói thành viên', 'Qua Màn 6'],
-  },
-  dock: ['Bài học', 'Thử thách', 'Hồ sơ của tôi', 'Thành tích'],
-  hint: 'Chạm vào đảo để đi tới, hoặc dùng phím W A S D. Cầu chỉ sáng khi bạn qua màn trước.',
-  lockedBridge: (title: string) => `Cầu chưa sáng. Qua màn ${title} trước nhé.`,
+/**
+ * Trang chủ là bản đồ đảo: máy quay lướt qua từng đảo kèm một câu, rồi dừng ở toàn cảnh.
+ * Mỗi đảo là cửa vào một trang thật (tab trong App). `landmark` chọn vật mốc dựng sẵn.
+ * Số trong câu lấy từ kho số đã kiểm: 300 đưa vào · 242 đo đầy đủ · 15 qua.
+ */
+export const HUB = {
+  intro: 'Thư viện kiểm định chiến lược giao dịch vàng. Đi một vòng xem ở đây có gì.',
+  islands: [
+    {
+      key: 'bat-dau',
+      landmark: 'khai-niem',
+      tab: 'journey',
+      title: 'Bắt đầu ở đây',
+      sub: 'Hai câu đố cho người mới',
+      caption: 'Biết cách đánh chưa có nghĩa là biết nó có ăn không. Bắt đầu bằng hai câu đố ngắn.',
+    },
+    {
+      key: 'vi-sao',
+      landmark: 'vi-sao-kiem-dinh',
+      tab: 'about',
+      title: 'Vì sao cần đo',
+      sub: 'Bản đọc đầy đủ',
+      caption: 'Thời AI, ai cũng tạo được một chiến lược trong năm phút. Chiến lược thì không thiếu, cái thiếu là bộ lọc.',
+    },
+    {
+      key: 'sau-o',
+      landmark: 'sau-o',
+      tab: 'sauo',
+      title: 'Tự kiểm 6 ô',
+      sub: 'Miễn phí',
+      caption: 'Trả lời sáu câu về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu.',
+    },
+    {
+      key: 'thu-vien',
+      landmark: 'thu-vien',
+      tab: 'viplibrary',
+      title: 'Thư viện 300',
+      sub: '15 chiến lược qua bài kiểm tra',
+      caption: '300 chiến lược đưa vào thư viện, 242 cái đã đo đầy đủ. Chỉ 15 cái qua bài kiểm tra. Mỗi ô sáng trên tường là một chiến lược.',
+    },
+    {
+      key: 'tai-lieu',
+      landmark: 'kiem-diem',
+      tab: 'vault',
+      title: 'Tài liệu',
+      sub: 'Dành cho thành viên',
+      caption: 'Kho tài liệu cốt lõi dành cho thành viên.',
+    },
+    {
+      key: 'thanh-vien',
+      landmark: 'chuyen-doi',
+      tab: 'membership',
+      title: 'Thành viên',
+      sub: 'Mở toàn bộ thư viện',
+      caption: 'Mở toàn bộ hồ sơ thư viện. Membership 100 đô một tháng. Tháng đầu 50.',
+    },
+  ] as const,
+  outro: 'Chạm vào một hòn đảo để vào trang đó.',
+  /** Menu cố định trên bản đồ: tab trong App + nhãn */
+  menu: [
+    { tab: 'viplibrary', label: 'Thư viện 300' },
+    { tab: 'sauo', label: 'Tự kiểm 6 ô' },
+    { tab: 'vault', label: 'Tài liệu' },
+    { tab: 'membership', label: 'Thành viên' },
+    { tab: 'about', label: 'Bản đọc' },
+  ],
+  skip: 'Bỏ qua',
+  replay: 'Xem lại vòng giới thiệu',
 };

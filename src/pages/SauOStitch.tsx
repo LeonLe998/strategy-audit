@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, Circle, ClipboardCheck, Clock3, RotateCcw, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, Circle, ClipboardCheck, Clock3, RotateCcw, ShieldCheck, Map as MapIcon } from 'lucide-react';
 import { SAUO_GAS_ENDPOINT } from '../config';
 import BottomNavigation from '../components/BottomNavigation';
 import './SauOStitch.css';
@@ -15,7 +15,8 @@ const questions: Question[] = [
 ];
 
 const links = [
-  { href: '/', label: 'Vì sao cần đo?', icon: ShieldCheck },
+  { href: '/', label: 'Về bản đồ', icon: MapIcon },
+  { href: '/gioi-thieu', label: 'Vì sao cần đo?', icon: ShieldCheck },
   { href: '/vip', label: 'Thư viện 300', icon: BookOpen },
   { href: '/membership', label: 'Thành viên', icon: CheckCircle2 },
 ];
@@ -98,7 +99,7 @@ export default function SauOStitch() {
       </aside>
 
       <div className="sa-six-main">
-        <header className="sa-six-topbar"><span><span className="sa-live-dot" /> BÀI TỰ RÀ SOÁT QUY TẮC</span><nav className="sa-six-mobile-nav"><a href="/">Trang chủ</a><a href="/vip">Thư viện</a><a href="/membership">Thành viên</a></nav><a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Cần trợ giúp? Nhắn Telegram <ArrowRight size={14} /></a></header>
+        <header className="sa-six-topbar"><a href="/" aria-label="Về bản đồ"><MapIcon size={14} /> Bản đồ</a><span><span className="sa-live-dot" /> BÀI TỰ RÀ SOÁT QUY TẮC</span><nav className="sa-six-mobile-nav"><a href="/">Bản đồ</a><a href="/vip">Thư viện</a><a href="/membership">Thành viên</a></nav><a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Cần trợ giúp? Nhắn Telegram <ArrowRight size={14} /></a></header>
         <div className="sa-six-content">
           <div className="sa-six-progress-head"><div><span className="sa-six-kicker">SÁU Ô · TỰ ĐÁNH GIÁ</span><h1>{step === 0 ? 'Bắt đầu từ cách bạn đang giao dịch.' : step <= 6 ? 'Làm rõ từng phần trong phương pháp.' : step === 7 ? 'Đây là mức độ rõ của các quy tắc bạn mô tả.' : 'Đã nhận được yêu cầu của bạn.'}</h1></div><div className="sa-duration"><Clock3 size={15} /><span>Khoảng 3 phút</span></div></div>
           <div className="sa-progress-meta"><span>{step > 0 && step < 7 ? `CÂU ${String(step).padStart(2, '0')} / 06` : step === 7 ? 'HOÀN TẤT' : 'CÁC BƯỚC'}</span><span>{step > 0 && step < 7 ? `${Math.round(progress)}%` : step === 7 || step === 8 ? '100%' : '6 câu hỏi'}</span></div>

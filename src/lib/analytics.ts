@@ -12,4 +12,7 @@ export const funnel = {
   cardGuess: (card: string, guess: string, correct: boolean) => track('card_guess', { card, guess, correct }),
   pointsEarn: (source: string, delta: number) => track('points_earn', { source, delta }),
   worldOpen: () => track('world_open', {}),
+  /** Sảnh bản đồ ở trang chủ: xem hết / bỏ qua vòng giới thiệu, bấm vào đảo nào */
+  hubTour: (action: 'done' | 'skip' | 'replay') => track('hub_tour', { action }),
+  hubIsland: (island: string, via: 'island' | 'label' | 'menu' | 'caption') => track('hub_island', { island, via }),
 };

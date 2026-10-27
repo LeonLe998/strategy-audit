@@ -3,13 +3,11 @@
  * Phần nhìn (màu, animation, bản đồ, con dấu) do Stitch → Antigravity làm lại,
  * giữ nguyên các lời gọi useJourney / useLibraryCards / funnel. Các thuộc tính data-* để bám vào khi style.
  */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useJourney, type StageView } from '../game/useJourney';
 import { POINT_NAME, type StageId } from '../game/journeyConfig';
 import { Stage1, Stage2, StagePlaceholder } from '../game/JourneyStages';
 import { funnel } from '../lib/analytics';
-
-const JourneyWorld3D = lazy(() => import('../game/world/JourneyWorld3D'));
 
 function StageMap({ stages, selected, onSelect }: { stages: StageView[]; selected: StageId; onSelect: (id: StageId) => void }) {
   return (
@@ -38,7 +36,6 @@ function StageMap({ stages, selected, onSelect }: { stages: StageView[]; selecte
 export default function JourneyPage() {
   const journey = useJourney();
   const [selected, setSelected] = useState<StageId>(journey.current.id);
-  const [world, setWorld] = useState(() => new URLSearchParams(window.location.search).has('3d'));
 
   useEffect(() => {
     funnel.stageView(selected);
@@ -59,14 +56,6 @@ export default function JourneyPage() {
         <p className="text-sm text-gray-300">Hành trình Đo trước khi tin</p>
         <p data-points className="font-mono text-sm text-white">{journey.points} {POINT_NAME}</p>
       </div>
-      <button type="button" data-open-world onClick={() => setWorld(true)} className="rounded-xl border border-white/30 px-4 py-2 text-sm font-semibold text-white">
-        Chơi trên bản đồ đảo 3D
-      </button>
-      {world && (
-        <Suspense fallback={null}>
-          <JourneyWorld3D onExit={() => setWorld(false)} />
-        </Suspense>
-      )}
       <StageMap stages={journey.stages} selected={stage.id} onSelect={setSelected} />
       {stage.id === 'khai-niem' && <Stage1 onDone={() => finish('khai-niem')} />}
       {stage.id === 'vi-sao-kiem-dinh' && <Stage2 onDone={() => finish('vi-sao-kiem-dinh')} />}

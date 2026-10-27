@@ -17,7 +17,7 @@ import { CustomInstructionsPanel } from './components/CustomInstructionsPanel';
 import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
 
 // Trang nặng (three.js, recharts, html2pdf, markdown) chỉ tải khi mở tới
-const JourneyWorld3D = lazy(() => import('./game/world/JourneyWorld3D'));
+const IslandHub3D = lazy(() => import('./game/world/IslandHub3D'));
 const DataScienceHub = lazy(() => import('./components/DataScienceHub').then((m) => ({ default: m.DataScienceHub })));
 const Vault = lazy(() => import('./components/Vault'));
 const IntakeWizard = lazy(() => import('./pages/IntakeWizard'));
@@ -26,6 +26,20 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const JourneyPage = lazy(() => import('./pages/JourneyPage'));
 
 const PageLoading = () => <div className="py-24 text-center text-sm text-gray-500">Đang tải…</div>;
+const HubLoading = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-[#040914] text-sm text-gray-400">Đang dựng bản đồ…</div>
+);
+
+/** Trang chủ là bản đồ đảo 3D; máy không chạy được WebGL thì trang chủ là bản đọc */
+const CAN_3D = (() => {
+  if (typeof window === 'undefined') return false;
+  try {
+    const c = document.createElement('canvas');
+    return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch {
+    return false;
+  }
+})();
 
 interface RouteInfo {
   tab: string;
@@ -63,6 +77,9 @@ function parseCurrentRoute(): RouteInfo {
   }
 
   const pLower = pathname.toLowerCase();
+  if (pLower === '/gioi-thieu' || pLower === '/about') {
+    return { tab: 'about', subId: null, isSauO: false };
+  }
   if (pLower === '/datascience' || pLower === '/math' || pLower === '/toan-hoc' || pLower === '/khoa-hoc-du-lieu') {
     return { tab: 'datascience', subId: null, isSauO: false };
   }
@@ -102,6 +119,8 @@ function getPathForRoute(tab: string, subId?: string | null): string {
   switch (tab) {
     case 'home':
       return '/';
+    case 'about':
+      return '/gioi-thieu';
     case 'datascience':
       return '/datascience';
     case 'services':
@@ -129,7 +148,6 @@ function getPathForRoute(tab: string, subId?: string | null): string {
 
 export default function App() {
   const [routeInfo, setRouteInfo] = useState<RouteInfo>(parseCurrentRoute);
-  const [isGameMode, setIsGameMode] = useState<boolean>(false);
   const [isCustomInstructionsOpen, setIsCustomInstructionsOpen] = useState<boolean>(false);
   const [activeSectionIndex, setActiveSectionIndex] = useState<number>(0);
 
@@ -165,6 +183,15 @@ export default function App() {
   const activeTab = routeInfo.tab;
   const setActiveTab = (tab: string) => navigate(tab, null);
 
+  // Trang chủ: bản đồ đảo toàn màn hình, tự có menu tới các trang
+  if (activeTab === 'home' && CAN_3D) {
+    return (
+      <Suspense fallback={<HubLoading />}>
+        <IslandHub3D onNavigate={setActiveTab} />
+      </Suspense>
+    );
+  }
+
   // Nếu đang ở đường dẫn /sauo, hiển thị trang Sáu Ô độc lập (chuẩn phễu mobile)
   if (routeInfo.isSauO || activeTab === 'sauo') {
     return <SauO />;
@@ -175,8 +202,8 @@ export default function App() {
       
       {/* Scroll-Driven Animation Engine (Progress bar, Chapter pill, 3D Game toggle) */}
       <ScrollAnimationEngine
-        isGameMode={isGameMode}
-        onToggleGameMode={() => setIsGameMode(prev => !prev)}
+        isGameMode={false}
+        onToggleGameMode={() => navigate('home')}
         onSectionChange={setActiveSectionIndex}
       />
 
@@ -187,15 +214,7 @@ export default function App() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onToggleGameMode={() => setIsGameMode(true)}
       />
-
-      {/* Fullscreen 3D Game Experience when toggled */}
-      {isGameMode && (
-        <Suspense fallback={null}>
-          <JourneyWorld3D onExit={() => setIsGameMode(false)} />
-        </Suspense>
-      )}
 
       {/* Custom Instructions Panel Modal */}
       <CustomInstructionsPanel
@@ -204,7 +223,7 @@ export default function App() {
       />
 
       {/* Primary body view holder with smooth route animations */}
-      <main id="app-main-content" className={`relative z-10 ${activeTab === 'home' ? 'pt-16' : 'pt-24'} min-h-[calc(100vh-16rem)]`}>
+      <main id="app-main-content" className={`relative z-10 ${activeTab === 'home' || activeTab === 'about' ? 'pt-16' : 'pt-24'} min-h-[calc(100vh-16rem)]`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -215,10 +234,10 @@ export default function App() {
             className="w-full"
           >
             <Suspense fallback={<PageLoading />}>
-            {activeTab === 'home' && (
+            {(activeTab === 'about' || activeTab === 'home') && (
               <Home
                 setActiveTab={setActiveTab}
-                onToggleGameMode={() => setIsGameMode(true)}
+                onToggleGameMode={CAN_3D ? () => navigate('home') : undefined}
                         activeSectionIndex={activeSectionIndex}
               />
             )}
