@@ -38,12 +38,15 @@ function StageMap({ stages, selected, onSelect }: { stages: StageView[]; selecte
 
 function Stage1({ onDone }: { onDone: () => void }) {
   const { answers, recordAnswer } = useJourney();
-  const picked = answers[STAGE1.quiz.key];
+  const { poll } = STAGE1;
+  const picked = answers[poll.key];
+  // Ô người chơi chọn lật trước, ba ô còn lại lật sau
+  const ordered = picked ? [...poll.options].sort((a, b) => Number(b.id === picked) - Number(a.id === picked)) : poll.options;
 
   const pick = (id: string) => {
     if (picked) return;
-    recordAnswer(STAGE1.quiz.key, id);
-    funnel.quizAnswer(STAGE1.quiz.key, id, id === STAGE1.quiz.correct);
+    recordAnswer(poll.key, id);
+    funnel.pollAnswer(poll.key, id);
   };
 
   return (
@@ -60,29 +63,26 @@ function Stage1({ onDone }: { onDone: () => void }) {
           </article>
         ))}
       </div>
-      <div data-quiz={STAGE1.quiz.key} className="rounded-xl border border-white/10 p-4">
-        <p className="font-semibold text-white">{STAGE1.quiz.question}</p>
+      <div data-poll={poll.key} className="rounded-xl border border-white/10 p-4">
+        <p className="font-semibold text-white">{poll.question}</p>
         <div className="mt-3 grid gap-2 md:grid-cols-2">
-          {STAGE1.quiz.options.map((o) => (
+          {ordered.map((o) => (
             <button
               key={o.id}
               type="button"
               data-option={o.id}
-              data-correct={picked ? o.id === STAGE1.quiz.correct : undefined}
               data-picked={picked === o.id}
+              data-revealed={Boolean(picked)}
+              disabled={Boolean(picked)}
               onClick={() => pick(o.id)}
-              className="rounded-lg border border-white/15 p-3 text-left text-sm text-gray-200"
+              className={`rounded-lg border p-3 text-left text-sm text-gray-200 ${picked === o.id ? 'border-white' : 'border-white/15'}`}
             >
-              <b>{o.id}.</b> {o.label}
-              {picked && (
-                <span className="block font-mono text-xs text-gray-400">
-                  {fmt(o.trades)} lệnh · thắng {o.winRate}
-                </span>
-              )}
+              <b className="block text-white">{o.label}</b>
+              {picked && <span data-fact className="mt-1 block text-xs text-gray-300">{o.fact}</span>}
             </button>
           ))}
         </div>
-        {picked && <p data-quiz-reveal className="mt-3 text-sm text-gray-200">{STAGE1.quiz.reveal}</p>}
+        {picked && <p data-poll-closing className="mt-3 text-sm text-gray-200">{poll.closing}</p>}
       </div>
       {picked && (
         <button type="button" data-cta onClick={onDone} className="rounded-xl bg-white px-5 py-3 text-sm font-bold text-black">

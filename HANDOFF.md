@@ -13,7 +13,7 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 - `src/game/journeyStore.ts`: trạng thái lưu localStorage (`sa_journey_v1`): màn đã qua, sổ điểm (mỗi việc chỉ cộng một lần), câu trả lời. Màn sau chỉ mở khi màn trước xong.
 - `src/game/useJourney.ts`: hook cho giao diện → `{ points, stages[{id, order, title, reward, status}], current, answers, ledger, completeStage(id), recordAnswer(key, value), award(key, delta, reason), reset() }`.
 - `src/game/useLibraryCards.ts`: đọc lá bài và phễu số từ dữ liệu công khai (đã lọc R/PF), không gõ số tay.
-- `src/content/journey.ts`: chữ Màn 1–2, **bản nháp chờ Leon duyệt**. Số cố định đã đối chiếu kho số: thí nghiệm thoát lệnh (39,42% / 48,22% / 25,45% / 38,03%), 4 trường phái 42 chiến lược · 22.938 lệnh · đậu 0, kỳ thi lần 2 15/15, nhóm Giờ giấc 4/22.
+- `src/content/journey.ts`: chữ Màn 1–2. **Leon đã duyệt Màn 2 và hướng câu đố Màn 1** (27/10): thẻ "Đo / Kiểm chứng"; câu đố là câu hỏi "yếu tố nào quan trọng nhất" không có đáp án sai, ô nào cũng có số trả lời (42 chiến lược · 22.938 lệnh · đậu 0 / chốt sớm 48,22% / Giờ giấc 4/22 = 18,2% / 62 chiến lược từ 597 lệnh đậu 0). Event GA4 `poll_answer` ghi lại người chơi tin vào yếu tố nào.
 - `src/lib/analytics.ts`: event GA4 `stage_view`, `stage_done`, `quiz_answer`, `card_guess`, `points_earn`.
 - `src/pages/JourneyPage.tsx`: **khung chưa style**, route `/hanh-trinh`. Lá bài Màn 2: IND002 (RSI-14), MTF014 (SMC FVG + CHoCH), SEA003 (Turn-of-month).
 

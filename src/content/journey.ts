@@ -22,8 +22,8 @@ export const STAGE1 = {
     },
     {
       key: 'do',
-      title: 'Đo',
-      body: 'Đo là đem đúng luật đó chạy qua thật nhiều lệnh trên dữ liệu thật, đã trừ phí, rồi xem nó có hơn vào lệnh ngẫu nhiên không.',
+      title: 'Đo / Kiểm chứng',
+      body: 'Đo, hay kiểm chứng, là đem đúng luật đó chạy qua thật nhiều lệnh trên dữ liệu thật, đã trừ phí, rồi xem nó có hơn vào lệnh ngẫu nhiên không.',
     },
     {
       key: 'thuc-hanh',
@@ -31,18 +31,34 @@ export const STAGE1 = {
       body: 'Có số rồi mới quyết dùng hay bỏ. Vì mình trade một chuỗi 500 đến 1000 lệnh, chứ không phải một lệnh.',
     },
   ],
-  quiz: {
-    key: 'khai-niem:quiz',
-    question: 'Cùng một luật vào lệnh, mình thử bốn cách thoát. Theo bạn, cách nào cho tỉ lệ thắng cao nhất?',
+  /** Câu hỏi không có đáp án sai: chọn ô nào cũng nhận một sự thật bằng số, rồi lật cả bốn ô */
+  poll: {
+    key: 'khai-niem:yeu-to',
+    question: 'Theo bạn, yếu tố nào quan trọng nhất khi xây một hệ thống giao dịch?',
     options: [
-      { id: 'A', label: 'Giữ cách thoát mặc định', trades: 5593, winRate: '39,42%' },
-      { id: 'B', label: 'Chốt lời sớm', trades: 6921, winRate: '48,22%' },
-      { id: 'C', label: 'Để lệnh chạy thật xa', trades: 3336, winRate: '25,45%' },
-      { id: 'D', label: 'Cắt lỗ thật sát', trades: 8539, winRate: '38,03%' },
+      {
+        id: 'vao-lenh',
+        label: 'Điểm vào lệnh đẹp',
+        fact: 'Bốn trường phái được nói nhiều nhất là SMC/ICT, ORB, RSI, MACD: 42 chiến lược, 22.938 lệnh, đậu 0. Vào lệnh đẹp chưa đủ.',
+      },
+      {
+        id: 'ti-le-thang',
+        label: 'Tỉ lệ thắng cao',
+        fact: 'Cùng một luật vào, mình thử bốn cách thoát. Chốt lời sớm thắng 48,22%, cao nhất trong bốn cách, mà lại gần tệ nhất.',
+      },
+      {
+        id: 'thoi-diem',
+        label: 'Thời điểm vào lệnh',
+        fact: 'Nhóm Giờ giấc & mùa vụ đậu 4 trên 22, tức 18,2%. Gấp 3,5 lần sáu nhóm còn lại gộp lại.',
+      },
+      {
+        id: 'ky-luat',
+        label: 'Kỷ luật',
+        fact: 'Kỷ luật là lặp lại hành vi đúng đủ nhiều lần. Nhưng 62 chiến lược chạy từ 597 lệnh trở lên thì không cái nào đậu. Lặp lại một luật không có lợi thế thì càng kỷ luật càng thua đều.',
+      },
     ],
-    correct: 'B',
-    reveal:
-      'Chốt sớm thắng nhiều nhất, 48,22%. Nhưng xét cả bốn cách thì nó lại gần tệ nhất. Tỉ lệ thắng cao chưa nói lên phương pháp tốt, nên mới phải đo đủ mặt.',
+    closing:
+      'Không yếu tố nào tự đứng một mình được. Muốn biết hệ thống của bạn đứng ở đâu thì phải đo nó.',
   },
   cta: 'Qua màn 2',
 };
