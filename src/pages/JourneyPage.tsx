@@ -129,17 +129,23 @@ function Stage2({ onDone }: { onDone: () => void }) {
       </div>
 
       <p className="text-sm text-gray-200">{STAGE2.gameIntro}</p>
+      <ul data-verdict-legend className="space-y-1 text-sm text-gray-300">
+        {STAGE2.verdictLegend.map((l) => (
+          <li key={l.verdict} data-legend={l.verdict}>
+            <b className="text-white">{l.verdict}</b>: {l.meaning}
+          </li>
+        ))}
+      </ul>
       <div data-card-deck className="grid gap-3 md:grid-cols-3">
         {cards === null && <p className="text-sm text-gray-500">Đang chia bài…</p>}
         {cards?.map((card) => {
-          const hint = STAGE2.cards.find((c) => c.id === card.id)?.hint;
+          const text = STAGE2.cards.find((c) => c.id === card.id);
           const mine = answers[`card:${card.id}`] as Verdict | undefined;
           return (
             <article key={card.id} data-card={card.id} data-flipped={Boolean(mine)} data-verdict={mine ? card.verdict : undefined} className="rounded-xl border border-white/10 p-4">
-              <p className="font-mono text-xs text-gray-400">{card.ho} · {card.tf}</p>
-              <h3 className="font-semibold text-white">{card.ten}</h3>
-              <p className="mt-1 text-sm text-gray-300">Luật: {card.moTa}</p>
-              {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
+              <h3 className="font-semibold text-white">{text?.name ?? card.ten}</h3>
+              <p className="mt-1 text-sm text-gray-300">Luật: {text?.rule ?? card.moTa}</p>
+              {text?.hint && <p className="mt-1 text-xs text-gray-500">{text.hint}</p>}
               {!mine ? (
                 <div className="mt-3 flex gap-2">
                   {STAGE2.verdictChoices.map((v) => (
@@ -152,10 +158,11 @@ function Stage2({ onDone }: { onDone: () => void }) {
                 <div data-card-reveal className="mt-3 space-y-1 text-sm">
                   <p className="font-bold text-white" data-stamp={card.verdict}>{card.verdict}</p>
                   <p className="text-gray-400">{mine === card.verdict ? 'Bạn đoán đúng.' : `Bạn đoán ${mine}.`}</p>
+                  <p className="text-xs text-gray-400">{STAGE2.reveal.thi1}:</p>
                   <p className="font-mono text-xs text-gray-300">
-                    Kỳ thi 2019–2023: {fmt(card.soLenh)} lệnh · thắng {card.tiLeThang?.toLocaleString('vi-VN')}% · năm dương {card.namDuong}
+                    {fmt(card.soLenh)} lệnh · thắng {card.tiLeThang?.toLocaleString('vi-VN')}% số lệnh · {card.namDuong} năm có lời
                   </p>
-                  {card.thiLan2 && <p className="font-mono text-xs text-gray-300">Kỳ thi lần 2: {card.thiLan2}</p>}
+                  {card.thiLan2 && <p className="font-mono text-xs text-gray-300">{STAGE2.reveal.thi2}: {card.thiLan2}</p>}
                 </div>
               )}
             </article>

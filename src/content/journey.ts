@@ -1,5 +1,5 @@
 /**
- * Chữ và số của Màn 1–2. BẢN NHÁP — chờ Leon duyệt.
+ * Chữ và số của Màn 1–2, viết cho trader mới: không tên nhóm, không thuật ngữ chưa giải thích.
  *
  * Số cố định ở đây lấy từ kho số đã kiểm (skill strategy-audit-content):
  *   thí nghiệm thoát lệnh · 4 trường phái nóng · kỳ thi lần 2.
@@ -74,27 +74,54 @@ export const STAGE2 = {
   intro:
     'Thời AI, ai cũng tạo được một chiến lược trong năm phút. Chiến lược càng nhiều thì càng cần một chỗ đo cho thẳng, nên mình làm thư viện này.',
   /** Phễu thư viện — đọc tong/da_chay/verdict_da_chay từ index lúc chạy, đây chỉ là nhãn */
-  funnelLabels: { tong: 'đưa vào thư viện', daChay: 'kiểm định đầy đủ', chat: 'đậu chuẩn' },
+  funnelLabels: { tong: 'chiến lược đưa vào thư viện', daChay: 'đã đo đầy đủ', chat: 'qua bài kiểm tra' },
+  /** Viết cho người mới như Màn 1: không tên nhóm, không thuật ngữ. Số 22.938 lệnh đã dùng ở Màn 1 nên không lặp lại. */
   facts: [
     {
-      key: 'truong-phai-nong',
-      title: 'Bốn trường phái được nói nhiều nhất',
-      body: 'SMC/ICT, ORB, RSI, MACD: 42 chiến lược, 22.938 lệnh, đậu 0.',
+      key: 'ti-le-qua',
+      title: 'Cứ 100 chiến lược, chỉ khoảng 6 cái qua',
+      body: 'Trong 242 chiến lược đã đo đầy đủ, 15 cái qua bài kiểm tra, 39 cái chỉ ăn trong một số điều kiện, còn 188 cái không có lợi thế.',
     },
     {
       key: 'ky-thi-2',
-      title: 'Kỳ thi lần 2',
-      body: 'Đem 15 chiến lược CHẤT chấm lại trên dữ liệu mới từ 02/2024 đến 07/2026: cả 15 vẫn giữ vững.',
+      title: 'Qua rồi có giữ được không?',
+      body: 'Mình đem 15 chiến lược đã qua chấm lại trên giá vàng mới, từ 02/2024 đến 07/2026, phần giá chưa hề có lúc làm bài kiểm tra đầu. Cả 15 vẫn qua.',
     },
   ],
-  gameIntro: 'Giờ tới lượt bạn. Đọc luật, đoán CHẤT hay CHÁT, rồi lật xem thư viện nói gì.',
+  gameIntro: 'Giờ tới lượt bạn. Đọc luật của từng lá, đoán nó thuộc loại nào, rồi lật xem kết quả đo.',
+  /** Giải nghĩa ba con dấu, hiện ngay trên chỗ chọn */
+  verdictLegend: [
+    { verdict: 'CHẤT' as Verdict, meaning: 'qua bài kiểm tra, có lợi thế thật' },
+    { verdict: 'CHÁT' as Verdict, meaning: 'không có lợi thế, không hơn vào lệnh bừa' },
+    { verdict: 'TÌNH HUỐNG' as Verdict, meaning: 'chỉ ăn trong một số điều kiện' },
+  ],
+  /** Tên và luật viết lại bằng lời thường. Kết quả của từng lá vẫn đọc từ dữ liệu. */
   cards: [
-    { id: 'IND002', hint: 'Chỉ báo gần như ai cũng học đầu tiên.' },
-    { id: 'MTF014', hint: 'Cách vào lệnh SMC đang được chia sẻ rất nhiều.' },
-    { id: 'SEA003', hint: 'Không chỉ báo, chỉ dựa vào ngày trong tháng.' },
+    {
+      id: 'IND002',
+      name: 'RSI quá mua, quá bán',
+      rule: 'Đường RSI xuống dưới 30 thì mua, lên trên 70 thì bán. Xem trên nến 4 giờ.',
+      hint: 'Chỉ báo gần như ai cũng học đầu tiên.',
+    },
+    {
+      id: 'MTF014',
+      name: 'SMC: vùng trống giá + đổi hướng',
+      rule: 'Chờ giá quay về một vùng giá chạy quá nhanh trên khung 4 giờ, rồi xuống khung 5 phút chờ giá đổi hướng mới vào lệnh.',
+      hint: 'Cách vào lệnh đang được chia sẻ rất nhiều trên mạng.',
+    },
+    {
+      id: 'SEA003',
+      name: 'Mua cuối tháng',
+      rule: 'Mua ở 2 ngày giao dịch cuối tháng, bán ra ở ngày giao dịch thứ 3 của tháng mới.',
+      hint: 'Không chỉ báo nào, chỉ nhìn lịch.',
+    },
   ],
   verdictChoices: ['CHẤT', 'CHÁT', 'TÌNH HUỐNG'] as Verdict[],
+  reveal: {
+    thi1: 'Bài thi trên giá vàng 2019–2023, phần giá không dùng lúc chỉnh luật',
+    thi2: 'Chấm lại trên giá 02/2024–07/2026',
+  },
   wrapUp:
-    'Cả ba lá đều thua nhiều lệnh hơn thắng, vậy mà một lá vẫn đậu. Vì đậu hay rớt không nằm ở tỉ lệ thắng, mà ở chỗ có hơn vào lệnh ngẫu nhiên và có qua được kỳ thi trên dữ liệu chưa từng thấy hay không. Lá đậu thuộc nhóm Giờ giấc & mùa vụ, nhóm đậu cao nhất thư viện: 4 trên 22.',
+    'Cả ba lá đều thua nhiều lệnh hơn thắng, vậy mà một lá vẫn qua. Vì qua hay rớt không nằm ở tỉ lệ thắng, mà ở chỗ cộng cả chuỗi lệnh lại có hơn vào lệnh bừa hay không, và còn đúng trên phần giá chưa dùng lúc chỉnh luật hay không. Lá qua lại là lá đơn giản nhất: chỉ nhìn lịch để mua, không cần chỉ báo nào.',
   cta: 'Qua màn 3 · Sáu Ô',
 };
