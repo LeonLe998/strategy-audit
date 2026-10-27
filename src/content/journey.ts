@@ -23,7 +23,7 @@ export const STAGE1 = {
     {
       key: 'do',
       title: 'Đo / Kiểm chứng',
-      body: 'Đo, hay kiểm chứng, là đem đúng luật đó chạy qua thật nhiều lệnh trên dữ liệu thật, đã trừ phí, rồi xem nó có hơn vào lệnh ngẫu nhiên không.',
+      body: 'Đo, hay kiểm chứng, là cho máy làm đúng luật đó qua hàng nghìn lệnh trên giá vàng thật của nhiều năm, có tính cả phí, rồi xem kết quả có hơn việc vào lệnh bừa hay không.',
     },
     {
       key: 'thuc-hanh',
@@ -31,7 +31,10 @@ export const STAGE1 = {
       body: 'Có số rồi mới quyết dùng hay bỏ. Vì mình trade một chuỗi 500 đến 1000 lệnh, chứ không phải một lệnh.',
     },
   ],
-  /** Câu hỏi không có đáp án sai: chọn ô nào cũng nhận một sự thật bằng số, rồi lật cả bốn ô */
+  /**
+   * Câu hỏi không có đáp án sai: chọn ô nào cũng nhận một sự thật bằng số, rồi lật cả bốn ô.
+   * Viết cho người mới: không tên nhóm, không thuật ngữ, mỗi ô tối đa một con số và số đó tự hiểu được.
+   */
   poll: {
     key: 'khai-niem:yeu-to',
     question: 'Theo bạn, yếu tố nào quan trọng nhất khi xây một hệ thống giao dịch?',
@@ -39,26 +42,26 @@ export const STAGE1 = {
       {
         id: 'vao-lenh',
         label: 'Điểm vào lệnh đẹp',
-        fact: 'Bốn trường phái được nói nhiều nhất là SMC/ICT, ORB, RSI, MACD: 42 chiến lược, 22.938 lệnh, đậu 0. Vào lệnh đẹp chưa đủ.',
+        fact: 'Mình lấy những cách vào lệnh được dạy nhiều nhất trên mạng, như SMC hay RSI, rồi cho máy làm đúng luật qua 22.938 lệnh. Không cách nào qua được bài kiểm tra. Vào lệnh đẹp thôi thì chưa đủ.',
       },
       {
         id: 'ti-le-thang',
         label: 'Tỉ lệ thắng cao',
-        fact: 'Cùng một luật vào, mình thử bốn cách thoát. Chốt lời sớm thắng 48,22%, cao nhất trong bốn cách, mà lại gần tệ nhất.',
+        fact: 'Cùng một cách vào lệnh, mình chỉ đổi cách chốt. Chốt lời sớm thì cứ 100 lệnh thắng khoảng 48, nhiều hơn mọi cách khác. Nhưng lệnh thắng thì lời ít, lệnh thua vẫn lỗ đủ, nên cộng cả chuỗi lại nó gần như tệ nhất.',
       },
       {
         id: 'thoi-diem',
         label: 'Thời điểm vào lệnh',
-        fact: 'Nhóm Giờ giấc & mùa vụ đậu 4 trên 22, tức 18,2%. Gấp 3,5 lần sáu nhóm còn lại gộp lại.',
+        fact: 'Có những cách đánh chỉ dựa vào giờ và ngày, ví dụ vào lệnh ở một khung giờ cố định, hay vài ngày cuối tháng. Nghe rất đơn giản, vậy mà đây lại là kiểu qua bài kiểm tra nhiều nhất thư viện, gấp khoảng 3,5 lần các kiểu còn lại.',
       },
       {
         id: 'ky-luat',
         label: 'Kỷ luật',
-        fact: 'Kỷ luật là lặp lại hành vi đúng đủ nhiều lần. Nhưng 62 chiến lược chạy từ 597 lệnh trở lên thì không cái nào đậu. Lặp lại một luật không có lợi thế thì càng kỷ luật càng thua đều.',
+        fact: 'Máy là thứ kỷ luật nhất: không cảm xúc, không phá luật lệnh nào. Mình cho máy làm đúng luật của 242 chiến lược, vậy mà 188 cái vẫn không có lợi thế. Kỷ luật chỉ giúp khi luật của bạn đúng từ đầu.',
       },
     ],
     closing:
-      'Không yếu tố nào tự đứng một mình được. Muốn biết hệ thống của bạn đứng ở đâu thì phải đo nó.',
+      'Không yếu tố nào tự đứng một mình được. Muốn biết cách đánh của bạn có lợi thế thật hay không, chỉ có một cách là đem nó đi đo.',
   },
   cta: 'Qua màn 2',
 };
