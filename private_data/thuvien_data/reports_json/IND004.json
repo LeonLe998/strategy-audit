@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "IND004",
+  "ten": "RSI phân kỳ ẩn (hidden divergence)",
+  "ho": "Indicator kinh điển",
+  "nguon": "Giáo khoa PTKT",
+  "mo_ta": "Giá đáy cao hơn, RSI đáy thấp hơn → mua thuận trend",
+  "archetype": "rsi_diverg_hidden",
+  "tf": "H4",
+  "tham_so": {
+   "rsi_len": 14,
+   "win": 40,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "win"
+ },
+ "IS": {
+  "n": 440,
+  "ev": -0.08,
+  "wr": 24.1,
+  "pf": 0.9,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 0.289,
+   "2005": -0.144,
+   "2006": 0.066,
+   "2007": -0.557,
+   "2008": 0.269,
+   "2009": -0.391,
+   "2010": -0.069,
+   "2011": 0.681,
+   "2012": 0.05,
+   "2013": 0.18,
+   "2014": 0.077,
+   "2015": -0.39,
+   "2016": -0.008,
+   "2017": 0.1,
+   "2018": -0.723
+  }
+ },
+ "null": {
+  "median": 0.014,
+  "p": 0.75,
+  "B": 16
+ },
+ "surplus": -0.094,
+ "robust": {
+  "winx0.7": -0.08,
+  "winx1.3": -0.08
+ },
+ "OOS": {
+  "n": 149,
+  "ev": -0.1,
+  "wr": 23.5,
+  "pf": 0.87,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": -0.427,
+   "2020": 0.109,
+   "2021": -0.271,
+   "2022": 0.062,
+   "2023": 0.078
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 74,
+  "ev": 0.155,
+  "wr": 29.7,
+  "pf": 1.21,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.245,
+   "2025": 0.031,
+   "2026": 0.231
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

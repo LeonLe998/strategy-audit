@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "BRK030",
+  "ten": "Breakout thất bại — fade (failed break)",
+  "ho": "Breakout & phiên",
+  "nguon": "Trading range kinh điển",
+  "mo_ta": "Phá biên rồi đóng lại TRONG range trong 2 nến → vào ngược",
+  "archetype": "failed_break",
+  "tf": "H1",
+  "tham_so": {
+   "n": 20,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 1288,
+  "ev": -0.047,
+  "wr": 25.9,
+  "pf": 0.94,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 0.213,
+   "2005": -0.277,
+   "2006": 0.076,
+   "2007": 0.07,
+   "2008": -0.071,
+   "2009": -0.081,
+   "2010": -0.174,
+   "2011": 0.026,
+   "2012": 0.22,
+   "2013": 0.059,
+   "2014": 0.143,
+   "2015": -0.218,
+   "2016": -0.388,
+   "2017": -0.167,
+   "2018": 0.086
+  }
+ },
+ "null": {
+  "median": -0.063,
+  "p": 0.38,
+  "B": 16
+ },
+ "surplus": 0.016,
+ "robust": {
+  "nx0.7": -0.026,
+  "nx1.3": -0.056
+ },
+ "OOS": {
+  "n": 468,
+  "ev": -0.084,
+  "wr": 25.6,
+  "pf": 0.9,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.111,
+   "2020": -0.027,
+   "2021": 0.02,
+   "2022": -0.142,
+   "2023": -0.158
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 240,
+  "ev": -0.053,
+  "wr": 26.2,
+  "pf": 0.93,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.052,
+   "2025": -0.118,
+   "2026": 0.126
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

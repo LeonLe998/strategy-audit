@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "REV004",
+  "ten": "RSI-14 cực trị fade",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Wilder",
+  "mo_ta": "RSI > 80 bán / < 20 mua (ngưỡng sâu hơn cổ điển)",
+  "archetype": "rsi_revert",
+  "tf": "H1",
+  "tham_so": {
+   "rsi_len": 14,
+   "buy_below": 20,
+   "sell_above": 80,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "buy_below"
+ },
+ "IS": {
+  "n": 493,
+  "ev": -0.166,
+  "wr": 22.7,
+  "pf": 0.8,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": -0.581,
+   "2005": -0.237,
+   "2006": -0.234,
+   "2007": -0.209,
+   "2008": -0.194,
+   "2009": -0.202,
+   "2010": -0.071,
+   "2011": -0.639,
+   "2012": -0.383,
+   "2013": -0.057,
+   "2014": -0.1,
+   "2015": 0.113,
+   "2016": 0.348,
+   "2017": -0.43,
+   "2018": 0.102
+  }
+ },
+ "null": {
+  "median": -0.053,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.113,
+ "robust": {
+  "buy_belowx0.7": -0.172,
+  "buy_belowx1.3": -0.08
+ },
+ "OOS": {
+  "n": 170,
+  "ev": -0.079,
+  "wr": 25.3,
+  "pf": 0.9,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.094,
+   "2020": -0.528,
+   "2021": 0.224,
+   "2022": 0.267,
+   "2023": -0.28
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 93,
+  "ev": -0.321,
+  "wr": 18.3,
+  "pf": 0.63,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.32,
+   "2025": -0.291,
+   "2026": -0.37
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

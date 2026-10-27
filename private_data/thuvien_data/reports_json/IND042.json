@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "IND042",
+  "ten": "TRIX cắt zero",
+  "ho": "Indicator kinh điển",
+  "nguon": "Jack Hutson (1980s)",
+  "mo_ta": "TRIX(15) vượt 0 mua, thủng 0 bán",
+  "archetype": "trix",
+  "tf": "D1",
+  "tham_so": {
+   "n": 15,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 72,
+  "ev": -0.128,
+  "wr": 22.2,
+  "pf": 0.84,
+  "years_pos": "4/14",
+  "by_year": {
+   "2005": -0.133,
+   "2006": 1.388,
+   "2007": -1.014,
+   "2008": -0.007,
+   "2009": -0.01,
+   "2010": -1.014,
+   "2011": -0.347,
+   "2012": 0.481,
+   "2013": 0.989,
+   "2014": -0.446,
+   "2015": -0.518,
+   "2016": -1.018,
+   "2017": 0.579,
+   "2018": -1.025
+  }
+ },
+ "null": {
+  "median": -0.086,
+  "p": 0.75,
+  "B": 16
+ },
+ "surplus": -0.042,
+ "robust": {
+  "nx0.7": 0.021,
+  "nx1.3": -0.509
+ },
+ "OOS": {
+  "n": 25,
+  "ev": 0.582,
+  "wr": 40.0,
+  "pf": 1.95,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": 0.974,
+   "2020": 0.989,
+   "2021": -1.018,
+   "2022": 0.981,
+   "2023": 1.984
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 7,
+  "ev": 0.126,
+  "wr": 28.6,
+  "pf": 1.17,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.317,
+   "2025": 0.313,
+   "2026": -1.006
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN001",
+  "ten": "Pin bar đảo chiều tại đáy/đỉnh",
+  "ho": "Mẫu nến",
+  "nguon": "Martin Pring / price action kinh điển",
+  "mo_ta": "Nến râu dài ≥2/3 thân xuất hiện tại đáy/đỉnh cục bộ, vào theo hướng ngược râu ở nến kế",
+  "archetype": "pinbar",
+  "tf": "H1",
+  "tham_so": {
+   "extreme": 10,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "extreme"
+ },
+ "IS": {
+  "n": 1871,
+  "ev": -0.094,
+  "wr": 24.9,
+  "pf": 0.88,
+  "years_pos": "3/15",
+  "by_year": {
+   "2004": 0.042,
+   "2005": -0.05,
+   "2006": -0.296,
+   "2007": -0.027,
+   "2008": 0.265,
+   "2009": -0.141,
+   "2010": 0.232,
+   "2011": -0.007,
+   "2012": -0.039,
+   "2013": -0.101,
+   "2014": -0.279,
+   "2015": -0.136,
+   "2016": -0.219,
+   "2017": -0.309,
+   "2018": -0.239
+  }
+ },
+ "null": {
+  "median": -0.035,
+  "p": 0.88,
+  "B": 16
+ },
+ "surplus": -0.059,
+ "robust": {
+  "extremex0.7": -0.087,
+  "extremex1.3": -0.101
+ },
+ "OOS": {
+  "n": 644,
+  "ev": -0.03,
+  "wr": 26.9,
+  "pf": 0.96,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.034,
+   "2020": -0.071,
+   "2021": -0.102,
+   "2022": 0.068,
+   "2023": -0.028
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 302,
+  "ev": -0.139,
+  "wr": 23.5,
+  "pf": 0.83,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.122,
+   "2025": -0.177,
+   "2026": -0.091
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

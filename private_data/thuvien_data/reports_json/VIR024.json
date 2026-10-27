@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR024",
+  "ten": "3 Line Strike (bull)",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "Viral TikTok từ 2021, vẫn sống",
+  "mo_ta": "3 nến giảm + 1 nến xanh nuốt cả 3 — mua",
+  "archetype": "line_strike3",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 797,
+  "ev": -0.077,
+  "wr": 25.5,
+  "pf": 0.9,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": -0.243,
+   "2005": 0.088,
+   "2006": -0.042,
+   "2007": 0.19,
+   "2008": -0.531,
+   "2009": 0.008,
+   "2010": -0.04,
+   "2011": 0.226,
+   "2012": -0.252,
+   "2013": 0.041,
+   "2014": -0.306,
+   "2015": 0.089,
+   "2016": -0.189,
+   "2017": 0.044,
+   "2018": -0.202
+  }
+ },
+ "null": {
+  "median": -0.06,
+  "p": 0.69,
+  "B": 16
+ },
+ "surplus": -0.017,
+ "robust": {
+  "dummyx0.7": -0.077,
+  "dummyx1.3": -0.077
+ },
+ "OOS": {
+  "n": 307,
+  "ev": 0.08,
+  "wr": 30.3,
+  "pf": 1.1,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.192,
+   "2020": 0.298,
+   "2021": 0.186,
+   "2022": -0.071,
+   "2023": -0.194
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 141,
+  "ev": -0.092,
+  "wr": 24.8,
+  "pf": 0.89,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.098,
+   "2025": -0.11,
+   "2026": -0.045
+  },
+  "status": "suy yếu",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

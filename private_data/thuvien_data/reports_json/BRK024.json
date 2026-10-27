@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "BRK024",
+  "ten": "Range co thắt 3 phiên (contraction)",
+  "ho": "Breakout & phiên",
+  "nguon": "Volatility cycle",
+  "mo_ta": "3 ngày range giảm dần → trade cú phá ngày 4",
+  "archetype": "contraction_break",
+  "tf": "D1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 115,
+  "ev": 0.353,
+  "wr": 34.8,
+  "pf": 1.54,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": -1.017,
+   "2005": -0.022,
+   "2006": -0.633,
+   "2007": 0.319,
+   "2008": 0.42,
+   "2009": -0.014,
+   "2010": 1.382,
+   "2011": 1.815,
+   "2012": 1.65,
+   "2013": -0.015,
+   "2014": 0.126,
+   "2015": 0.982,
+   "2016": -0.127,
+   "2017": 0.976,
+   "2018": 0.65
+  }
+ },
+ "null": {
+  "median": -0.014,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.367,
+ "robust": {
+  "dummyx0.7": 0.353,
+  "dummyx1.3": 0.353
+ },
+ "OOS": {
+  "n": 41,
+  "ev": -0.041,
+  "wr": 24.4,
+  "pf": 0.95,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.219,
+   "2020": -0.348,
+   "2021": 0.317,
+   "2022": -0.127,
+   "2023": 0.315
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 20,
+  "ev": 0.73,
+  "wr": 45.0,
+  "pf": 2.31,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 1.983,
+   "2025": 0.077,
+   "2026": 1.165
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

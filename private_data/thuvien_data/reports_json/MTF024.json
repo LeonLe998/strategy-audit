@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF024",
+  "ten": "D1 inside day + H1 breakout hướng mẹ",
+  "ho": "Đa khung & lai",
+  "nguon": "Nến + đa khung",
+  "mo_ta": "Inside day D1 → trade phá biên nến mẹ bằng tín hiệu H1",
+  "archetype": "MTF024",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 560,
+  "ev": 0.019,
+  "wr": 27.5,
+  "pf": 1.02,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": -0.134,
+   "2005": 0.574,
+   "2006": -0.26,
+   "2007": -0.135,
+   "2008": 0.482,
+   "2009": 0.49,
+   "2010": -0.078,
+   "2011": 0.228,
+   "2012": -0.406,
+   "2013": -0.252,
+   "2014": -0.241,
+   "2015": -0.282,
+   "2016": 0.267,
+   "2017": -0.155,
+   "2018": -0.054
+  }
+ },
+ "null": {
+  "median": -0.043,
+  "p": 0.06,
+  "B": 16
+ },
+ "surplus": 0.062,
+ "robust": {
+  "dummyx0.7": 0.019,
+  "dummyx1.3": 0.019
+ },
+ "OOS": {
+  "n": 195,
+  "ev": 0.039,
+  "wr": 28.2,
+  "pf": 1.05,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.182,
+   "2020": 0.294,
+   "2021": -0.178,
+   "2022": 0.103,
+   "2023": -0.251
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 103,
+  "ev": 0.325,
+  "wr": 35.0,
+  "pf": 1.47,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.245,
+   "2025": 0.581,
+   "2026": -0.155
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

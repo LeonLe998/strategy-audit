@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "REV025",
+  "ten": "Quay về VWAP tuần",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Anchored VWAP",
+  "mo_ta": "Cách VWAP neo đầu tuần ≥2σ — vào ngược",
+  "archetype": "vwap_day",
+  "tf": "H4",
+  "tham_so": {
+   "mode": "revert",
+   "k": 2.0,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 445,
+  "ev": -0.032,
+  "wr": 25.6,
+  "pf": 0.96,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": 0.213,
+   "2005": -0.08,
+   "2006": 0.008,
+   "2007": 0.566,
+   "2008": -0.131,
+   "2009": -0.3,
+   "2010": 0.074,
+   "2011": 0.195,
+   "2012": -0.801,
+   "2013": -0.089,
+   "2014": -0.167,
+   "2015": -0.393,
+   "2016": 0.323,
+   "2017": 0.369,
+   "2018": -0.202
+  }
+ },
+ "null": {
+  "median": -0.06,
+  "p": 0.38,
+  "B": 16
+ },
+ "surplus": 0.028,
+ "robust": {
+  "kx0.7": 0.081,
+  "kx1.3": -0.092
+ },
+ "OOS": {
+  "n": 144,
+  "ev": 0.091,
+  "wr": 28.5,
+  "pf": 1.12,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": -0.159,
+   "2020": -0.081,
+   "2021": 0.27,
+   "2022": 0.067,
+   "2023": 0.33
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 86,
+  "ev": 0.074,
+  "wr": 27.9,
+  "pf": 1.1,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.0,
+   "2025": -0.059,
+   "2026": 0.488
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

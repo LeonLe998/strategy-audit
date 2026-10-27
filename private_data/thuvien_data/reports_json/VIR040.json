@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR040",
+  "ten": "Head & Shoulders phá neckline",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "Kinh điển được TikTok hồi sinh",
+  "mo_ta": "Vai-đầu-vai phá neckline — vào theo, SL trên vai phải",
+  "archetype": "hs",
+  "tf": "H4",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 221,
+  "ev": 0.39,
+  "wr": 35.7,
+  "pf": 1.58,
+  "years_pos": "14/15",
+  "by_year": {
+   "2004": 0.734,
+   "2005": 0.155,
+   "2006": 0.061,
+   "2007": -0.035,
+   "2008": 0.661,
+   "2009": 0.146,
+   "2010": 0.419,
+   "2011": 0.965,
+   "2012": 0.624,
+   "2013": 0.71,
+   "2014": 0.289,
+   "2015": 0.208,
+   "2016": 0.373,
+   "2017": 0.662,
+   "2018": 0.03
+  }
+ },
+ "null": {
+  "median": -0.011,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.401,
+ "robust": {
+  "dummyx0.7": 0.39,
+  "dummyx1.3": 0.39
+ },
+ "OOS": {
+  "n": 100,
+  "ev": 0.234,
+  "wr": 32.0,
+  "pf": 1.33,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": -0.009,
+   "2020": 0.39,
+   "2021": 0.121,
+   "2022": 0.559,
+   "2023": 0.215
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 37,
+  "ev": 0.155,
+  "wr": 29.7,
+  "pf": 1.21,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": -0.241,
+   "2025": 0.195,
+   "2026": 0.756
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "BRK032",
+  "ten": "Mốc số tròn (00) breakout",
+  "ho": "Breakout & phiên",
+  "nguon": "Tâm lý giá",
+  "mo_ta": "Phá mốc tròn 50/100$ của vàng bằng nến đóng, vào tiếp diễn",
+  "archetype": "round_lvl",
+  "tf": "H1",
+  "tham_so": {
+   "step": 50.0,
+   "mode": "break",
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "step"
+ },
+ "IS": {
+  "n": 703,
+  "ev": -0.003,
+  "wr": 26.7,
+  "pf": 1.0,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": -0.707,
+   "2005": 0.261,
+   "2006": 0.358,
+   "2007": 0.004,
+   "2008": 0.08,
+   "2009": -0.011,
+   "2010": -0.033,
+   "2011": -0.055,
+   "2012": -0.124,
+   "2013": 0.1,
+   "2014": -0.14,
+   "2015": 0.32,
+   "2016": -0.204,
+   "2017": 0.151,
+   "2018": -0.199
+  }
+ },
+ "null": {
+  "median": 0.005,
+  "p": 0.5,
+  "B": 16
+ },
+ "surplus": -0.008,
+ "robust": {
+  "stepx0.7": 0.003,
+  "stepx1.3": 0.083
+ },
+ "OOS": {
+  "n": 321,
+  "ev": -0.08,
+  "wr": 25.5,
+  "pf": 0.9,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.199,
+   "2020": -0.032,
+   "2021": -0.058,
+   "2022": -0.327,
+   "2023": 0.241
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 289,
+  "ev": 0.171,
+  "wr": 31.1,
+  "pf": 1.24,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.154,
+   "2025": 0.192,
+   "2026": 0.158
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

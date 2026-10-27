@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "IND060",
+  "ten": "RVI cross (Relative Vigor)",
+  "ho": "Indicator kinh điển",
+  "nguon": "John Ehlers",
+  "mo_ta": "RVI cắt signal, vào theo hướng",
+  "archetype": "rvi",
+  "tf": "H4",
+  "tham_so": {
+   "n": 10,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 750,
+  "ev": -0.144,
+  "wr": 22.4,
+  "pf": 0.82,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": 0.526,
+   "2005": -0.226,
+   "2006": -0.476,
+   "2007": -0.428,
+   "2008": -0.193,
+   "2009": 0.087,
+   "2010": 0.115,
+   "2011": 0.01,
+   "2012": -0.007,
+   "2013": 0.276,
+   "2014": -0.339,
+   "2015": -0.106,
+   "2016": -0.078,
+   "2017": -0.242,
+   "2018": -0.544
+  }
+ },
+ "null": {
+  "median": -0.004,
+  "p": 0.94,
+  "B": 16
+ },
+ "surplus": -0.14,
+ "robust": {
+  "nx0.7": 0.028,
+  "nx1.3": 0.005
+ },
+ "OOS": {
+  "n": 234,
+  "ev": -0.045,
+  "wr": 25.6,
+  "pf": 0.94,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.175,
+   "2020": -0.133,
+   "2021": 0.278,
+   "2022": -0.317,
+   "2023": 0.187
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 116,
+  "ev": 0.105,
+  "wr": 30.2,
+  "pf": 1.14,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": 0.509,
+   "2025": -0.106,
+   "2026": -0.115
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

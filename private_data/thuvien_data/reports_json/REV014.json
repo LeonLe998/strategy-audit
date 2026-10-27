@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "REV014",
+  "ten": "Pivot PP làm nam châm",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Floor trading",
+  "mo_ta": "Giá cách PP ≥1ATR đầu phiên — vào ngược về PP",
+  "archetype": "prevclose_fade",
+  "tf": "H1",
+  "tham_so": {
+   "k": 1.0,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "k"
+ },
+ "IS": {
+  "n": 673,
+  "ev": -0.266,
+  "wr": 20.1,
+  "pf": 0.69,
+  "years_pos": "2/15",
+  "by_year": {
+   "2004": -0.01,
+   "2005": -0.348,
+   "2006": 0.041,
+   "2007": -0.064,
+   "2008": -0.355,
+   "2009": -0.25,
+   "2010": -0.3,
+   "2011": -0.575,
+   "2012": -0.186,
+   "2013": -0.576,
+   "2014": -0.319,
+   "2015": 0.081,
+   "2016": -0.083,
+   "2017": -0.459,
+   "2018": -0.321
+  }
+ },
+ "null": {
+  "median": -0.026,
+  "p": 1.0,
+  "B": 16
+ },
+ "surplus": -0.24,
+ "robust": {
+  "kx0.7": -0.108,
+  "kx1.3": -0.289
+ },
+ "OOS": {
+  "n": 224,
+  "ev": -0.235,
+  "wr": 21.0,
+  "pf": 0.72,
+  "years_pos": "0/5",
+  "by_year": {
+   "2019": -0.333,
+   "2020": -0.422,
+   "2021": -0.162,
+   "2022": -0.266,
+   "2023": -0.019
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 132,
+  "ev": -0.376,
+  "wr": 17.4,
+  "pf": 0.57,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.621,
+   "2025": -0.223,
+   "2026": -0.301
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

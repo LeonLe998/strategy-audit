@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN003",
+  "ten": "Bullish engulfing sau ≥3 nến giảm",
+  "ho": "Mẫu nến",
+  "nguon": "Nison — Japanese Candlestick Charting",
+  "mo_ta": "Nến xanh nuốt trọn thân nến đỏ trước, sau chuỗi giảm, mua mở nến kế",
+  "archetype": "engulf",
+  "tf": "H1",
+  "tham_so": {
+   "after": 3,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "after"
+ },
+ "IS": {
+  "n": 1096,
+  "ev": 0.003,
+  "wr": 27.5,
+  "pf": 1.0,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 0.579,
+   "2005": 0.697,
+   "2006": 0.053,
+   "2007": 0.041,
+   "2008": -0.141,
+   "2009": 0.166,
+   "2010": -0.098,
+   "2011": 0.255,
+   "2012": -0.376,
+   "2013": 0.414,
+   "2014": 0.169,
+   "2015": -0.072,
+   "2016": -0.332,
+   "2017": -0.135,
+   "2018": -0.299
+  }
+ },
+ "null": {
+  "median": -0.067,
+  "p": 0.06,
+  "B": 16
+ },
+ "surplus": 0.07,
+ "robust": {
+  "afterx0.7": -0.003,
+  "afterx1.3": -0.083
+ },
+ "OOS": {
+  "n": 362,
+  "ev": -0.143,
+  "wr": 24.3,
+  "pf": 0.83,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.187,
+   "2020": 0.312,
+   "2021": -0.141,
+   "2022": -0.323,
+   "2023": -0.242
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 208,
+  "ev": 0.134,
+  "wr": 30.3,
+  "pf": 1.18,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.122,
+   "2025": 0.229,
+   "2026": 0.014
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

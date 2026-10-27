@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Strategy Audit - Quantitative Lab</title><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"outline-variant":"#3c4a42","secondary-fixed":"#acedff","on-error":"#690005","on-secondary-container":"#00424e","on-background":"#d4e4fa","secondary-container":"#03b5d3","on-tertiary-container":"#780021","on-tertiary":"#67001b","surface-container-highest":"#273647","inverse-on-surface":"#233143","inverse-primary":"#006c49","tertiary-container":"#ff7886","on-error-container":"#ffdad6","surface-container-high":"#1c2b3c","primary-container":"#10b981","secondary-fixed-dim":"#4cd7f6","on-tertiary-fixed":"#40000d","inverse-surface":"#d4e4fa","on-primary-fixed-variant":"#005236","on-primary-fixed":"#002113","background":"#051424","surface-bright":"#2c3a4c","on-primary":"#003824","surface":"#051424","on-secondary-fixed":"#001f26","primary-fixed":"#6ffbbe","on-surface-variant":"#bbcabf","error-container":"#93000a","surface-variant":"#273647","primary":"#4edea3","surface-container":"#122131","surface-dim":"#051424","on-surface":"#d4e4fa","tertiary-fixed-dim":"#ffb2b7","surface-container-low":"#0d1c2d","on-secondary-fixed-variant":"#004e5c","surface-tint":"#4edea3","outline":"#86948a","on-secondary":"#003640","on-primary-container":"#00422b","secondary":"#4cd7f6","on-tertiary-fixed-variant":"#92002a","primary-fixed-dim":"#4edea3","tertiary":"#ffb2b7","surface-container-lowest":"#010f1f","tertiary-fixed":"#ffdadb","error":"#ffb4ab"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-mobile":"1rem","space-lg":"1.5rem","space-md":"1rem","space-xl":"2.25rem","margin":"2rem","gutter-mobile":"0.75rem","space-xs":"0.25rem","space-sm":"0.5rem","gutter":"1.25rem"},"fontFamily":{"label-lg":["JetBrains Mono"],"body-lg":["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"headline-lg-mobile":["Inter"],"headline-xl":["Inter"],"headline-lg":["Inter"],"label-md":["JetBrains Mono"],"label-sm":["JetBrains Mono"],"headline-xl-mobile":["Inter"],"headline-md":["Inter"],"headline-sm":["Inter"]},"fontSize":{"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0.01em","fontWeight":"500"}],"body-lg":["1rem",{"lineHeight":"1.625rem","fontWeight":"400"}],"body-md":["0.875rem",{"lineHeight":"1.375rem","fontWeight":"400"}],"body-sm":["0.75rem",{"lineHeight":"1.125rem","fontWeight":"400"}],"headline-lg-mobile":["1.5rem",{"lineHeight":"2rem","letterSpacing":"-0.015em","fontWeight":"600"}],"headline-xl":["3rem",{"lineHeight":"3.5rem","letterSpacing":"-0.025em","fontWeight":"700"}],"headline-lg":["2rem",{"lineHeight":"2.5rem","letterSpacing":"-0.02em","fontWeight":"600"}],"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.02em","fontWeight":"500"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.03em","fontWeight":"500"}],"headline-xl-mobile":["2rem",{"lineHeight":"2.5rem","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-md":["1.375rem",{"lineHeight":"1.75rem","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["1.125rem",{"lineHeight":"1.5rem","letterSpacing":"-0.005em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.45)]"><div class="h-16 w-full px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><img alt="Strategy Audit Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VUIzWNk-Uo30T_WUi_6ryQ_3SOpk5Xmka4b6LFwej5TAeyL0O5ezO0w2daDOvaxNVUQYq2pHhYiY2AUVHRUtAwMGviEnmetPoBnU2uEObdbpm8gXzc4-SZCyBMS2mEELtG7qvocz0nhuJjGy0OAcj7dXnytEeK8pubuaTz_5nioemDt0F0-5cfFwaEyjx1RIKjvRnoswg_N_9miF2ZCJ1ZQlP0XQHh6bgjD-5RA8qSuYS4D-JkJQ_0Tw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">STRATEGY AUDIT</span><span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">QUANTITATIVE LAB</span></div><span class="ml-space-xs px-space-xs py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm tracking-wide">LAB v2.4 DATA ENGINE</span></div><nav class="hidden lg:flex items-center gap-space-sm" data-active-classes="bg-surface-container-high text-primary font-bold"><a aria-current="page" class="px-space-sm py-1.5 rounded transition-colors bg-surface-container-high text-primary font-bold" data-path="cach-hoat-dong" href="#">Cách hoạt động</a><div class="relative flex items-center"><a class="px-space-sm py-1.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-body-sm text-body-sm" data-path="sau-o-audit" href="#">Sáu Ô</a><span class="ml-1 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm uppercase">Miễn phí</span></div><a class="px-space-sm py-1.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-body-sm text-body-sm" data-path="thu-vien-300-chien-luoc" href="#">Thư viện 300 Chiến lược</a><a class="px-space-sm py-1.5 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors font-body-sm text-body-sm" data-path="thanh-vien" href="#">Thành viên</a></nav><div class="flex items-center gap-space-sm"><a class="hidden sm:flex items-center gap-1.5 px-space-sm py-1.5 rounded bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm text-label-sm transition-colors" href="#"><span class="material-symbols-outlined text-[16px] text-secondary">send</span><span>TG @StrategyAuditLab</span></a><a class="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary font-label-md text-label-md font-semibold tracking-wide transition-all shadow-[0_2px_8px_rgba(16,185,129,0.2)]" data-path="sau-o-audit" href="#"><span class="material-symbols-outlined text-[16px]">terminal</span><span>Bắt đầu với Sáu Ô</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-16rem)]"><div class="flex flex-col w-full">
+<!-- SECTION 1: HERO FINTECH TECH -->
+<section class="relative w-full px-margin py-space-xl overflow-hidden bg-surface">
+<div class="absolute inset-0 pointer-events-none opacity-40">
+<svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="grid-pattern" patternunits="userSpaceOnUse" width="40">
+<path d="M 40 0 L 0 0 0 40" fill="none" stroke="#273647" stroke-dasharray="1 3" stroke-width="0.75"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid-pattern)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="relative max-w-6xl mx-auto flex flex-col items-center text-center">
+<!-- Terminal Tag -->
+<div class="inline-flex items-center gap-space-xs px-space-md py-1 rounded bg-surface-container-high text-secondary mb-space-lg shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">verified</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface">QUANTITATIVE EMPIRICAL AUDIT LAB v2.4</span>
+</div>
+<!-- Main Catchphrase -->
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight max-w-4xl mb-space-md">
+        Biết cách giao dịch chưa đủ. <br class="hidden md:inline"/>
+<span class="text-primary font-bold">Hãy kiểm tra xem phương pháp có đứng vững qua dữ liệu không.</span>
+</h1>
+<!-- Calm Narrative Subtitle -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mb-space-xl">
+        Thêm bước <span class="text-secondary font-semibold">ĐO</span> lường định lượng vào giữa <span class="text-on-surface font-medium">Học</span> và <span class="text-on-surface font-medium">Thực hành</span> — biến trực giác và cảm tính thành các quy tắc kiểm chứng được bằng dữ liệu trước khi bạn mạo hiểm vốn thật.
+      </p>
+<!-- Action CTAs -->
+<div class="flex flex-wrap items-center justify-center gap-space-md mb-space-xl">
+<a class="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-semibold shadow-lg hover:bg-primary transition-all" href="#sau-o-preview">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+<span>Bắt đầu với Sáu Ô (Miễn phí)</span>
+</a>
+<a class="inline-flex items-center gap-space-xs px-space-lg py-3 rounded-lg bg-surface-container-high text-on-surface font-label-lg text-label-lg font-medium hover:bg-surface-container-highest transition-colors" href="#quy-trinh-5-buoc">
+<span class="material-symbols-outlined text-[20px] text-secondary">insights</span>
+<span>Xem cách đo một phương pháp</span>
+</a>
+</div>
+<!-- Trust Badges -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md w-full max-w-3xl pt-space-md">
+<div class="flex items-center justify-center gap-space-xs py-2 px-space-sm rounded bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-outline text-[18px]">gavel</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Không cam kết lợi nhuận viển vông</span>
+</div>
+<div class="flex items-center justify-center gap-space-xs py-2 px-space-sm rounded bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-error text-[18px]">do_not_disturb_on</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Không bán tín hiệu hay kéo lệnh</span>
+</div>
+<div class="flex items-center justify-center gap-space-xs py-2 px-space-sm rounded bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dữ liệu kiểm chứng độc lập</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: HERO PRODUCT PREVIEW (INTERACTIVE QUANT AUDIT REPORT) -->
+<section class="w-full px-margin py-space-xl bg-surface-container-lowest">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-md">
+<!-- Terminal Window Container -->
+<div class="rounded-xl bg-surface-container-low overflow-hidden shadow-xl">
+<!-- Report Header Bar -->
+<div class="p-space-md bg-surface-container flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="w-3 h-3 rounded-full bg-error inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-secondary-container inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+<div class="h-4 w-px bg-surface-container-highest mx-1"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Mẫu Báo Cáo Kiểm Định Độc Lập</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Chiến lược Breakout Đa Khung Thời Gian (BTC/USDT &amp; XAU/USD 4H)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest text-secondary font-label-sm text-label-sm">Sample Data (Minh họa)</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest text-outline font-label-sm text-label-sm">RUN_ID: #892-QUANT</span>
+</div>
+</div>
+<!-- Telemetry Metagrid -->
+<div class="grid grid-cols-2 md:grid-cols-5 p-space-md gap-space-md bg-surface-container-low">
+<div class="flex flex-col p-space-sm rounded bg-surface-container">
+<span class="font-label-sm text-label-sm text-outline">Số lệnh mẫu (N)</span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">1,420 trades</span>
+<span class="font-label-sm text-label-sm text-secondary">OOS Validated</span>
+</div>
+<div class="flex flex-col p-space-sm rounded bg-surface-container">
+<span class="font-label-sm text-label-sm text-outline">Tỷ lệ thắng (Win Rate)</span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">48.2%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">R:R Kỳ vọng 1:2.4</span>
+</div>
+<div class="flex flex-col p-space-sm rounded bg-surface-container">
+<span class="font-label-sm text-label-sm text-outline">Hệ số lãi (Profit Factor)</span>
+<span class="font-label-lg text-label-lg font-bold text-primary">1.84</span>
+<span class="font-label-sm text-label-sm text-primary">▲ +0.34 vs Benchmark</span>
+</div>
+<div class="flex flex-col p-space-sm rounded bg-surface-container">
+<span class="font-label-sm text-label-sm text-outline">Sụt giảm tối đa (Max DD)</span>
+<span class="font-label-lg text-label-lg font-bold text-error">-14.6%</span>
+<span class="font-label-sm text-label-sm text-error">▼ Phục hồi sau 42 ngày</span>
+</div>
+<div class="flex flex-col p-space-sm rounded bg-surface-container col-span-2 md:col-span-1">
+<span class="font-label-sm text-label-sm text-outline">Sharpe Ratio (Hàng năm)</span>
+<span class="font-label-lg text-label-lg font-bold text-secondary">1.62</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sortino: 2.15</span>
+</div>
+</div>
+<!-- Terminal Equity Curve Chart -->
+<div class="p-space-md bg-surface-container-lowest">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm font-semibold text-on-surface uppercase">Biểu đồ vốn (Equity Trace) &amp; Vùng Underwater</span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary">
+<span class="w-2 h-0.5 bg-primary inline-block"></span> Model Portfolio
+              </span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-outline">
+<span class="w-2 h-0.5 bg-outline inline-block"></span> Buy &amp; Hold BTC
+              </span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Dữ liệu nén 2021 - 2024</span>
+</div>
+<!-- SVG Chart Area -->
+<div class="relative w-full h-64 bg-surface rounded p-space-xs overflow-hidden">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="equityGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#10b981" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#10b981" stop-opacity="0.0"></stop>
+</lineargradient>
+<lineargradient id="drawdownGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#ff7886" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#ff7886" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid Horizontal Lines -->
+<line stroke="#1c2b3c" stroke-width="1" x1="0" x2="1000" y1="40" y2="40"></line>
+<line stroke="#1c2b3c" stroke-width="1" x1="0" x2="1000" y1="90" y2="90"></line>
+<line stroke="#1c2b3c" stroke-width="1" x1="0" x2="1000" y1="140" y2="140"></line>
+<line stroke="#1c2b3c" stroke-width="1" x1="0" x2="1000" y1="190" y2="190"></line>
+<!-- Benchmark Dotted Line -->
+<path d="M 0 180 Q 200 190 350 140 T 700 130 T 1000 90" fill="none" opacity="0.6" stroke="#86948a" stroke-dasharray="4 4" stroke-width="1.5"></path>
+<!-- Equity Fill Area -->
+<path d="M 0 190 L 120 170 L 220 180 L 320 130 L 440 145 L 560 90 L 680 110 L 800 50 L 900 65 L 1000 30 L 1000 210 L 0 210 Z" fill="url(#equityGrad)"></path>
+<!-- Main Equity Curve (Stroke) -->
+<path d="M 0 190 L 120 170 L 220 180 L 320 130 L 440 145 L 560 90 L 680 110 L 800 50 L 900 65 L 1000 30" fill="none" stroke="#4edea3" stroke-width="2.5"></path>
+<!-- Drawdown Underwater Sub-zone -->
+<path d="M 120 220 L 220 235 L 320 220 L 440 230 L 560 220 L 680 232 L 800 220 L 900 228 L 1000 220 L 1000 220 Z" fill="url(#drawdownGrad)" stroke="#ff7886" stroke-width="1"></path>
+<!-- Verification Stage Markers -->
+<circle cx="320" cy="130" fill="#4cd7f6" r="4"></circle>
+<circle cx="680" cy="110" fill="#4cd7f6" r="4"></circle>
+<circle cx="1000" cy="30" fill="#10b981" r="4"></circle>
+</svg>
+<!-- Chart Hover Inspection Badge Overlay -->
+<div class="absolute top-4 right-6 p-space-xs rounded bg-surface-container-high/90 backdrop-blur-md shadow-md">
+<span class="font-label-sm text-label-sm text-outline block">Mốc Đỉnh Vốn (HWM):</span>
+<span class="font-label-md text-label-md text-primary font-bold">+184.2% Return</span>
+</div>
+</div>
+</div>
+<!-- Quantitative Audit Note Footer -->
+<div class="p-space-md bg-surface-container flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">analytics</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-secondary">Nhận xét &amp; Giới hạn định lượng:</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Lợi nhuận chủ yếu đến từ các chu kỳ xu hướng mạnh Q1-Q3; hệ thống chịu drawdown kéo dài khi thị trường đi ngang biên hẹp. Cần bổ sung bộ lọc biến động ATR/ADX để triệt tiêu các điểm vào lệnh nhiễu.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: SƠ ĐỒ HỌC → ĐO → THỰC HÀNH -->
+<section class="w-full px-margin py-space-xl bg-surface">
+<div class="max-w-6xl mx-auto flex flex-col items-center">
+<div class="text-center max-w-2xl mb-space-xl">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest block mb-1">Phương pháp luận ba giai đoạn</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Khép kín khoảng cách nguy hiểm giữa Lý thuyết và Thực tế</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Hầu hết nhà giao dịch nhảy thẳng từ HỌC sang THỰC HÀNH mà bỏ qua việc ĐO LƯỜNG — nguyên nhân dẫn đến 90% thất bại.</p>
+</div>
+<!-- 3-Node Architecture Pipeline -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg w-full items-stretch relative">
+<!-- Node 1: HỌC -->
+<div class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md relative overflow-hidden group">
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-label-md text-label-md font-bold text-outline">01</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Giai đoạn tiền đề</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">HỌC (Learn)</h3>
+<p class="font-label-md text-label-md text-secondary font-medium mb-space-sm">"Tôi hiểu nguyên lý vào lệnh và cấu trúc thị trường chưa?"</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-space-md">
+            Thu thập lý thuyết phương pháp: Mô hình nến, Smart Money Concepts, Cung cầu (Order Block), Breakout, hay Chỉ báo xu hướng. Xác định rõ điểm neo giả định của hệ thống.
+          </p>
+<div class="mt-auto pt-space-sm flex items-center gap-1.5 text-outline font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>Khái niệm &amp; Logic lý thuyết</span>
+</div>
+</div>
+<!-- Node 2: ĐO (NỔI BẬT NHẤT - Center Emerald Cyan Glow) -->
+<div class="flex flex-col p-space-lg rounded-xl bg-surface-container shadow-2xl relative overflow-hidden transform md:-translate-y-2">
+<!-- Top Accent Light Rail -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-secondary-container"></div>
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md font-bold">02</span>
+<span class="px-space-xs py-0.5 rounded bg-primary/10 text-primary font-label-sm text-label-sm font-bold uppercase tracking-wider">Trọng tâm định lượng</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold mb-space-xs">ĐO (Measure)</h3>
+<p class="font-label-md text-label-md text-secondary-fixed font-semibold mb-space-sm">
+            "Hệ thống có edge thực sự qua 1,000+ lệnh không, hay chỉ là may mắn ngắn hạn? Sụt giảm vốn tối đa là bao nhiêu?"
+          </p>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed mb-space-md">
+            Kiểm thử độc lập trên dữ liệu Out-of-Sample. Tính toán Expectancy toán học, Sharpe Ratio, tỷ lệ phục hồi sau Drawdown và kiểm tra độ bền vững qua mô phỏng Monte Carlo 10,000 chuỗi ngẫu nhiên.
+          </p>
+<div class="mt-auto p-space-xs rounded bg-surface-container-high flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary font-bold">TẦNG CHẨN ĐOÁN CHIẾN LƯỢC</span>
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+</div>
+</div>
+<!-- Node 3: THỰC HÀNH -->
+<div class="flex flex-col p-space-lg rounded-xl bg-surface-container-low shadow-md relative overflow-hidden">
+<div class="flex items-center justify-between mb-space-md">
+<span class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center font-label-md text-label-md font-bold text-outline">03</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Thực thi vốn</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">THỰC HÀNH (Practice)</h3>
+<p class="font-label-md text-label-md text-secondary font-medium mb-space-sm">"Kỷ luật quản trị rủi ro và tâm lý giao dịch khi đối mặt với chuỗi thua lỗ liên tiếp."</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mb-space-md">
+            Thực hiện lệnh với định cỡ vị thế (Position Sizing) tương thích với Drawdown chịu đựng tối đa. Bảo toàn tâm lý vững vàng vì bạn đã biết xác suất thua liên tiếp tối đa là bao nhiêu từ bước Đo.
+          </p>
+<div class="mt-auto pt-space-sm flex items-center gap-1.5 text-outline font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">psychology</span>
+<span>Kỷ luật tâm lý &amp; Vốn thực tế</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: CÁCH LÀM (QUY TRÌNH 5 BƯỚC ĐỊNH LƯỢNG) -->
+<section class="w-full px-margin py-space-xl bg-surface-container-lowest" id="quy-trinh-5-buoc">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block mb-1">Quy trình chuẩn hóa</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">5 Bước kiểm tra sức bền của một chiến lược</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+          Không suy đoán, không linh cảm. Mỗi bước trong phòng thí nghiệm Strategy Audit đều tạo ra tài liệu chẩn đoán cụ thể.
+        </p>
+</div>
+<!-- 5-Step Grid Cards -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-space-sm">
+<!-- Step 1 -->
+<div class="p-space-md rounded-lg bg-surface-container flex flex-col justify-between shadow-sm">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-primary mb-space-sm">
+<span class="material-symbols-outlined text-[20px]">filter_center_focus</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline block">BƯỚC 01</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Chọn phương pháp</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Lựa chọn mô hình cốt lõi cần đo lường.</p>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low font-label-sm text-label-sm text-secondary">
+            Ví dụ: SMC Break of Structure, Bollinger Band Squeeze.
+          </div>
+</div>
+<!-- Step 2 -->
+<div class="p-space-md rounded-lg bg-surface-container flex flex-col justify-between shadow-sm">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-secondary mb-space-sm">
+<span class="material-symbols-outlined text-[20px]">rule</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline block">BƯỚC 02</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Xác định quy tắc</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Khóa chặt các điều kiện logic vào và thoát lệnh.</p>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low font-label-sm text-label-sm text-secondary">
+            Ví dụ: SL cách swing low 1.5 ATR, TP cố định tỷ lệ 1:2.5.
+          </div>
+</div>
+<!-- Step 3 -->
+<div class="p-space-md rounded-lg bg-surface-container flex flex-col justify-between shadow-sm">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-primary mb-space-sm">
+<span class="material-symbols-outlined text-[20px]">history_edu</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline block">BƯỚC 03</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Kiểm tra qua dữ liệu</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Quét dữ liệu lịch sử tối thiểu 500-1000 nến mẫu.</p>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low font-label-sm text-label-sm text-secondary">
+            Ví dụ: Lấy mẫu 3 năm dữ liệu tick thực trên cặp XAU/USD.
+          </div>
+</div>
+<!-- Step 4 -->
+<div class="p-space-md rounded-lg bg-surface-container flex flex-col justify-between shadow-sm">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-error mb-space-sm">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline block">BƯỚC 04</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Đọc kết quả &amp; Giới hạn</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Nhận diện chuỗi thua liên tiếp và rủi ro sụt giảm.</p>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low font-label-sm text-label-sm text-secondary">
+            Ví dụ: Thua tối đa 8 lệnh liên tiếp, DD sâu nhất -16.8%.
+          </div>
+</div>
+<!-- Step 5 -->
+<div class="p-space-md rounded-lg bg-surface-container flex flex-col justify-between shadow-sm">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-high flex items-center justify-center text-secondary mb-space-sm">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline block">BƯỚC 05</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Quyết định bước đi</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Tối ưu hóa, loại bỏ hoặc chuẩn bị vốn thực thi.</p>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low font-label-sm text-label-sm text-secondary">
+            Ví dụ: Áp dụng quy tắc rủi ro 0.75% tài khoản cho mỗi lệnh.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: SÁU Ô PREVIEW (/SAUO PREVIEW) -->
+<section class="w-full px-margin py-space-xl bg-surface" id="sau-o-preview">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-lg">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest block mb-1">Công cụ chẩn đoán nhanh độc quyền</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Khung Đánh Giá "Sáu Ô" (Six-Box Audit)</h2>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="px-space-sm py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+            ⏱ Thời gian: <span class="text-on-surface font-semibold">3 Phút</span>
+</div>
+<div class="px-space-sm py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant">
+            🎯 Chi phí: <span class="text-primary font-semibold">Miễn phí hoàn toàn</span>
+</div>
+</div>
+</div>
+<!-- Who and What Intro Card -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md p-space-md rounded-xl bg-surface-container-low">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-semibold">Ai nên dùng?</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Trader đang băn khoăn liệu phương pháp hiện tại có đáng tin hay chỉ đang ăn may.</p>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-semibold">Cần chuẩn bị gì?</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Không cần nạp tiền. Chỉ cần nhớ lại quy tắc vào/thoát lệnh của phương pháp bạn đang dùng.</p>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-semibold">Bạn nhận được gì?</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Bản chẩn đoán 6 chiều: Điểm mù rủi ro, lỗ hổng kỳ vọng và xác suất chịu sụt giảm vốn.</p>
+</div>
+</div>
+<!-- Interactive 6-Box Preview Container -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-md">
+<!-- Ô 1 -->
+<div class="p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-mono">Ô 01 / QUY TẮC</span>
+<span class="material-symbols-outlined text-[18px] text-outline">login</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Quy tắc vào lệnh (Entry Rules)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Điều kiện cụ thể khiến bạn nhấn nút đặt lệnh là gì? Có yếu tố mơ hồ hay phụ thuộc cảm giác không?</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-outline">Trạng thái: Cần chuẩn hóa</span>
+</div>
+</div>
+<!-- Ô 2 -->
+<div class="p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-mono">Ô 02 / BẢO VỆ</span>
+<span class="material-symbols-outlined text-[18px] text-outline">shield</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Dừng lỗ &amp; Chốt lời (Exit Rules)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Điểm Stoploss và Takeprofit có cố định trước khi vào lệnh hay di chuyển theo cảm tính khi giá tiệm cận?</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-outline">Trạng thái: Trọng số cao</span>
+</div>
+</div>
+<!-- Ô 3 -->
+<div class="p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-mono">Ô 03 / QUẢN TRỊ</span>
+<span class="material-symbols-outlined text-[18px] text-outline">pie_chart</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Quản lý vốn (Risk Model)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Bạn đi lệnh theo số lot cố định hay theo % rủi ro danh mục? Có cơ chế giảm volume khi thua không?</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-outline">Trạng thái: Sống còn</span>
+</div>
+</div>
+<!-- Ô 4 -->
+<div class="p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-mono">Ô 04 / BẰNG CHỨNG</span>
+<span class="material-symbols-outlined text-[18px] text-outline">database</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Bằng chứng dữ liệu mẫu (Sample Data)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Phương pháp này đã được kiểm định trên tối thiểu bao nhiêu lệnh trong quá khứ? N &gt; 100 hay chỉ là 5 lệnh gần nhất?</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-secondary">Kiểm định mẫu số N</span>
+</div>
+</div>
+<!-- Ô 5 -->
+<div class="p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-mono">Ô 05 / CHU KỲ</span>
+<span class="material-symbols-outlined text-[18px] text-outline">calendar_month</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Thời gian kiểm thử (Market Cycles)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Dữ liệu kiểm thử đã đi qua thị trường bò (Bull), gấu (Bear) và tích lũy đi ngang (Chop/Sideway) chưa?</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-outline">Độ bền chu kỳ</span>
+</div>
+</div>
+<!-- Ô 6 -->
+<div class="p-space-md rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-mono">Ô 06 / TÂM LÝ</span>
+<span class="material-symbols-outlined text-[18px] text-outline">psychology_alt</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Kế hoạch chuỗi thua (Drawdown Plan)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Nếu dính chuỗi 7 lệnh thua liên tiếp, bạn dừng lại kiểm tra hệ thống hay tăng volume để gỡ gạc?</p>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-error">Chốt chặn tâm lý</span>
+</div>
+</div>
+</div>
+<!-- Action Button for Sáu Ô -->
+<div class="flex justify-center pt-space-sm">
+<a class="inline-flex items-center gap-space-xs px-space-xl py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-lg hover:bg-primary transition-all" href="#sauo-start">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+<span>Làm bài kiểm tra Sáu Ô ngay</span>
+</a>
+</div>
+</div>
+</section>
+<!-- SECTION 6: CASE STUDY PHÂN TÍCH THỰC TẾ -->
+<section class="w-full px-margin py-space-xl bg-surface-container-lowest">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-lg">
+<div class="flex items-center justify-between flex-wrap gap-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block mb-1">Báo cáo mổ xẻ thực nghiệm</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Case Study Phân Tích Thực Tế</h2>
+</div>
+<span class="px-space-sm py-1 rounded bg-surface-container text-outline font-label-sm text-label-sm">
+          Huy hiệu: Dữ liệu minh họa nghiên cứu
+        </span>
+</div>
+<!-- Case Study Presentation Block -->
+<div class="rounded-xl bg-surface-container p-space-lg shadow-md flex flex-col gap-space-md">
+<!-- Title & Subtitle -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-space-md bg-surface-container-low p-space-md rounded-lg gap-space-sm">
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold">CASE ID #CS-041</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Kiểm định phương pháp SMC Order Block trên khung M15</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cặp giao dịch: EUR/USD &amp; GBP/USD (2022 - 2024)</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-outline">Mẫu kiểm tra</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">N = 840 trades</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-outline">Win Rate thực tế</span>
+<span class="font-label-md text-label-md font-bold text-secondary">39.4%</span>
+</div>
+</div>
+</div>
+<!-- 5-Step Logic Breakdown -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-space-md">
+<!-- Step 1 -->
+<div class="flex flex-col p-space-sm rounded bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">1. Câu hỏi ban đầu</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-xs">
+              "Liệu các vùng nến Order Block khung M15 có giữ được tỷ lệ Risk:Reward 1:3 như lời đồn không?"
+            </p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col p-space-sm rounded bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">2. Dữ liệu đưa vào</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-xs">
+              840 nến đảo chiều xác nhận BOS + FVG, khung M15, loại trừ trượt giá và tính phí spread 0.8 pip.
+            </p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col p-space-sm rounded bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-primary uppercase font-semibold">3. Phát hiện chính</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-xs">
+              Tỷ lệ thắng đạt 39.4%, nhưng Profit Factor đạt 1.48 nhờ các lệnh thắng lớn bù đắp trong phiên London.
+            </p>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col p-space-sm rounded bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-error uppercase font-semibold">4. Giới hạn thực tế</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-xs">
+              Phương pháp thất bại nặng khi có tin tức CPI/FOMC ra mắt. Chuỗi thua dài nhất chạm mốc 9 lệnh liên tiếp.
+            </p>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col p-space-sm rounded bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-semibold">5. Điều học được</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-space-xs">
+              Cần bộ lọc lọc tin tức kinh tế vĩ mô và chỉ rủi ro tối đa 0.5%/lệnh để tài khoản không rơi vào tâm lý hoảng loạn.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 7: THƯ VIỆN 300 CHIẾN LƯỢC (PREVIEW) -->
+<section class="w-full px-margin py-space-xl bg-surface">
+<div class="max-w-6xl mx-auto flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest block mb-1">Cơ sở dữ liệu định lượng</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Thư Viện 300+ Chiến Lược Đã Đo</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">
+          Được phân loại theo logic, cặp tài sản và hồ sơ rủi ro
+        </span>
+</div>
+<!-- Search & Category Filters Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-md p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-xs flex-1 max-w-md bg-surface px-space-sm py-1.5 rounded">
+<span class="material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="bg-transparent border-none outline-none font-body-sm text-body-sm text-on-surface w-full placeholder:text-outline" placeholder="Tìm kiếm chiến lược (ví dụ: EMA, RSI, Breakout...)" type="text"/>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="px-space-sm py-1 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold">Tất cả (300+)</button>
+<button class="px-space-sm py-1 rounded bg-surface text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Price Action</button>
+<button class="px-space-sm py-1 rounded bg-surface text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Trend Following</button>
+<button class="px-space-sm py-1 rounded bg-surface text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Mean Reversion</button>
+<button class="px-space-sm py-1 rounded bg-surface text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Breakout</button>
+</div>
+</div>
+<!-- 3 Strategy Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Strategy 1 (Free Preview) -->
+<div class="p-space-md rounded-xl bg-surface-container flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between mb-space-xs">
+<span class="px-space-xs py-0.5 rounded bg-primary/20 text-primary font-label-sm text-label-sm font-semibold">FREE PREVIEW</span>
+<span class="font-label-sm text-label-sm text-outline">Trend Following</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Cặp EMA 21/55 Dynamic Support</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">Chiến lược đi theo sóng hồi trên thị trường có xu hướng mạnh, xác thực bằng nến xác nhận.</p>
+<div class="grid grid-cols-3 gap-space-xs py-space-xs bg-surface-container-low rounded p-space-xs mb-space-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Win Rate</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">51.2%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Profit Factor</span>
+<span class="font-label-md text-label-md font-bold text-primary">1.65</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Max DD</span>
+<span class="font-label-md text-label-md font-bold text-error">-11.2%</span>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center gap-1 w-full py-2 rounded bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold transition-colors" href="#">
+<span>Xem chi tiết hồ sơ đo</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Strategy 2 (Member Only) -->
+<div class="p-space-md rounded-xl bg-surface-container flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-outline text-[20px]">lock</span>
+</div>
+<div>
+<div class="flex items-center justify-between mb-space-xs pr-6">
+<span class="px-space-xs py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm font-semibold">MEMBER ONLY</span>
+<span class="font-label-sm text-label-sm text-outline">Volatility Breakout</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Volatility Squeeze Breakout v3.2</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">Hệ thống kích hoạt khi dải Bollinger nén chặt trong Keltner Channel kèm đột biến khối lượng.</p>
+<div class="grid grid-cols-3 gap-space-xs py-space-xs bg-surface-container-low rounded p-space-xs mb-space-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Win Rate</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">44.8%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Profit Factor</span>
+<span class="font-label-md text-label-md font-bold text-primary">2.12</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Max DD</span>
+<span class="font-label-md text-label-md font-bold text-error">-13.4%</span>
+</div>
+</div>
+</div>
+<button class="w-full py-2 rounded bg-surface-container-low text-outline font-label-sm text-label-sm flex items-center justify-center gap-1 cursor-not-allowed">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Mở khóa cho Thành viên</span>
+</button>
+</div>
+<!-- Strategy 3 (Member Only) -->
+<div class="p-space-md rounded-xl bg-surface-container flex flex-col justify-between shadow-sm relative overflow-hidden">
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-outline text-[20px]">lock</span>
+</div>
+<div>
+<div class="flex items-center justify-between mb-space-xs pr-6">
+<span class="px-space-xs py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm font-semibold">MEMBER ONLY</span>
+<span class="font-label-sm text-label-sm text-outline">Volume Profiling</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Volume Profile POC Rejection</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">Định lượng phản ứng giá tại vùng Point of Control của phiên giao dịch trước đó trên SPX500 và BTC.</p>
+<div class="grid grid-cols-3 gap-space-xs py-space-xs bg-surface-container-low rounded p-space-xs mb-space-md">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Win Rate</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">56.0%</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Profit Factor</span>
+<span class="font-label-md text-label-md font-bold text-primary">1.78</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">Max DD</span>
+<span class="font-label-md text-label-md font-bold text-error">-9.8%</span>
+</div>
+</div>
+</div>
+<button class="w-full py-2 rounded bg-surface-container-low text-outline font-label-sm text-label-sm flex items-center justify-center gap-1 cursor-not-allowed">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Mở khóa cho Thành viên</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 8: THÀNH VIÊN (MEMBERSHIP SECTION) -->
+<section class="w-full px-margin py-space-xl bg-surface-container-lowest">
+<div class="max-w-4xl mx-auto rounded-2xl bg-surface-container p-space-lg md:p-space-xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-space-xl">
+<!-- Membership Value Pitch -->
+<div class="flex flex-col gap-space-sm flex-1">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest font-semibold">Tư cách thành viên Lab</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Truy Cập Toàn Bộ Dữ Liệu Định Lượng</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Tham gia phòng thí nghiệm nghiên cứu độc lập để tiếp cận 300+ bảng kiểm định đầy đủ, bộ lọc rủi ro thời gian thực và mô hình mô phỏng Monte Carlo.
+        </p>
+<!-- Bullet Highlights -->
+<div class="flex flex-col gap-2 mt-space-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">check</span>
+<span class="font-body-sm text-body-sm text-on-surface">Mở khóa toàn bộ 300+ hồ sơ kiểm định chi tiết</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">check</span>
+<span class="font-body-sm text-body-sm text-on-surface">Cập nhật 4-8 chiến lược mới hàng tháng</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">check</span>
+<span class="font-body-sm text-body-sm text-on-surface">Quyền yêu cầu kiểm định phương pháp cá nhân</span>
+</div>
+</div>
+<div class="mt-space-sm p-space-xs rounded bg-surface-container-low text-outline font-label-sm text-label-sm">
+          💡 Lưu ý: Không tự động gia hạn - Chuyển khoản và gửi xác nhận thủ công qua Telegram.
+        </div>
+</div>
+<!-- Pricing & Action Card -->
+<div class="w-full md:w-80 p-space-lg rounded-xl bg-surface-container-low shadow-md flex flex-col items-center text-center">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline mb-1">MỨC PHÍ MINH BẠCH</span>
+<div class="flex items-baseline gap-1 my-space-xs">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">$50</span>
+<span class="font-label-md text-label-md text-on-surface-variant">/ tháng đầu</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline mb-space-md">$100 mỗi tháng từ tháng thứ hai</span>
+<a class="w-full py-3 rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-bold flex items-center justify-center gap-space-xs hover:bg-primary transition-all shadow-md" href="https://t.me/strategyaudit" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Nhắn Strategy Audit trên Telegram</span>
+</a>
+<span class="font-label-sm text-label-sm text-outline mt-space-sm">Hỗ trợ 1:1 qua @strategyaudit</span>
+</div>
+</div>
+</section>
+<!-- SECTION 9: FAQ & LƯU Ý RỦI RO -->
+<section class="w-full px-margin py-space-xl bg-surface">
+<div class="max-w-4xl mx-auto flex flex-col gap-space-xl">
+<!-- Section Title -->
+<div class="text-center">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-widest block mb-1">Giải đáp thắc mắc</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold">Câu Hỏi Thường Gặp &amp; Nguyên Tắc Hoạt Động</h2>
+</div>
+<!-- FAQ Accordion Items -->
+<div class="flex flex-col gap-space-sm">
+<div class="p-space-md rounded-lg bg-surface-container shadow-sm">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Tại sao Strategy Audit không bao giờ phát tín hiệu (Signals) hay mở quỹ ủy thác?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Phát tín hiệu biến trader thành người thụ động và phụ thuộc hoàn toàn vào cảm xúc của người khác. Mục tiêu của Lab là cung cấp "công cụ đo đạc độc lập" để bạn tự kiểm chứng phương pháp và nhận thức rõ rủi ro trước khi mạo hiểm tiền thật.
+          </p>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container shadow-sm">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Dữ liệu kiểm tra trong thư viện lấy từ đâu?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Dữ liệu được trích xuất từ dữ liệu tick và thanh nến chuẩn hóa (OOS - Out of Sample) từ các sàn giao dịch hàng đầu (Binance, CME, OANDA) có tính toán độ trượt giá (slippage) và phí giao dịch thực tế để phản ánh đúng thực tế.
+          </p>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container shadow-sm">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Bản quyền của các phương pháp được kiểm tra xử lý như thế nào?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Chúng tôi không sở hữu và không nhận quyền tác giả của bất kỳ trường phái phân tích nào (như Wyckoff, SMC, Dow, ICT...). Lab chỉ đóng vai trò là bên thứ ba trung lập dùng toán học và xác suất để đo đạc tính hiệu quả của các quy tắc đó.
+          </p>
+</div>
+</div>
+<!-- Risk Disclaimer Dark Guard Box -->
+<div class="p-space-md rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0 mt-0.5">verified_user</span>
+<div class="flex flex-col gap-1">
+<span class="font-label-md text-label-md uppercase font-bold text-on-surface">Tuyên Bố Rủi Ro &amp; Tính Khách Quan Định Lượng</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Mọi dữ liệu kiểm định quá khứ (Backtest và Forward test) không thể đảm bảo chắc chắn cho lợi nhuận trong tương lai. Thị trường tài chính luôn biến đổi cấu trúc. Việc đo lường nhằm loại bỏ các phương pháp có kỳ vọng âm (-EV) và giới hạn tỷ lệ sụt giảm vốn tài khoản, không phải là lời cam kết sinh lời. Luôn quản trị rủi ro trên mỗi lệnh giao dịch.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-lowest"><div class="w-full px-margin py-space-xl"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-lg mb-space-xl"><div class="lg:col-span-2 flex flex-col gap-space-sm pr-space-md"><div class="flex items-center gap-space-xs"><img alt="Strategy Audit Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VUIzWNk-Uo30T_WUi_6ryQ_3SOpk5Xmka4b6LFwej5TAeyL0O5ezO0w2daDOvaxNVUQYq2pHhYiY2AUVHRUtAwMGviEnmetPoBnU2uEObdbpm8gXzc4-SZCyBMS2mEELtG7qvocz0nhuJjGy0OAcj7dXnytEeK8pubuaTz_5nioemDt0F0-5cfFwaEyjx1RIKjvRnoswg_N_9miF2ZCJ1ZQlP0XQHh6bgjD-5RA8qSuYS4D-JkJQ_0Tw"/><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">STRATEGY AUDIT</span></div><p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">Nền tảng đo và kiểm định phương pháp giao dịch độc lập bằng dữ liệu mẫu và mô hình hóa toán học. Loại bỏ thiên kiến tâm lý qua chuẩn hóa 6 chiều định lượng.</p><div class="flex items-center gap-space-xs mt-space-xs"><span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span></span><span class="font-label-sm text-label-sm text-primary">Engine status: Online • 300+ Verified Strategies</span></div></div><div class="flex flex-col gap-space-xs"><span class="font-label-md text-label-md font-semibold uppercase tracking-wider text-on-surface">Sản phẩm &amp; Công cụ</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="sau-o-audit" href="#">Sáu Ô audit</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="backtest-engine" href="#">Backtest engine</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="case-study-phan-tich" href="#">Case study phân tích</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="monte-carlo-lab" href="#">Mô phỏng Monte Carlo</a></div><div class="flex flex-col gap-space-xs"><span class="font-label-md text-label-md font-semibold uppercase tracking-wider text-on-surface">Thư viện Chiến lược</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="thu-vien-300-chien-luoc" href="#">300 Chiến lược định lượng</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="price-action-audit" href="#">Price Action Models</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="trend-following-audit" href="#">Trend Following</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="mean-reversion-audit" href="#">Mean Reversion</a></div><div class="flex flex-col gap-space-xs"><span class="font-label-md text-label-md font-semibold uppercase tracking-wider text-on-surface">Điều khoản &amp; Minh bạch</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="chuan-muc-dinh-luong" href="#">Chuẩn mực định lượng</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="chinh-sach-du-lieu" href="#">Chính sách dữ liệu OOS</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="dieu-khoan-su-dung" href="#">Điều khoản dịch vụ</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="bao-mat-phap-ly" href="#">Bảo mật &amp; Pháp lý</a></div></div><div class="p-space-md rounded bg-surface-container-low mb-space-lg"><div class="flex items-start gap-space-sm"><span class="material-symbols-outlined text-outline text-[20px] shrink-0 mt-0.5">shield_with_heart</span><div class="flex flex-col gap-1"><span class="font-label-sm text-label-sm uppercase font-semibold text-outline">Tuyên bố miễn trừ trách nhiệm &amp; Quản trị rủi ro</span><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Strategy Audit không phải là phòng phát tín hiệu giao dịch hay kênh tư vấn đầu tư cá nhân. Mọi dữ liệu quá khứ không cam kết hay bảo đảm cho lợi nhuận tương lai. Nội dung mang tính giáo dục, nghiên cứu định lượng và quản trị rủi ro theo phương pháp luận thực nghiệm.</p></div></div></div><div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm pt-space-md"><span class="font-label-sm text-label-sm text-outline">© 2024 Strategy Audit Lab. All mathematical rights reserved.</span><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm text-outline">Lat: 12ms</span><span class="font-label-sm text-label-sm text-outline">Sample: N=14,280 trades</span><span class="font-label-sm text-label-sm text-secondary">Build: v2.4.8-quant</span></div></div></div></footer></body></html>

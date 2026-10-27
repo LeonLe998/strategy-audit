@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "BRK035",
+  "ten": "Hộp 4h đầu tuần",
+  "ho": "Breakout & phiên",
+  "nguon": "Weekly opening range",
+  "mo_ta": "Range 4 giờ đầu tuần, phá biên trong ngày thứ Hai",
+  "archetype": "week_open_box",
+  "tf": "H1",
+  "tham_so": {
+   "nbars": 4,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "nbars"
+ },
+ "IS": {
+  "n": 945,
+  "ev": 0.09,
+  "wr": 29.6,
+  "pf": 1.12,
+  "years_pos": "9/15",
+  "by_year": {
+   "2004": -0.096,
+   "2005": -0.092,
+   "2006": -0.363,
+   "2007": 0.175,
+   "2008": 0.277,
+   "2009": -0.117,
+   "2010": 0.407,
+   "2011": 0.501,
+   "2012": -0.241,
+   "2013": 0.007,
+   "2014": 0.25,
+   "2015": 0.159,
+   "2016": 0.271,
+   "2017": 0.247,
+   "2018": -0.087
+  }
+ },
+ "null": {
+  "median": -0.068,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.158,
+ "robust": {
+  "nbarsx0.7": 0.05,
+  "nbarsx1.3": 0.101
+ },
+ "OOS": {
+  "n": 337,
+  "ev": 0.051,
+  "wr": 29.1,
+  "pf": 1.07,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": 0.012,
+   "2020": 0.122,
+   "2021": -0.099,
+   "2022": 0.027,
+   "2023": 0.207
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 168,
+  "ev": 0.027,
+  "wr": 28.6,
+  "pf": 1.04,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.479,
+   "2025": 0.749,
+   "2026": -0.334
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

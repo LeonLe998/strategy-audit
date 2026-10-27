@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR038",
+  "ten": "Fib extension 1.272 chốt — vào 0.786",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "Fib sâu",
+  "mo_ta": "Hồi sâu 0.786 vào ngược sóng hồi",
+  "archetype": "qm",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1377,
+  "ev": -0.035,
+  "wr": 26.4,
+  "pf": 0.96,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.321,
+   "2005": -0.132,
+   "2006": 0.061,
+   "2007": 0.207,
+   "2008": 0.012,
+   "2009": -0.022,
+   "2010": 0.021,
+   "2011": -0.169,
+   "2012": -0.035,
+   "2013": -0.083,
+   "2014": -0.256,
+   "2015": 0.345,
+   "2016": -0.22,
+   "2017": 0.04,
+   "2018": -0.074
+  }
+ },
+ "null": {
+  "median": -0.067,
+  "p": 0.19,
+  "B": 16
+ },
+ "surplus": 0.032,
+ "robust": {
+  "dummyx0.7": -0.035,
+  "dummyx1.3": -0.035
+ },
+ "OOS": {
+  "n": 480,
+  "ev": -0.063,
+  "wr": 26.0,
+  "pf": 0.92,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.232,
+   "2020": 0.281,
+   "2021": -0.263,
+   "2022": -0.258,
+   "2023": 0.152
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 239,
+  "ev": -0.081,
+  "wr": 25.5,
+  "pf": 0.9,
+  "years_pos": "0/3",
+  "by_year": {
+   "2024": -0.058,
+   "2025": -0.131,
+   "2026": -0.011
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

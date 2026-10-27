@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR022",
+  "ten": "Vegas Tunnel",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "Viral cộng đồng Á (EMA144/169)",
+  "mo_ta": "Giá phá 'đường hầm' EMA144-169 + retest — vào theo hướng",
+  "archetype": "vegas",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 864,
+  "ev": 0.071,
+  "wr": 28.8,
+  "pf": 1.09,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": -0.132,
+   "2005": 0.451,
+   "2006": 0.309,
+   "2007": 0.332,
+   "2008": 0.246,
+   "2009": 0.038,
+   "2010": 0.233,
+   "2011": -0.08,
+   "2012": -0.049,
+   "2013": -0.023,
+   "2014": 0.029,
+   "2015": -0.052,
+   "2016": -0.262,
+   "2017": 0.323,
+   "2018": -0.26
+  }
+ },
+ "null": {
+  "median": -0.072,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.143,
+ "robust": {
+  "dummyx0.7": 0.071,
+  "dummyx1.3": 0.071
+ },
+ "OOS": {
+  "n": 337,
+  "ev": -0.248,
+  "wr": 21.1,
+  "pf": 0.71,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.384,
+   "2020": -0.084,
+   "2021": -0.2,
+   "2022": -0.529,
+   "2023": 0.013
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 146,
+  "ev": 0.088,
+  "wr": 30.1,
+  "pf": 1.12,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.031,
+   "2025": 0.094,
+   "2026": 0.195
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

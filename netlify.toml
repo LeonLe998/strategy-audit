@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  # Bài VIP đi kèm function, không nằm trong thư mục deploy công khai
+  included_files = ["private_data/vip_articles/**"]
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

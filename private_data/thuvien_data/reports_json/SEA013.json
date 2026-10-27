@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "SEA013",
+  "ten": "Tháng 9 yếu — thiên bán",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Seasonality chứng khoán áp thử vàng",
+  "mo_ta": "Chỉ nhận tín hiệu bán trong tháng 9",
+  "archetype": "season_window",
+  "tf": "D1",
+  "tham_so": {
+   "month": 9,
+   "d0": 1,
+   "d1": 5,
+   "dir": -1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "d0"
+ },
+ "IS": {
+  "n": 15,
+  "ev": 0.315,
+  "wr": 33.3,
+  "pf": 1.46,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": -1.016,
+   "2005": -1.019,
+   "2006": 2.986,
+   "2007": -1.019,
+   "2008": -1.01,
+   "2009": -1.017,
+   "2010": -1.023,
+   "2011": 2.993,
+   "2012": -1.022,
+   "2013": 2.987,
+   "2014": 2.97,
+   "2015": -1.015,
+   "2016": -1.022,
+   "2017": 2.98,
+   "2018": -1.025
+  }
+ },
+ "null": {
+  "median": -0.481,
+  "p": 0.19,
+  "B": 16
+ },
+ "surplus": 0.796,
+ "robust": {
+  "d0x0.7": 0.315,
+  "d0x1.3": 0.315
+ },
+ "OOS": {
+  "n": 5,
+  "ev": 0.581,
+  "wr": 40.0,
+  "pf": 1.95,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -1.016,
+   "2020": 2.99,
+   "2021": -1.023,
+   "2022": -1.019,
+   "2023": 2.972
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 2,
+  "ev": -1.02,
+  "wr": 0.0,
+  "pf": 0.0,
+  "years_pos": "0/2",
+  "by_year": {
+   "2024": -1.019,
+   "2025": -1.022
+  },
+  "status": "suy yếu",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

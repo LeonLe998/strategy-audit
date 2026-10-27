@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN022",
+  "ten": "Nến phá vỡ giả (fakey)",
+  "ho": "Mẫu nến",
+  "nguon": "Nial Fuller phổ biến hoá",
+  "mo_ta": "Inside bar bị phá một đầu rồi đóng ngược lại — vào theo hướng đóng",
+  "archetype": "fakey",
+  "tf": "H4",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 290,
+  "ev": 0.12,
+  "wr": 29.3,
+  "pf": 1.16,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": -0.044,
+   "2005": 0.038,
+   "2006": 0.689,
+   "2007": 0.808,
+   "2008": -0.178,
+   "2009": -0.031,
+   "2010": 0.293,
+   "2011": 0.074,
+   "2012": -0.16,
+   "2013": 0.298,
+   "2014": -0.319,
+   "2015": 0.246,
+   "2016": 0.739,
+   "2017": -0.507,
+   "2018": -0.163
+  }
+ },
+ "null": {
+  "median": -0.04,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.16,
+ "robust": {
+  "dummyx0.7": 0.12,
+  "dummyx1.3": 0.12
+ },
+ "OOS": {
+  "n": 127,
+  "ev": 0.161,
+  "wr": 29.9,
+  "pf": 1.22,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.241,
+   "2020": 0.431,
+   "2021": -0.041,
+   "2022": -0.243,
+   "2023": 0.356
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 58,
+  "ev": 0.206,
+  "wr": 31.0,
+  "pf": 1.29,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.293,
+   "2025": 0.243,
+   "2026": -0.024
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

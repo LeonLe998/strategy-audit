@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#051424;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 0.5rem);}.pt-safe{padding-top:env(safe-area-inset-top, 0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-error": "#690005", "on-secondary-container": "#00424e", "surface-container-highest": "#273647", "inverse-surface": "#d4e4fa", "primary-fixed": "#6ffbbe", "tertiary-fixed-dim": "#ffb2b7", "on-primary-fixed-variant": "#005236", "on-primary": "#003824", "surface-dim": "#051424", "surface-container-low": "#0d1c2d", "tertiary": "#ffb2b7", "surface-tint": "#4edea3", "surface": "#051424", "surface-container": "#122131", "secondary-fixed": "#acedff", "secondary-container": "#03b5d3", "primary-container": "#10b981", "surface-bright": "#2c3a4c", "secondary": "#4cd7f6", "inverse-on-surface": "#233143", "surface-variant": "#273647", "on-surface-variant": "#bbcabf", "on-tertiary": "#67001b", "error-container": "#93000a", "on-secondary-fixed-variant": "#004e5c", "on-secondary-fixed": "#001f26", "on-tertiary-container": "#780021", "on-secondary": "#003640", "on-background": "#d4e4fa", "on-primary-fixed": "#002113", "tertiary-container": "#ff7886", "on-tertiary-fixed-variant": "#92002a", "on-primary-container": "#00422b", "on-tertiary-fixed": "#40000d", "outline-variant": "#3c4a42", "error": "#ffb4ab", "background": "#051424", "inverse-primary": "#006c49", "secondary-fixed-dim": "#4cd7f6", "surface-container-high": "#1c2b3c", "primary": "#4edea3", "on-error-container": "#ffdad6", "surface-container-lowest": "#010f1f", "tertiary-fixed": "#ffdadb", "on-surface": "#d4e4fa", "primary-fixed-dim": "#4edea3", "outline": "#86948a" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-xl": "2.25rem", "space-md": "1rem", "gutter-mobile": "0.75rem", "gutter": "1.25rem", "margin": "2rem", "margin-mobile": "1rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "space-xs": "0.25rem" }, "fontFamily": { "label-lg": ["JetBrains Mono"], "label-sm": ["JetBrains Mono"], "label-md": ["JetBrains Mono"], "headline-lg-mobile": ["Inter"], "body-md": ["Inter"], "headline-xl-mobile": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Inter"], "headline-sm": ["Inter"], "headline-xl": ["Inter"], "headline-md": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "label-lg": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "500" }], "label-sm": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.03em", "fontWeight": "500" }], "label-md": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-lg-mobile": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.015em", "fontWeight": "600" }], "body-md": ["0.875rem", { "lineHeight": "1.375rem", "fontWeight": "400" }], "headline-xl-mobile": ["2rem", { "lineHeight": "2.5rem", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["0.75rem", { "lineHeight": "1.125rem", "fontWeight": "400" }], "headline-lg": ["2rem", { "lineHeight": "2.5rem", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["1.125rem", { "lineHeight": "1.5rem", "letterSpacing": "-0.005em", "fontWeight": "600" }], "headline-xl": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.025em", "fontWeight": "700" }], "headline-md": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-lg": ["1rem", { "lineHeight": "1.625rem", "fontWeight": "400" }] } } } }</script></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.4)]"><div class="h-16 px-gutter-mobile flex items-center justify-between gap-space-xs"><div class="flex items-center gap-space-xs"><img alt="Strategy Audit logo icon featuring a clean geometric data audit grid with an upward verified trendline and metric node, in modern emerald cyan and slate silver colors.. Brand logo. - Primary color: #10b981
+- Font: inter
+- Mode: dark
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UMf8lFkvPwqQ7TLOyot6IpMQ_5jc54VXPF8ONsQ_GV1UEp3MeMqI0wOVY7_EOs84kVXtnM7T4R2mpSxZyMT3-D_YF8Pej_y1Kf4TFhIY-vKqWs84MaRfhYA3Q763cZHXig82mT0bImR_EmE00IB9yuD1Cj7IEkUyl5PYutvlmRLn68gf-k266jqKdbj-CWGL86EYN_pZuOww10Vbc5gbIkDqOGQH_Yw0I9WzyO-BdthAKEQXZ9_pXwRKw"/><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">QUANT LAB</span><span class="flex h-1.5 w-1.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span></span></div><span class="font-label-sm text-label-sm text-primary tracking-widest uppercase">QUANT LAB ACTIVE</span></div></div><div class="flex items-center gap-space-xs"><a class="h-11 px-space-sm bg-surface-container-high hover:bg-surface-variant text-primary font-label-md text-label-md rounded-lg flex items-center gap-space-xs transition-colors shrink-0" data-path="tu-kiem-tra" href="#"><span class="material-symbols-outlined text-[16px]">verified</span><span>Tự kiểm tra</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-gutter-mobile gap-space-md">
+<!-- Search & Filter Console -->
+<div class="flex flex-col gap-space-sm">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full h-11 pl-10 pr-10 bg-surface-container text-on-surface placeholder:text-on-surface-variant font-body-md text-body-md rounded-xl outline-none focus:bg-surface-container-high transition-colors" id="strategy-search" placeholder="Tìm 300+ chiến lược, mô hình, chỉ báo..." type="text"/>
+<button class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface" id="clear-search">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+</div>
+<!-- Category Pills (Horizontal Scroll) -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-0.5 -mx-gutter-mobile px-gutter-mobile">
+<button class="filter-category-pill shrink-0 px-space-sm h-8 rounded-lg font-label-sm text-label-sm bg-primary text-on-primary transition-all active:scale-95" data-category="all">
+        Tất cả (304)
+      </button>
+<button class="filter-category-pill shrink-0 px-space-sm h-8 rounded-lg font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-all active:scale-95" data-category="trend">
+        Trend Following
+      </button>
+<button class="filter-category-pill shrink-0 px-space-sm h-8 rounded-lg font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-all active:scale-95" data-category="breakout">
+        Breakout
+      </button>
+<button class="filter-category-pill shrink-0 px-space-sm h-8 rounded-lg font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-all active:scale-95" data-category="price-action">
+        Price Action
+      </button>
+<button class="filter-category-pill shrink-0 px-space-sm h-8 rounded-lg font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-all active:scale-95" data-category="mean-reversion">
+        Mean Reversion
+      </button>
+<button class="filter-category-pill shrink-0 px-space-sm h-8 rounded-lg font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-all active:scale-95" data-category="indicators">
+        Indicator-based
+      </button>
+</div>
+<!-- Micro-Dimensional Filtering (Timeframe & Market) -->
+<div class="flex items-center justify-between gap-space-xs bg-surface-container-low p-space-xs rounded-xl">
+<!-- Timeframe Segment -->
+<div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+<span class="material-symbols-outlined text-outline text-[16px] ml-1">schedule</span>
+<button class="tf-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-surface-bright text-primary font-semibold" data-tf="all">ALL</button>
+<button class="tf-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-tf="M15">M15</button>
+<button class="tf-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-tf="H1">H1</button>
+<button class="tf-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-tf="H4">H4</button>
+<button class="tf-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-tf="D1">D1</button>
+</div>
+<div class="h-4 w-[1px] bg-surface-bright"></div>
+<!-- Market Segment -->
+<div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+<button class="market-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-surface-bright text-secondary font-semibold" data-market="all">Tất cả</button>
+<button class="market-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-market="crypto">Crypto</button>
+<button class="market-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-market="forex">Forex</button>
+<button class="market-btn px-2 py-1 rounded-md font-label-sm text-label-sm bg-transparent hover:bg-surface-container text-on-surface-variant" data-market="equities">US Eq</button>
+</div>
+</div>
+</div>
+<!-- Telemetry Bar -->
+<div class="flex items-center justify-between px-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span id="filtered-count">304</span> mô hình đã kiểm định Out-of-Sample
+    </div>
+<span class="text-outline">Cập nhật: 06:00 UTC</span>
+</div>
+<!-- Strategy Cards Stream -->
+<div class="flex flex-col gap-space-sm" id="strategy-grid">
+<!-- CARD 1: Free Preview Strategy -->
+<div class="strategy-card flex flex-col bg-surface-container hover:bg-surface-container-high rounded-xl p-space-md gap-space-sm cursor-pointer shadow-md transition-all active:scale-[0.99]" data-assumptions="Phí giao dịch thực: Taker 0.05%, Giả lập trượt giá Slippage: 1 tick cố định. Kiểm định dữ liệu 2019-2024 không trùng khớp in-sample." data-dd="-8.2%" data-hypothesis="Khai thác xung lực hồi quy cấu trúc vi mô khi giá phản ứng tại dải động EMA 21-55 có sự bảo chứng của Volume Expansion." data-id="strat-01" data-market="Crypto" data-pf="1.84" data-tf="H1" data-title="Cặp EMA 21/55 Dynamic Support &amp; Resistance" data-trades="1,420" data-type="free" data-winrate="62.4%">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-primary/15 text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">visibility</span>
+              FREE PREVIEW
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">
+              CRYPTO • H1
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface-variant">
+              Trend Following
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Cặp EMA 21/55 Dynamic Support &amp; Resistance</h3>
+</div>
+<button class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<!-- Sparkline preview & key metrics grid -->
+<div class="grid grid-cols-4 gap-2 pt-space-xs">
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+<span class="font-label-md text-label-md text-primary font-bold">62.4%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Profit Factor</span>
+<span class="font-label-md text-label-md text-secondary font-bold">1.84</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max DD</span>
+<span class="font-label-md text-label-md text-tertiary font-bold">-8.2%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mẫu Lệnh</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">1,420</span>
+</div>
+</div>
+<!-- Live Mini Sparkline Visual -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">ssid_chart</span>
+<span>Equity Drift Walk: Ổn định</span>
+</div>
+<svg class="w-24 h-5 stroke-primary fill-none overflow-visible" viewbox="0 0 100 20">
+<path d="M0,18 L15,14 L30,16 L45,9 L60,11 L75,4 L90,6 L100,2" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- CARD 2: Volatility Squeeze Breakout v3.2 (MEMBER ONLY) -->
+<div class="strategy-card flex flex-col bg-surface-container hover:bg-surface-container-high rounded-xl p-space-md gap-space-sm cursor-pointer shadow-md transition-all active:scale-[0.99] relative overflow-hidden" data-assumptions="Spread EUR/USD 0.8 pip, Trượt giá 0.5 pip, Dữ liệu tick lịch sử 10 năm liên tục từ Dukascopy." data-dd="-11.4%" data-hypothesis="Bộ nén biến động Bollinger Bands lọt lòng Keltner Channel kết hợp động lượng DMI xác nhận pha bung tích lũy lớn." data-id="strat-02" data-market="Forex" data-pf="2.31" data-tf="H4" data-title="Volatility Squeeze Breakout v3.2" data-trades="2,840" data-type="member" data-winrate="54.1%">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container-highest text-secondary-fixed-dim flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+              MEMBER ONLY
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">
+              FOREX • H4
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface-variant">
+              Breakout
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Volatility Squeeze Breakout v3.2</h3>
+</div>
+<div class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-2 pt-space-xs">
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+<span class="font-label-md text-label-md text-primary font-bold">54.1%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Profit Factor</span>
+<span class="font-label-md text-label-md text-secondary font-bold">2.31</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max DD</span>
+<span class="font-label-md text-label-md text-tertiary font-bold">-11.4%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mẫu Lệnh</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">2,840</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">code</span>
+<span>Full PineScript &amp; Python Quant Engine</span>
+</div>
+<svg class="w-24 h-5 stroke-secondary fill-none overflow-visible" viewbox="0 0 100 20">
+<path d="M0,19 L20,15 L35,16 L50,11 L65,7 L80,9 L95,3 L100,1" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- CARD 3: Volume Profile POC Rejection M15 (FREE PREVIEW) -->
+<div class="strategy-card flex flex-col bg-surface-container hover:bg-surface-container-high rounded-xl p-space-md gap-space-sm cursor-pointer shadow-md transition-all active:scale-[0.99]" data-assumptions="Order book Binance L2 2021-2024, trượt giá ước tính 0.02% per fill, tính gộp cả funding rates." data-dd="-9.5%" data-hypothesis="Kiểm tra phản ứng thanh khoản tại Point of Control (POC) phiên London, vào lệnh khi xuất hiện Delta Divergence ngược hướng." data-id="strat-03" data-market="Crypto" data-pf="1.95" data-tf="M15" data-title="Volume Profile POC Rejection M15" data-trades="3,110" data-type="free" data-winrate="58.7%">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-primary/15 text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">visibility</span>
+              FREE PREVIEW
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">
+              CRYPTO • M15
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface-variant">
+              Price Action
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Volume Profile POC Rejection M15</h3>
+</div>
+<button class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-4 gap-2 pt-space-xs">
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+<span class="font-label-md text-label-md text-primary font-bold">58.7%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Profit Factor</span>
+<span class="font-label-md text-label-md text-secondary font-bold">1.95</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max DD</span>
+<span class="font-label-md text-label-md text-tertiary font-bold">-9.5%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mẫu Lệnh</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">3,110</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">data_thresholding</span>
+<span>Order Flow Imbalance L3</span>
+</div>
+<svg class="w-24 h-5 stroke-primary fill-none overflow-visible" viewbox="0 0 100 20">
+<path d="M0,17 L25,18 L40,12 L55,14 L70,8 L85,4 L100,3" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- CARD 4: Asian Range Liquidity Sweep (ICT) (MEMBER ONLY) -->
+<div class="strategy-card flex flex-col bg-surface-container hover:bg-surface-container-high rounded-xl p-space-md gap-space-sm cursor-pointer shadow-md transition-all active:scale-[0.99]" data-assumptions="Slippage 1.2 pips tại London Open, commission 7$/lot round-turn. Mẫu hình 8 năm cặp GBPUSD &amp; EURUSD." data-dd="-6.9%" data-hypothesis="Quét sạch đỉnh/đáy biên độ phiên Á (Asian High/Low) ngay đầu phiên London kết hợp Market Structure Shift (MSS) ở khung M1-M5." data-id="strat-04" data-market="Forex" data-pf="2.45" data-tf="M15" data-title="Asian Range Liquidity Sweep (ICT)" data-trades="1,890" data-type="member" data-winrate="65.8%">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container-highest text-secondary-fixed-dim flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+              MEMBER ONLY
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">
+              FOREX • M15
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface-variant">
+              Price Action
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">Asian Range Liquidity Sweep (ICT)</h3>
+</div>
+<div class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-2 pt-space-xs">
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+<span class="font-label-md text-label-md text-primary font-bold">65.8%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Profit Factor</span>
+<span class="font-label-md text-label-md text-secondary font-bold">2.45</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max DD</span>
+<span class="font-label-md text-label-md text-tertiary font-bold">-6.9%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mẫu Lệnh</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">1,890</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">security</span>
+<span>Monte Carlo Stress-Tested (99% CI)</span>
+</div>
+<svg class="w-24 h-5 stroke-secondary fill-none overflow-visible" viewbox="0 0 100 20">
+<path d="M0,18 L18,17 L36,13 L54,10 L72,6 L90,4 L100,1" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- CARD 5: SP500 Mean Reversion RSI-2 (MEMBER ONLY) -->
+<div class="strategy-card flex flex-col bg-surface-container hover:bg-surface-container-high rounded-xl p-space-md gap-space-sm cursor-pointer shadow-md transition-all active:scale-[0.99]" data-assumptions="Phí SEC, FINRA và trượt giá 0.01$/share. Backtest từ 1995 đến 2024 bao gồm cả khủng hoảng Dotcom &amp; Subprime." data-dd="-12.8%" data-hypothesis="Mua sâu khi RSI(2) &lt; 10 và giá trên SMA(200), thoát vị thế khi giá vượt SMA(5) trong cấu trúc thị trường cổ phiếu Mỹ." data-id="strat-05" data-market="US Equities" data-pf="1.98" data-tf="D1" data-title="SP500 Larry Connors RSI-2 Mean Reversion" data-trades="4,280" data-type="member" data-winrate="74.2%">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-md font-label-sm text-label-sm bg-surface-container-highest text-secondary-fixed-dim flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+              MEMBER ONLY
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">
+              US EQ • D1
+            </span>
+<span class="px-1.5 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-on-surface-variant">
+              Mean Reversion
+            </span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate">SP500 Larry Connors RSI-2</h3>
+</div>
+<div class="shrink-0 w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-2 pt-space-xs">
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+<span class="font-label-md text-label-md text-primary font-bold">74.2%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Profit Factor</span>
+<span class="font-label-md text-label-md text-secondary font-bold">1.98</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max DD</span>
+<span class="font-label-md text-label-md text-tertiary font-bold">-12.8%</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded-lg">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mẫu Lệnh</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">4,280</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">troubleshoot</span>
+<span>VectorBT Python Benchmark Included</span>
+</div>
+<svg class="w-24 h-5 stroke-secondary fill-none overflow-visible" viewbox="0 0 100 20">
+<path d="M0,19 L20,16 L40,17 L60,11 L80,6 L100,2" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Transparent Member Lab Gate Banner -->
+<div class="flex flex-col bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-low rounded-xl p-space-md gap-space-sm shadow-xl my-space-xs">
+<div class="flex items-center gap-2">
+<div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[22px]">database</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Mở khóa toàn bộ 300+ Chiến lược</span>
+<span class="font-label-sm text-label-sm text-primary">KÈM SOURCE CODE PYTHON &amp; PINESCRIPT</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+      Mỗi mô hình trong kho lưu trữ đều đi kèm bộ tham số tối ưu hóa không overfit, bộ dữ liệu out-of-sample kiểm thử trượt giá (slippage) và tài liệu logic chi tiết.
+    </p>
+<!-- Visual feature highlights -->
+<div class="grid grid-cols-2 gap-space-xs pt-1">
+<div class="flex items-center gap-1.5 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Mã nguồn PineScript v5</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Jupyter Notebook Python</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Kiểm định Walk-Forward</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Nhóm Nghiên cứu Quant VIP</span>
+</div>
+</div>
+<a class="mt-2 w-full h-11 bg-primary text-on-primary font-headline-sm text-label-lg rounded-lg flex items-center justify-center gap-space-xs shadow-md active:scale-[0.98] transition-all" data-path="thanh-vien" href="#">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Nâng cấp Gói Hội viên Lab</span>
+</a>
+</div>
+<!-- Educational Strategy Visual Deck -->
+<div class="flex flex-col bg-surface-container rounded-xl p-space-md gap-space-sm mb-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">science</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Phương pháp Kiểm định Lab</span>
+</div>
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">
+        Chuẩn Học thuật
+      </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+      Mỗi thuật toán trước khi vào thư viện bắt buộc phải vượt qua 3 tầng lọc: Độ lệch chuẩn Monte Carlo, Kiểm định trượt giá ngoài mẫu (OOS) và Giới hạn chu kỳ thị trường (Regime Filter).
+    </p>
+<!-- Visual Diagram Placeholder using asset pipeline -->
+<div class="w-full h-36 rounded-lg overflow-hidden relative bg-surface-container-lowest flex items-center justify-center">
+<img class="w-full h-full object-cover opacity-80" data-alt="A clean institutional quantitative analysis dashboard showing Monte Carlo simulated equity trajectories with confidence intervals in vibrant emerald green and cyan against a deep dark navy data background. Clinical typography and subtle terminal grid lines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZlrCOIrZe0ZF8zI98LQ5_7TMDfaisc4AQ8fNeD6fEQcABQ4XLSP4fMaHW3ynkNPyQw09ks2BOM5-DiqnIY7MeCUoCtGzwgW1qMA4OCJf_A6zeIsRQudza0X3ZEp7aCrjPfFASJO3FLPIkNDPaBBA3RVEVhUwX3NmtJhcFKBVnpe6fCJ3k0OO8QTU_rNNN1lXGCj1LqBScYYIuzkDNvzJYQvcyhIbFJavzRVg1jZ7Om4yugHki9TNZ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/30 to-transparent flex items-end p-space-sm">
+<div class="flex items-center justify-between w-full font-label-sm text-label-sm text-on-surface">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> Monte Carlo 1,000 Runs</span>
+<span class="text-secondary font-mono">99.2% Robustness</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- STRATEGY DETAIL & AUDIT MODAL (DRAWER / OVERLAY) -->
+<div class="fixed inset-0 z-50 hidden bg-surface-dim/80 backdrop-blur-md flex flex-col justify-end" id="strategy-modal">
+<div class="w-full max-h-[85vh] overflow-y-auto bg-surface-container-low rounded-t-2xl p-gutter-mobile flex flex-col gap-space-md shadow-2xl animate-in slide-in-from-bottom duration-200">
+<!-- Modal Drag Handle & Header -->
+<div class="flex flex-col gap-space-xs">
+<div class="w-12 h-1 bg-surface-bright rounded-full mx-auto mb-1"></div>
+<div class="flex items-start justify-between">
+<div class="flex flex-col gap-1 min-w-0 pr-2">
+<div class="flex items-center gap-1.5" id="modal-tags">
+<!-- Dynamic tags -->
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight" id="modal-title">
+            Tên Chiến lược
+          </h2>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center shrink-0 hover:text-on-surface" id="close-modal">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- Switcher Tab: Nguyên lý vs Kết quả kiểm định -->
+<div class="flex bg-surface-container p-1 rounded-xl">
+<button class="flex-1 py-1.5 rounded-lg font-label-md text-label-md bg-surface-bright text-primary font-semibold transition-all" id="tab-logic-btn">
+        Mô tả nguyên lý
+      </button>
+<button class="flex-1 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant transition-all" id="tab-audit-btn">
+        Kết quả kiểm định thực tế
+      </button>
+</div>
+<!-- TAB CONTENT 1: NGUYÊN LÝ -->
+<div class="flex flex-col gap-space-sm" id="tab-logic-content">
+<div class="bg-surface-container p-space-sm rounded-xl flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-primary uppercase font-semibold">Giả thuyết Cốt lõi (Hypothesis)</span>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed" id="modal-hypothesis">
+          Nội dung giả thuyết chiến lược...
+        </p>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<div class="bg-surface-container p-space-sm rounded-xl flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">Quy tắc Vào lệnh (Entry)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Xác nhận nến đóng ngoài biên biến động kèm thanh khoản &gt; 1.5x MA(20).</span>
+</div>
+<div class="bg-surface-container p-space-sm rounded-xl flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-secondary">Quy tắc Thoát lệnh (Exit)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Trailing stop theo ATR(14) x 2.0 hoặc chạm R:R mục tiêu 1:2.5.</span>
+</div>
+</div>
+<div class="bg-surface-container p-space-sm rounded-xl flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-outline">Giới hạn Chu kỳ Thị trường (Market Regime)</span>
+<div class="flex items-center gap-2 pt-1">
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-primary/10 text-primary">Hiệu quả cao: Trending Bull/Bear</span>
+<span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-error/10 text-error">Hạn chế: Choppy / Sideway</span>
+</div>
+</div>
+</div>
+<!-- TAB CONTENT 2: KIỂM ĐỊNH THỰC TẾ -->
+<div class="hidden flex-col gap-space-sm" id="tab-audit-content">
+<!-- Metrics Snapshot -->
+<div class="grid grid-cols-4 gap-2">
+<div class="bg-surface-container p-2 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+<span class="font-label-md text-label-md text-primary font-bold" id="modal-metric-wr">--</span>
+</div>
+<div class="bg-surface-container p-2 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Profit Factor</span>
+<span class="font-label-md text-label-md text-secondary font-bold" id="modal-metric-pf">--</span>
+</div>
+<div class="bg-surface-container p-2 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max DD</span>
+<span class="font-label-md text-label-md text-tertiary font-bold" id="modal-metric-dd">--</span>
+</div>
+<div class="bg-surface-container p-2 rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Số Mẫu Lệnh</span>
+<span class="font-label-md text-label-md text-on-surface font-bold" id="modal-metric-trades">--</span>
+</div>
+</div>
+<!-- Out-of-sample & Friction Details -->
+<div class="bg-surface-container p-space-sm rounded-xl flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-primary font-semibold uppercase">Giả định ma sát &amp; Dữ liệu Kiểm toán</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed" id="modal-assumptions">
+          Dữ liệu kiểm toán và ma sát trượt giá...
+        </p>
+<div class="flex flex-col gap-1.5 pt-2 border-t-0">
+<div class="flex items-center justify-between text-body-sm text-on-surface font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Chu kỳ Dữ liệu Out-of-Sample:</span>
+<span class="font-mono text-secondary">2020 - 2024 (Độc lập)</span>
+</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Phí giao dịch giả định (Fee):</span>
+<span class="font-mono text-on-surface">Taker 0.05% per side</span>
+</div>
+<div class="flex items-center justify-between text-body-sm text-on-surface font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Ước lượng Trượt giá (Slippage):</span>
+<span class="font-mono text-tertiary">1 tick cố định / order</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+<span>Kiểm toán tự động bởi Python VectorBT Pro Engine</span>
+</div>
+</div>
+<!-- Action Drawer CTA -->
+<div class="pt-1" id="modal-action-container">
+<!-- Injected dynamically based on free or locked status -->
+</div>
+</div>
+</div>
+<script>
+  // Simple reactive filter & interaction logic
+  const searchInput = document.getElementById('strategy-search');
+  const clearSearchBtn = document.getElementById('clear-search');
+  const strategyCards = document.querySelectorAll('.strategy-card');
+  const filteredCountEl = document.getElementById('filtered-count');
+  
+  // Category Filtering
+  const categoryPills = document.querySelectorAll('.filter-category-pill');
+  let currentCategory = 'all';
+  let currentTimeframe = 'all';
+  let currentMarket = 'all';
+
+  function applyFilters() {
+    const term = searchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    strategyCards.forEach(card => {
+      const title = card.getAttribute('data-title').toLowerCase();
+      const tf = card.getAttribute('data-tf');
+      const market = card.getAttribute('data-market').toLowerCase();
+      const rawText = card.innerText.toLowerCase();
+
+      const matchesSearch = !term || title.includes(term) || rawText.includes(term);
+      const matchesTf = currentTimeframe === 'all' || tf === currentTimeframe;
+      const matchesMarket = currentMarket === 'all' || market.includes(currentMarket);
+      
+      let matchesCat = true;
+      if (currentCategory !== 'all') {
+        const catMap = {
+          'trend': 'trend following',
+          'breakout': 'breakout',
+          'price-action': 'price action',
+          'mean-reversion': 'mean reversion',
+          'indicators': 'indicator'
+        };
+        matchesCat = rawText.includes(catMap[currentCategory] || currentCategory);
+      }
+
+      if (matchesSearch && matchesTf && matchesMarket && matchesCat) {
+        card.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    if (filteredCountEl) {
+      filteredCountEl.innerText = visibleCount;
+    }
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    if (e.target.value.length > 0) {
+      clearSearchBtn.classList.remove('hidden');
+    } else {
+      clearSearchBtn.classList.add('hidden');
+    }
+    applyFilters();
+  });
+
+  clearSearchBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearchBtn.classList.add('hidden');
+    applyFilters();
+  });
+
+  categoryPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      categoryPills.forEach(p => {
+        p.classList.remove('bg-primary', 'text-on-primary');
+        p.classList.add('bg-surface-container', 'text-on-surface-variant');
+      });
+      pill.classList.add('bg-primary', 'text-on-primary');
+      pill.classList.remove('bg-surface-container', 'text-on-surface-variant');
+      currentCategory = pill.getAttribute('data-category');
+      applyFilters();
+    });
+  });
+
+  // Timeframe pills
+  const tfBtns = document.querySelectorAll('.tf-btn');
+  tfBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tfBtns.forEach(b => {
+        b.classList.remove('bg-surface-bright', 'text-primary', 'font-semibold');
+        b.classList.add('bg-transparent', 'text-on-surface-variant');
+      });
+      btn.classList.add('bg-surface-bright', 'text-primary', 'font-semibold');
+      btn.classList.remove('bg-transparent', 'text-on-surface-variant');
+      currentTimeframe = btn.getAttribute('data-tf');
+      applyFilters();
+    });
+  });
+
+  // Market pills
+  const marketBtns = document.querySelectorAll('.market-btn');
+  marketBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      marketBtns.forEach(b => {
+        b.classList.remove('bg-surface-bright', 'text-secondary', 'font-semibold');
+        b.classList.add('bg-transparent', 'text-on-surface-variant');
+      });
+      btn.classList.add('bg-surface-bright', 'text-secondary', 'font-semibold');
+      btn.classList.remove('bg-transparent', 'text-on-surface-variant');
+      currentMarket = btn.getAttribute('data-market');
+      applyFilters();
+    });
+  });
+
+  // Modal interactions
+  const modal = document.getElementById('strategy-modal');
+  const closeModalBtn = document.getElementById('close-modal');
+  const tabLogicBtn = document.getElementById('tab-logic-btn');
+  const tabAuditBtn = document.getElementById('tab-audit-btn');
+  const tabLogicContent = document.getElementById('tab-logic-content');
+  const tabAuditContent = document.getElementById('tab-audit-content');
+
+  function switchTab(toLogic) {
+    if (toLogic) {
+      tabLogicBtn.classList.add('bg-surface-bright', 'text-primary', 'font-semibold');
+      tabLogicBtn.classList.remove('text-on-surface-variant');
+      tabAuditBtn.classList.remove('bg-surface-bright', 'text-primary', 'font-semibold');
+      tabAuditBtn.classList.add('text-on-surface-variant');
+      tabLogicContent.classList.remove('hidden');
+      tabAuditContent.classList.add('hidden');
+    } else {
+      tabAuditBtn.classList.add('bg-surface-bright', 'text-primary', 'font-semibold');
+      tabAuditBtn.classList.remove('text-on-surface-variant');
+      tabLogicBtn.classList.remove('bg-surface-bright', 'text-primary', 'font-semibold');
+      tabLogicBtn.classList.add('text-on-surface-variant');
+      tabAuditContent.classList.remove('hidden');
+      tabLogicContent.classList.add('hidden');
+    }
+  }
+
+  tabLogicBtn.addEventListener('click', () => switchTab(true));
+  tabAuditBtn.addEventListener('click', () => switchTab(false));
+
+  strategyCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const type = card.getAttribute('data-type');
+      const title = card.getAttribute('data-title');
+      const tf = card.getAttribute('data-tf');
+      const market = card.getAttribute('data-market');
+      const wr = card.getAttribute('data-winrate');
+      const pf = card.getAttribute('data-pf');
+      const dd = card.getAttribute('data-dd');
+      const trades = card.getAttribute('data-trades');
+      const hypothesis = card.getAttribute('data-hypothesis');
+      const assumptions = card.getAttribute('data-assumptions');
+
+      // Populate Modal Info
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-hypothesis').innerText = hypothesis;
+      document.getElementById('modal-assumptions').innerText = assumptions;
+      document.getElementById('modal-metric-wr').innerText = wr;
+      document.getElementById('modal-metric-pf').innerText = pf;
+      document.getElementById('modal-metric-dd').innerText = dd;
+      document.getElementById('modal-metric-trades').innerText = trades;
+
+      const tagsContainer = document.getElementById('modal-tags');
+      tagsContainer.innerHTML = '';
+      if (type === 'free') {
+        tagsContainer.innerHTML = `
+          <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-primary/20 text-primary">FREE PREVIEW</span>
+          <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">${market} • ${tf}</span>
+        `;
+      } else {
+        tagsContainer.innerHTML = `
+          <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-secondary/20 text-secondary flex items-center gap-1 font-semibold">
+            <span class="material-symbols-outlined text-[13px]">lock</span> MEMBER ONLY
+          </span>
+          <span class="px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-highest text-secondary">${market} • ${tf}</span>
+        `;
+      }
+
+      const actionContainer = document.getElementById('modal-action-container');
+      if (type === 'free') {
+        actionContainer.innerHTML = `
+          <div class="flex gap-space-xs">
+            <button class="flex-1 h-11 bg-primary text-on-primary font-headline-sm text-label-lg rounded-xl flex items-center justify-center gap-1">
+              <span class="material-symbols-outlined text-[18px]">download</span>
+              <span>Tải Logic & Thông số</span>
+            </button>
+            <button class="h-11 px-4 bg-surface-container-highest text-on-surface hover:text-primary rounded-xl flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">share</span>
+            </button>
+          </div>
+        `;
+      } else {
+        actionContainer.innerHTML = `
+          <div class="flex flex-col gap-2">
+            <a href="#" data-path="thanh-vien" class="w-full h-11 bg-gradient-to-r from-primary to-secondary text-on-primary font-headline-sm text-label-lg rounded-xl flex items-center justify-center gap-1 shadow-lg">
+              <span class="material-symbols-outlined text-[18px]">lock_open</span>
+              <span>Mở khóa mã nguồn qua Gói Hội Viên</span>
+            </a>
+            <span class="text-center font-label-sm text-label-sm text-on-surface-variant">Bao gồm Code Python, PineScript & Dữ liệu tick kiểm định</span>
+          </div>
+        `;
+      }
+
+      switchTab(true);
+      modal.classList.remove('hidden');
+    });
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    modal.classList.add('hidden');
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.add('hidden');
+    }
+  });
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-4px_16px_rgba(0,0,0,0.5)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-16 text-on-surface-variant hover:text-on-surface transition-all gap-0.5" data-path="trang-chu" href="#"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-label-sm text-label-sm tracking-tight">Trang chủ</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-16 text-on-surface-variant hover:text-on-surface transition-all gap-0.5" data-path="sau-o" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-sm text-label-sm tracking-tight">Sáu Ô</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-16 text-on-surface-variant hover:text-on-surface transition-all gap-0.5" data-path="thu-vien" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-sm text-label-sm tracking-tight">Thư viện</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] w-16 text-on-surface-variant hover:text-on-surface transition-all gap-0.5" data-path="thanh-vien" href="#"><span class="material-symbols-outlined text-[20px]">workspace_premium</span><span class="font-label-sm text-label-sm tracking-tight">Thành viên</span></a></div></nav></body></html>

@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "SEA014",
+  "ten": "Mùa cưới Ấn Độ (T10-T12) — thiên mua vàng",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Cầu vàng vật chất",
+  "mo_ta": "Chỉ nhận tín hiệu mua T10-T12",
+  "archetype": "season_window",
+  "tf": "D1",
+  "tham_so": {
+   "month": 10,
+   "d0": 1,
+   "d1": 7,
+   "dir": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "d0"
+ },
+ "IS": {
+  "n": 15,
+  "ev": 0.073,
+  "wr": 26.7,
+  "pf": 1.1,
+  "years_pos": "4/15",
+  "by_year": {
+   "2004": -1.021,
+   "2005": 2.986,
+   "2006": -1.011,
+   "2007": -1.016,
+   "2008": -1.004,
+   "2009": 2.984,
+   "2010": 2.977,
+   "2011": -0.669,
+   "2012": -1.02,
+   "2013": -1.009,
+   "2014": -1.018,
+   "2015": -1.017,
+   "2016": -1.026,
+   "2017": -1.02,
+   "2018": 2.973
+  }
+ },
+ "null": {
+  "median": 0.318,
+  "p": 0.75,
+  "B": 16
+ },
+ "surplus": -0.245,
+ "robust": {
+  "d0x0.7": 0.073,
+  "d0x1.3": 0.073
+ },
+ "OOS": {
+  "n": 5,
+  "ev": 0.583,
+  "wr": 40.0,
+  "pf": 1.95,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": 2.984,
+   "2020": -1.014,
+   "2021": 2.985,
+   "2022": -1.015,
+   "2023": -1.025
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 2,
+  "ev": 0.983,
+  "wr": 50.0,
+  "pf": 2.93,
+  "years_pos": "1/2",
+  "by_year": {
+   "2024": -1.018,
+   "2025": 2.984
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

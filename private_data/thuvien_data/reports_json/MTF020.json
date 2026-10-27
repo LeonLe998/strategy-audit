@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "MTF020",
+  "ten": "Golden cross D1 nền + mua mọi hồi H4",
+  "ho": "Đa khung & lai",
+  "nguon": "Trend nền dài",
+  "mo_ta": "Sau golden cross D1, mua mỗi lần H4 hồi về EMA20",
+  "archetype": "MTF020",
+  "tf": "H4",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 482,
+  "ev": 0.165,
+  "wr": 30.3,
+  "pf": 1.23,
+  "years_pos": "11/14",
+  "by_year": {
+   "2005": 0.372,
+   "2006": 0.175,
+   "2007": 0.79,
+   "2008": 0.052,
+   "2009": 0.24,
+   "2010": 0.564,
+   "2011": 0.566,
+   "2012": -0.411,
+   "2013": 0.368,
+   "2014": -0.224,
+   "2015": 0.201,
+   "2016": 0.085,
+   "2017": 0.057,
+   "2018": -0.215
+  }
+ },
+ "null": {
+  "median": -0.022,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.187,
+ "robust": {
+  "dummyx0.7": 0.165,
+  "dummyx1.3": 0.165
+ },
+ "OOS": {
+  "n": 143,
+  "ev": 0.201,
+  "wr": 30.8,
+  "pf": 1.28,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": 0.269,
+   "2020": 0.598,
+   "2021": -0.044,
+   "2022": 0.164,
+   "2023": 0.225
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 48,
+  "ev": 0.75,
+  "wr": 45.8,
+  "pf": 2.35,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.3,
+   "2025": 1.176,
+   "2026": -0.082
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

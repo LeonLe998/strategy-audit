@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "MTF016",
+  "ten": "Mùa vụ D1 + tín hiệu H1",
+  "ho": "Đa khung & lai",
+  "nguon": "Seasonality làm lọc",
+  "mo_ta": "Chỉ nhận tín hiệu H1 thuận hướng mùa vụ tháng đó",
+  "archetype": "MTF016",
+  "tf": "H1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 311,
+  "ev": 0.168,
+  "wr": 31.5,
+  "pf": 1.23,
+  "years_pos": "11/15",
+  "by_year": {
+   "2004": 0.792,
+   "2005": 0.357,
+   "2006": 0.005,
+   "2007": 0.947,
+   "2008": 0.19,
+   "2009": 0.499,
+   "2010": 0.533,
+   "2011": 0.443,
+   "2012": -0.219,
+   "2013": -0.309,
+   "2014": 0.071,
+   "2015": -0.134,
+   "2016": -0.607,
+   "2017": 0.353,
+   "2018": 0.247
+  }
+ },
+ "null": {
+  "median": 0.018,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.15,
+ "robust": {
+  "dummyx0.7": 0.168,
+  "dummyx1.3": 0.168
+ },
+ "OOS": {
+  "n": 101,
+  "ev": 0.305,
+  "wr": 35.6,
+  "pf": 1.44,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.045,
+   "2020": -0.106,
+   "2021": -0.093,
+   "2022": 0.734,
+   "2023": 0.73
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 41,
+  "ev": 0.096,
+  "wr": 29.3,
+  "pf": 1.13,
+  "years_pos": "1/2",
+  "by_year": {
+   "2024": -0.003,
+   "2025": 0.21
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

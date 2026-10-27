@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/skills.json",
+  "skills": [
+    {
+      "name": "datascience-math-intelligence",
+      "path": "./skills/datascience-math-intelligence/SKILL.md",
+      "description": "Data Science, Mathematics & 3D Topology Analysis for Strategy Audit"
+    }
+  ]
+}

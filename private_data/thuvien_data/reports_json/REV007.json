@@ -1,0 +1,87 @@
+{
+ "spec": {
+  "id": "REV007",
+  "ten": "Đóng cửa thấp nhất 5 ngày — mua",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Connors",
+  "mo_ta": "Close thấp nhất 5 phiên trong uptrend (trên SMA200) — mua",
+  "archetype": "lowestclose",
+  "tf": "D1",
+  "tham_so": {
+   "n": 5,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "n"
+ },
+ "IS": {
+  "n": 98,
+  "ev": 0.154,
+  "wr": 29.6,
+  "pf": 1.22,
+  "years_pos": "8/14",
+  "by_year": {
+   "2005": 0.435,
+   "2006": 0.992,
+   "2007": 1.388,
+   "2008": -0.12,
+   "2009": 0.59,
+   "2010": 1.652,
+   "2011": 0.764,
+   "2012": -1.019,
+   "2013": 1.117,
+   "2014": -0.685,
+   "2015": -0.445,
+   "2016": -0.349,
+   "2017": -0.622,
+   "2018": 0.574
+  }
+ },
+ "null": {
+  "median": 0.044,
+  "p": 0.12,
+  "B": 16
+ },
+ "surplus": 0.11,
+ "robust": {
+  "nx0.7": 0.249,
+  "nx1.3": 0.139
+ },
+ "OOS": {
+  "n": 33,
+  "ev": -0.223,
+  "wr": 21.2,
+  "pf": 0.72,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": 0.981,
+   "2020": 0.131,
+   "2021": -0.468,
+   "2022": -0.015,
+   "2023": -0.688
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 11,
+  "ev": 0.97,
+  "wr": 54.5,
+  "pf": 3.12,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.984,
+   "2025": 2.19,
+   "2026": -0.56
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR045",
+  "ten": "Chiến lược 2.6 (mathematical)",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "Viral TikTok 2026 — ĐÃ audit nội bộ: CHÁT",
+  "mo_ta": "Đánh theo bước giá cố định 2.6 — đưa vào để công khai kết quả kiểm định",
+  "archetype": "grid26",
+  "tf": "H1",
+  "tham_so": {
+   "step": 2.6,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "step"
+ },
+ "IS": {
+  "n": 1967,
+  "ev": -0.008,
+  "wr": 27.1,
+  "pf": 0.99,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": 0.492,
+   "2005": 0.152,
+   "2006": 0.003,
+   "2007": 0.265,
+   "2008": -0.017,
+   "2009": 0.161,
+   "2010": 0.302,
+   "2011": 0.153,
+   "2012": -0.065,
+   "2013": -0.268,
+   "2014": -0.218,
+   "2015": -0.256,
+   "2016": -0.069,
+   "2017": -0.012,
+   "2018": -0.285
+  }
+ },
+ "null": {
+  "median": 0.004,
+  "p": 0.69,
+  "B": 16
+ },
+ "surplus": -0.012,
+ "robust": {
+  "stepx0.7": -0.015,
+  "stepx1.3": -0.023
+ },
+ "OOS": {
+  "n": 708,
+  "ev": 0.01,
+  "wr": 27.8,
+  "pf": 1.01,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.063,
+   "2020": 0.203,
+   "2021": -0.182,
+   "2022": -0.028,
+   "2023": 0.01
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 334,
+  "ev": 0.304,
+  "wr": 34.7,
+  "pf": 1.44,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.411,
+   "2025": 0.433,
+   "2026": -0.146
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

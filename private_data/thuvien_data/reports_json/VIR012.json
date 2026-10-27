@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "VIR012",
+  "ten": "CHoCH (change of character)",
+  "ho": "Viral & SMC/ICT",
+  "nguon": "SMC",
+  "mo_ta": "Cú phá ngược đầu tiên sau trend dài = đổi tính chất — vào sớm",
+  "archetype": "choch",
+  "tf": "H1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 1558,
+  "ev": -0.062,
+  "wr": 25.9,
+  "pf": 0.92,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": 0.178,
+   "2005": -0.143,
+   "2006": 0.172,
+   "2007": -0.165,
+   "2008": 0.067,
+   "2009": -0.384,
+   "2010": 0.274,
+   "2011": 0.059,
+   "2012": -0.208,
+   "2013": 0.007,
+   "2014": -0.357,
+   "2015": 0.177,
+   "2016": -0.196,
+   "2017": -0.068,
+   "2018": -0.179
+  }
+ },
+ "null": {
+  "median": -0.052,
+  "p": 0.56,
+  "B": 16
+ },
+ "surplus": -0.01,
+ "robust": {
+  "dummyx0.7": -0.062,
+  "dummyx1.3": -0.062
+ },
+ "OOS": {
+  "n": 513,
+  "ev": 0.03,
+  "wr": 28.7,
+  "pf": 1.04,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.285,
+   "2020": 0.327,
+   "2021": -0.007,
+   "2022": 0.158,
+   "2023": -0.028
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 243,
+  "ev": 0.034,
+  "wr": 28.4,
+  "pf": 1.04,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.136,
+   "2025": 0.101,
+   "2026": -0.381
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

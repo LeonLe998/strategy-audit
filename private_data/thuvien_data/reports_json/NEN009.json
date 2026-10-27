@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "NEN009",
+  "ten": "Morning star (sao mai)",
+  "ho": "Mẫu nến",
+  "nguon": "Nison",
+  "mo_ta": "Cụm 3 nến: giảm mạnh — nến nhỏ — tăng mạnh vượt 50% nến 1, mua nến kế",
+  "archetype": "star",
+  "tf": "H4",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 64,
+  "ev": -0.037,
+  "wr": 25.0,
+  "pf": 0.95,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 2.959,
+   "2005": -0.239,
+   "2006": -1.022,
+   "2007": 0.557,
+   "2008": 0.98,
+   "2009": 0.962,
+   "2010": -1.034,
+   "2011": -1.035,
+   "2012": 2.964,
+   "2013": -1.025,
+   "2014": 1.351,
+   "2015": -1.038,
+   "2016": 0.105,
+   "2017": 2.929,
+   "2018": -1.057
+  }
+ },
+ "null": {
+  "median": -0.004,
+  "p": 0.5,
+  "B": 16
+ },
+ "surplus": -0.033,
+ "robust": {
+  "dummyx0.7": -0.037,
+  "dummyx1.3": -0.037
+ },
+ "OOS": {
+  "n": 21,
+  "ev": -0.573,
+  "wr": 14.3,
+  "pf": 0.36,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -1.047,
+   "2020": -1.035,
+   "2021": -1.049,
+   "2022": 0.296,
+   "2023": 0.13
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 10,
+  "ev": 0.334,
+  "wr": 40.0,
+  "pf": 1.54,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.555,
+   "2025": 0.301,
+   "2026": -0.17
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

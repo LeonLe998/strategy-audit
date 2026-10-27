@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "IND038",
+  "ten": "OBV phân kỳ",
+  "ho": "Indicator kinh điển",
+  "nguon": "Joe Granville (1963)",
+  "mo_ta": "OBV phân kỳ với giá tại cực trị, vào ngược",
+  "archetype": "obv_diverg",
+  "tf": "H4",
+  "tham_so": {
+   "win": 40,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "win"
+ },
+ "IS": {
+  "n": 443,
+  "ev": -0.046,
+  "wr": 25.5,
+  "pf": 0.94,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.47,
+   "2005": 0.281,
+   "2006": -0.026,
+   "2007": -0.264,
+   "2008": 0.404,
+   "2009": 0.05,
+   "2010": 0.053,
+   "2011": 0.465,
+   "2012": -0.072,
+   "2013": -0.207,
+   "2014": -0.27,
+   "2015": -0.014,
+   "2016": 0.221,
+   "2017": -0.234,
+   "2018": -0.634
+  }
+ },
+ "null": {
+  "median": -0.023,
+  "p": 0.5,
+  "B": 16
+ },
+ "surplus": -0.023,
+ "robust": {
+  "winx0.7": -0.044,
+  "winx1.3": -0.046
+ },
+ "OOS": {
+  "n": 143,
+  "ev": 0.324,
+  "wr": 34.3,
+  "pf": 1.47,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": -0.287,
+   "2020": 0.36,
+   "2021": 0.433,
+   "2022": 0.294,
+   "2023": 0.752
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 60,
+  "ev": 0.064,
+  "wr": 28.3,
+  "pf": 1.09,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.137,
+   "2025": 0.069,
+   "2026": -0.13
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

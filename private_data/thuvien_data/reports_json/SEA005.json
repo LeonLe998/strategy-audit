@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "SEA005",
+  "ten": "Drift qua đêm (overnight vs intraday)",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Nghiên cứu học thuật nổi tiếng",
+  "mo_ta": "Giữ qua đêm (đóng Mỹ → mở Á) ăn drift, tránh giữ trong phiên",
+  "archetype": "hour_enter",
+  "tf": "H1",
+  "tham_so": {
+   "h": 21,
+   "dir": 1,
+   "hold_bars": 4,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "h"
+ },
+ "IS": {
+  "n": 1117,
+  "ev": -0.005,
+  "wr": 47.3,
+  "pf": 0.97,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.056,
+   "2005": -0.025,
+   "2006": -0.079,
+   "2007": 0.036,
+   "2008": -0.092,
+   "2009": 0.037,
+   "2010": -0.001,
+   "2011": -0.067,
+   "2012": 0.006,
+   "2013": -0.046,
+   "2014": -0.043,
+   "2015": 0.119,
+   "2016": 0.087,
+   "2017": -0.018,
+   "2018": 0.001
+  }
+ },
+ "null": {
+  "median": -0.067,
+  "p": 0.0,
+  "B": 16
+ },
+ "surplus": 0.062,
+ "robust": {
+  "hx0.7": -0.063,
+  "hx1.3": null
+ },
+ "OOS": {
+  "n": 416,
+  "ev": 0.011,
+  "wr": 51.9,
+  "pf": 1.06,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": 0.028,
+   "2020": -0.001,
+   "2021": -0.077,
+   "2022": 0.007,
+   "2023": 0.089
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 244,
+  "ev": 0.163,
+  "wr": 54.1,
+  "pf": 1.86,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.098,
+   "2025": 0.155,
+   "2026": 0.266
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

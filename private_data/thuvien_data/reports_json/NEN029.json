@@ -1,0 +1,75 @@
+{
+ "spec": {
+  "id": "NEN029",
+  "ten": "Gap sáng thứ Hai — theo",
+  "ho": "Mẫu nến",
+  "nguon": "Biến thể ngược",
+  "mo_ta": "Gap mở tuần ≥1ATR, vào THEO hướng gap (momentum)",
+  "archetype": "gap_week",
+  "tf": "H1",
+  "tham_so": {
+   "mode": "follow",
+   "th": 1.0,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "th"
+ },
+ "IS": {
+  "n": 18,
+  "ev": 0.699,
+  "wr": 44.4,
+  "pf": 2.17,
+  "years_pos": "4/8",
+  "by_year": {
+   "2004": -1.116,
+   "2005": 0.932,
+   "2006": 2.934,
+   "2007": -1.109,
+   "2010": -1.06,
+   "2011": -0.073,
+   "2017": 2.855,
+   "2018": 2.896
+  }
+ },
+ "null": {
+  "median": 0.0,
+  "p": 1.0,
+  "B": 0
+ },
+ "surplus": 0.699,
+ "robust": {
+  "thx0.7": 0.523,
+  "thx1.3": 0.806
+ },
+ "OOS": {
+  "n": 2,
+  "ev": 2.917,
+  "wr": 100.0,
+  "pf": 99.0,
+  "years_pos": "2/2",
+  "by_year": {
+   "2022": 2.911,
+   "2023": 2.924
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 0,
+  "ev": 0.0,
+  "wr": 0.0,
+  "pf": 0.0,
+  "years_pos": "0/0",
+  "by_year": {},
+  "status": "không lệnh",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

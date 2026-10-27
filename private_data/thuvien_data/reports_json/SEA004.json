@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "SEA004",
+  "ten": "Hiệu ứng đầu quý",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Seasonality",
+  "mo_ta": "Mua/bán theo drift 3 ngày đầu quý",
+  "archetype": "quarter_hold",
+  "tf": "D1",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 53,
+  "ev": 0.428,
+  "wr": 35.8,
+  "pf": 1.67,
+  "years_pos": "7/15",
+  "by_year": {
+   "2004": -1.021,
+   "2005": -0.019,
+   "2006": 0.989,
+   "2007": -0.019,
+   "2008": -0.01,
+   "2009": -0.012,
+   "2010": 0.983,
+   "2011": 1.132,
+   "2012": 0.982,
+   "2013": -0.016,
+   "2014": -0.017,
+   "2015": 0.318,
+   "2016": 1.652,
+   "2017": -0.022,
+   "2018": 0.975
+  }
+ },
+ "null": {
+  "median": 0.235,
+  "p": 0.19,
+  "B": 16
+ },
+ "surplus": 0.193,
+ "robust": {
+  "dummyx0.7": 0.428,
+  "dummyx1.3": 0.428
+ },
+ "OOS": {
+  "n": 15,
+  "ev": 0.851,
+  "wr": 46.7,
+  "pf": 2.57,
+  "years_pos": "4/5",
+  "by_year": {
+   "2019": 2.985,
+   "2020": 0.99,
+   "2021": 0.984,
+   "2022": 0.318,
+   "2023": -0.019
+  }
+ },
+ "verdict": "CHẤT",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 9,
+  "ev": 1.392,
+  "wr": 66.7,
+  "pf": 5.11,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.98,
+   "2025": 1.982,
+   "2026": 0.881
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

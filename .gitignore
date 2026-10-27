@@ -1,0 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary unzipped folders
+vip_articles_pack.zip
+vip_articles_pack/
+
+# Dữ liệu công khai sinh từ private_data/ bởi scripts/build-data.mjs
+public/data/thuvien_data/
+
+# Biến môi trường
+.env
+.env.*
+!.env.example
+
+.netlify

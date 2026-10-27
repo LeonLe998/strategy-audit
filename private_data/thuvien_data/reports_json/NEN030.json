@@ -1,0 +1,89 @@
+{
+ "spec": {
+  "id": "NEN030",
+  "ten": "Nến đóng cửa cực trị (close ở 10% range)",
+  "ho": "Mẫu nến",
+  "nguon": "Price action thống kê",
+  "mo_ta": "Nến đóng sát đỉnh (top 10% range) sau chuỗi giảm, mua đảo chiều",
+  "archetype": "ibs",
+  "tf": "H1",
+  "tham_so": {
+   "lo": 0.1,
+   "hi": 0.9,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "lo"
+ },
+ "IS": {
+  "n": 2119,
+  "ev": -0.037,
+  "wr": 26.2,
+  "pf": 0.95,
+  "years_pos": "8/15",
+  "by_year": {
+   "2004": 0.004,
+   "2005": -0.046,
+   "2006": -0.117,
+   "2007": 0.028,
+   "2008": -0.1,
+   "2009": 0.058,
+   "2010": 0.082,
+   "2011": 0.072,
+   "2012": -0.17,
+   "2013": 0.07,
+   "2014": -0.071,
+   "2015": 0.052,
+   "2016": -0.162,
+   "2017": 0.023,
+   "2018": -0.224
+  }
+ },
+ "null": {
+  "median": -0.023,
+  "p": 0.75,
+  "B": 16
+ },
+ "surplus": -0.014,
+ "robust": {
+  "lox0.7": -0.043,
+  "lox1.3": 0.003
+ },
+ "OOS": {
+  "n": 704,
+  "ev": -0.09,
+  "wr": 25.3,
+  "pf": 0.89,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.205,
+   "2020": 0.078,
+   "2021": -0.247,
+   "2022": 0.029,
+   "2023": -0.093
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 368,
+  "ev": 0.059,
+  "wr": 29.1,
+  "pf": 1.08,
+  "years_pos": "2/3",
+  "by_year": {
+   "2024": 0.161,
+   "2025": -0.044,
+   "2026": 0.124
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

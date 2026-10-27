@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "SEA028",
+  "ten": "Quarter theory — quý giờ (90 phút)",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Viral gần đây (gốc ICT)",
+  "mo_ta": "Chia phiên thành khối 90 phút, trade đảo chiều đầu mỗi khối",
+  "archetype": "q90_fade",
+  "tf": "M15",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 6328,
+  "ev": -0.128,
+  "wr": 26.7,
+  "pf": 0.85,
+  "years_pos": "2/15",
+  "by_year": {
+   "2004": -0.204,
+   "2005": -0.091,
+   "2006": 0.026,
+   "2007": 0.029,
+   "2008": -0.047,
+   "2009": -0.098,
+   "2010": -0.095,
+   "2011": -0.172,
+   "2012": -0.084,
+   "2013": -0.163,
+   "2014": -0.127,
+   "2015": -0.051,
+   "2016": -0.259,
+   "2017": -0.329,
+   "2018": -0.234
+  }
+ },
+ "null": {
+  "median": -0.124,
+  "p": 0.75,
+  "B": 16
+ },
+ "surplus": -0.004,
+ "robust": {
+  "dummyx0.7": -0.128,
+  "dummyx1.3": -0.128
+ },
+ "OOS": {
+  "n": 2131,
+  "ev": -0.17,
+  "wr": 26.0,
+  "pf": 0.8,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.349,
+   "2020": -0.403,
+   "2021": -0.097,
+   "2022": 0.025,
+   "2023": -0.033
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 1189,
+  "ev": -0.136,
+  "wr": 25.7,
+  "pf": 0.84,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": -0.167,
+   "2025": -0.185,
+   "2026": 0.027
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

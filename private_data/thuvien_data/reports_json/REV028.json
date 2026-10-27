@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "REV028",
+  "ten": "3 đáy thấp dần kiệt sức (3 pushes)",
+  "ho": "Hồi quy trung bình",
+  "nguon": "Mẫu hình kiệt sức",
+  "mo_ta": "3 đáy thấp dần với momentum yếu dần — mua đảo chiều",
+  "archetype": "choch",
+  "tf": "H4",
+  "tham_so": {
+   "dummy": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 411,
+  "ev": -0.025,
+  "wr": 25.5,
+  "pf": 0.97,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.376,
+   "2005": -0.178,
+   "2006": 0.683,
+   "2007": 0.247,
+   "2008": 0.277,
+   "2009": -0.141,
+   "2010": -0.201,
+   "2011": 0.081,
+   "2012": -0.417,
+   "2013": -0.344,
+   "2014": -0.528,
+   "2015": -0.009,
+   "2016": 0.593,
+   "2017": 0.428,
+   "2018": -0.275
+  }
+ },
+ "null": {
+  "median": -0.046,
+  "p": 0.38,
+  "B": 16
+ },
+ "surplus": 0.021,
+ "robust": {
+  "dummyx0.7": -0.025,
+  "dummyx1.3": -0.025
+ },
+ "OOS": {
+  "n": 134,
+  "ev": 0.123,
+  "wr": 29.9,
+  "pf": 1.17,
+  "years_pos": "3/5",
+  "by_year": {
+   "2019": -0.113,
+   "2020": 0.465,
+   "2021": -0.186,
+   "2022": 0.453,
+   "2023": 0.016
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": true,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 56,
+  "ev": 0.157,
+  "wr": 32.1,
+  "pf": 1.22,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.007,
+   "2025": 0.013,
+   "2026": 0.833
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

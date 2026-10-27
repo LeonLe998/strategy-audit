@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "SEA015",
+  "ten": "Tết Nguyên Đán — cầu vàng châu Á",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Cầu vật chất",
+  "mo_ta": "Thiên mua 3 tuần trước Tết âm",
+  "archetype": "season_window",
+  "tf": "D1",
+  "tham_so": {
+   "month": 1,
+   "d0": 10,
+   "d1": 31,
+   "dir": 1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "d0"
+ },
+ "IS": {
+  "n": 14,
+  "ev": 0.412,
+  "wr": 35.7,
+  "pf": 1.63,
+  "years_pos": "5/14",
+  "by_year": {
+   "2005": -1.018,
+   "2006": 2.988,
+   "2007": 2.986,
+   "2008": -1.012,
+   "2009": -1.008,
+   "2010": -1.015,
+   "2011": -1.017,
+   "2012": 2.986,
+   "2013": -1.02,
+   "2014": 2.984,
+   "2015": -1.015,
+   "2016": -1.021,
+   "2017": 2.98,
+   "2018": -1.023
+  }
+ },
+ "null": {
+  "median": 0.128,
+  "p": 0.38,
+  "B": 16
+ },
+ "surplus": 0.284,
+ "robust": {
+  "d0x0.7": 0.983,
+  "d0x1.3": 0.699
+ },
+ "OOS": {
+  "n": 4,
+  "ev": 0.982,
+  "wr": 50.0,
+  "pf": 2.93,
+  "years_pos": "2/4",
+  "by_year": {
+   "2020": 2.985,
+   "2021": -1.013,
+   "2022": 2.976,
+   "2023": -1.02
+  }
+ },
+ "verdict": "TÌNH HUỐNG",
+ "tieu_chi": {
+  "edge_vs_null": true,
+  "ben_tham_so": true,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 2,
+  "ev": 2.983,
+  "wr": 100.0,
+  "pf": 99.0,
+  "years_pos": "2/2",
+  "by_year": {
+   "2025": 2.977,
+   "2026": 2.988
+  },
+  "status": "giữ vững",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

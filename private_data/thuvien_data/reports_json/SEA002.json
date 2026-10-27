@@ -1,0 +1,90 @@
+{
+ "spec": {
+  "id": "SEA002",
+  "ten": "Fade chiều thứ Sáu",
+  "ho": "Giờ giấc & mùa vụ",
+  "nguon": "Seasonality",
+  "mo_ta": "Bán cú tăng sau 19h VN thứ Sáu, đóng trước nghỉ tuần",
+  "archetype": "dow_hold",
+  "tf": "H1",
+  "tham_so": {
+   "dow": 4,
+   "hour": 19,
+   "dir": -1,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "hour"
+ },
+ "IS": {
+  "n": 720,
+  "ev": -0.118,
+  "wr": 24.3,
+  "pf": 0.86,
+  "years_pos": "5/15",
+  "by_year": {
+   "2004": -0.207,
+   "2005": -0.211,
+   "2006": 0.292,
+   "2007": -0.146,
+   "2008": -0.249,
+   "2009": 0.077,
+   "2010": -0.758,
+   "2011": -0.356,
+   "2012": -0.159,
+   "2013": -0.201,
+   "2014": 0.021,
+   "2015": 0.344,
+   "2016": -0.063,
+   "2017": -0.271,
+   "2018": 0.088
+  }
+ },
+ "null": {
+  "median": -0.091,
+  "p": 0.62,
+  "B": 16
+ },
+ "surplus": -0.027,
+ "robust": {
+  "hourx0.7": -0.038,
+  "hourx1.3": null
+ },
+ "OOS": {
+  "n": 245,
+  "ev": -0.097,
+  "wr": 25.3,
+  "pf": 0.88,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -0.496,
+   "2020": -0.267,
+   "2021": 0.133,
+   "2022": -0.071,
+   "2023": 0.171
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 120,
+  "ev": 0.205,
+  "wr": 32.5,
+  "pf": 1.28,
+  "years_pos": "3/3",
+  "by_year": {
+   "2024": 0.209,
+   "2025": 0.146,
+   "2026": 0.313
+  },
+  "status": "lãi lại",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

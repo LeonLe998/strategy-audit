@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "IND011",
+  "ten": "Bollinger squeeze breakout",
+  "ho": "Indicator kinh điển",
+  "nguon": "Bollinger",
+  "mo_ta": "Bandwidth hẹp nhất 100 nến rồi giá phá band, vào theo hướng phá",
+  "archetype": "boll",
+  "tf": "H4",
+  "tham_so": {
+   "mode": "squeeze",
+   "n": 20,
+   "k": 2.0,
+   "look": 100,
+   "sl_atr": 2.0,
+   "tp_r": 3.0
+  },
+  "tham_so_chinh": "look"
+ },
+ "IS": {
+  "n": 32,
+  "ev": -0.413,
+  "wr": 15.6,
+  "pf": 0.53,
+  "years_pos": "4/13",
+  "by_year": {
+   "2004": -1.052,
+   "2005": -1.064,
+   "2006": -1.031,
+   "2007": -1.071,
+   "2008": 0.977,
+   "2009": -1.024,
+   "2010": -1.046,
+   "2011": 0.113,
+   "2012": 0.288,
+   "2013": -1.037,
+   "2015": -1.031,
+   "2016": 0.955,
+   "2018": -1.057
+  }
+ },
+ "null": {
+  "median": -0.004,
+  "p": 0.94,
+  "B": 16
+ },
+ "surplus": -0.409,
+ "robust": {
+  "lookx0.7": -0.454,
+  "lookx1.3": -0.315
+ },
+ "OOS": {
+  "n": 12,
+  "ev": -0.054,
+  "wr": 25.0,
+  "pf": 0.93,
+  "years_pos": "2/5",
+  "by_year": {
+   "2019": -1.086,
+   "2020": -1.037,
+   "2021": -1.041,
+   "2022": 0.284,
+   "2023": 1.61
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": false
+ },
+ "OOS2": {
+  "n": 3,
+  "ev": -1.036,
+  "wr": 0.0,
+  "pf": 0.0,
+  "years_pos": "0/2",
+  "by_year": {
+   "2024": -1.036,
+   "2025": -1.036
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}

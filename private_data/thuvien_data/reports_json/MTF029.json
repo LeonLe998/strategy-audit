@@ -1,0 +1,88 @@
+{
+ "spec": {
+  "id": "MTF029",
+  "ten": "VWAP tháng + phản ứng ngày",
+  "ho": "Đa khung & lai",
+  "nguon": "Anchored VWAP",
+  "mo_ta": "Chạm VWAP neo đầu tháng — vào theo hướng bật ngày hôm đó",
+  "archetype": "MTF029",
+  "tf": "D1",
+  "tham_so": {
+   "sl_atr": 2.0,
+   "tp_r": 3.0,
+   "dummy": 1
+  },
+  "tham_so_chinh": "dummy"
+ },
+ "IS": {
+  "n": 108,
+  "ev": -0.14,
+  "wr": 22.2,
+  "pf": 0.82,
+  "years_pos": "6/15",
+  "by_year": {
+   "2004": -0.219,
+   "2005": -0.574,
+   "2006": 0.133,
+   "2007": -1.014,
+   "2008": -0.565,
+   "2009": -0.213,
+   "2010": -0.651,
+   "2011": -0.579,
+   "2012": 0.584,
+   "2013": -1.013,
+   "2014": 0.698,
+   "2015": 1.65,
+   "2016": 0.128,
+   "2017": 0.476,
+   "2018": -0.224
+  }
+ },
+ "null": {
+  "median": 0.017,
+  "p": 0.81,
+  "B": 16
+ },
+ "surplus": -0.157,
+ "robust": {
+  "dummyx0.7": -0.14,
+  "dummyx1.3": -0.14
+ },
+ "OOS": {
+  "n": 38,
+  "ev": 0.156,
+  "wr": 28.9,
+  "pf": 1.22,
+  "years_pos": "1/5",
+  "by_year": {
+   "2019": -0.352,
+   "2020": -0.014,
+   "2021": 1.271,
+   "2022": -0.015,
+   "2023": -0.071
+  }
+ },
+ "verdict": "CHÁT",
+ "tieu_chi": {
+  "edge_vs_null": false,
+  "ben_tham_so": false,
+  "song_sot_oos": false,
+  "chiu_phi": true,
+  "kha_thi": true
+ },
+ "OOS2": {
+  "n": 19,
+  "ev": -0.116,
+  "wr": 26.3,
+  "pf": 0.84,
+  "years_pos": "1/3",
+  "by_year": {
+   "2024": 0.7,
+   "2025": -1.013,
+   "2026": -0.17
+  },
+  "status": "vẫn rớt",
+  "pham_vi": "2024-02-01 → 2026-07-07",
+  "ghi_chu": "Kỳ thi lần 2 chấm một lần duy nhất ngày 2026-08-16. KHÔNG thay đổi verdict gốc từ kỳ thi thật 2019–2023."
+ }
+}
