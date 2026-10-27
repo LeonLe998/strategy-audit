@@ -14,5 +14,7 @@ export const funnel = {
   worldOpen: () => track('world_open', {}),
   /** Sảnh bản đồ ở trang chủ: xem hết / bỏ qua vòng giới thiệu, bấm vào đảo nào */
   hubTour: (action: 'done' | 'skip' | 'replay') => track('hub_tour', { action }),
+  /** Ô Bước tiếp theo cuối trang: từ trang nào sang trang nào ('home' = về bản đồ) */
+  nextStep: (from: string, to: string) => track('next_step', { from, to }),
   hubIsland: (island: string, via: 'island' | 'label' | 'menu' | 'caption') => track('hub_island', { island, via }),
 };

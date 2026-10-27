@@ -17,7 +17,8 @@ Leon chốt: bản đồ không còn là game đi bộ 6 màn, chỉ là cửa v
 - Nối các trang về bản đồ: Navbar có mục "Bản đồ", thanh dưới điện thoại đổi "Trang chủ" → "Bản đồ", trang Sáu Ô có link "Bản đồ" ở thanh trên và thanh bên. Bỏ nút "Chơi trên bản đồ đảo 3D" ở trang hành trình và nút Game 3D trên menu.
 - GA4 thêm `hub_tour` (done/skip/replay) và `hub_island` (đảo nào, bấm từ đâu).
 - Đã thử trên khung điện thoại (vòng giới thiệu, bấm đảo → /vip, về bản đồ) và khung 1280 (chụp mờ, bố cục 3×2 vừa khung). Chưa thử máy thật.
-- Chưa làm: ô "Bước tiếp theo" cuối mỗi trang; làm xong Sáu Ô chưa tự ghi điểm/qua màn.
+- Ô "Bước tiếp theo" (`src/components/NextStep.tsx`, chữ ở `NEXT_STEP`): cuối mỗi trang trong khung App, chỉ sang đảo kế tiếp theo thứ tự `HUB.islands`, kèm nút "Về bản đồ". Trang Thành viên và các trang ngoài bản đồ gợi ý Tự kiểm 6 ô. Trang Sáu Ô không gắn vì đã có ô liên hệ và link thư viện riêng ở cuối bài. GA4 `next_step` (from, to).
+- Chưa làm: làm xong Sáu Ô chưa tự ghi điểm/qua màn.
 
 ## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · Bản đồ đảo 3D (đã thay bằng sảnh ở trên)
 

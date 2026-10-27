@@ -197,3 +197,14 @@ export const HUB = {
   skip: 'Bỏ qua',
   replay: 'Xem lại vòng giới thiệu',
 };
+
+/** Ô cuối mỗi trang: dẫn sang đảo kế tiếp theo thứ tự HUB.islands */
+export const NEXT_STEP = {
+  kicker: 'Bước tiếp theo',
+  /** Ở trang cuối (Thành viên) thì gợi ý quay lại bài miễn phí */
+  lastKicker: 'Chưa sẵn sàng đăng ký?',
+  /** Trang không nằm trên bản đồ, hoặc trang cuối, thì gợi ý trang này */
+  fallback: 'sauo',
+  go: 'Đi tiếp',
+  backToMap: 'Về bản đồ',
+};

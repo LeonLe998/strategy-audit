@@ -13,6 +13,7 @@ import MembershipPage from './pages/MembershipPage';
 import SauO from './pages/SauOStitch';
 import AmbientBackground from './components/SoftBackdrop';
 import BottomNavigation from './components/BottomNavigation';
+import NextStep from './components/NextStep';
 import { CustomInstructionsPanel } from './components/CustomInstructionsPanel';
 import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
 
@@ -267,6 +268,7 @@ export default function App() {
               </div>
             )}
             </Suspense>
+            {activeTab !== 'admin' && <NextStep tab={activeTab} onGo={setActiveTab} />}
           </motion.div>
         </AnimatePresence>
       </main>
