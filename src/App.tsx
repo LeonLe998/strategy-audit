@@ -17,7 +17,7 @@ import { CustomInstructionsPanel } from './components/CustomInstructionsPanel';
 import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
 
 // Trang nặng (three.js, recharts, html2pdf, markdown) chỉ tải khi mở tới
-const World3D = lazy(() => import('./components/Game3D/World3D').then((m) => ({ default: m.World3D })));
+const JourneyWorld3D = lazy(() => import('./game/world/JourneyWorld3D'));
 const DataScienceHub = lazy(() => import('./components/DataScienceHub').then((m) => ({ default: m.DataScienceHub })));
 const Vault = lazy(() => import('./components/Vault'));
 const IntakeWizard = lazy(() => import('./pages/IntakeWizard'));
@@ -193,10 +193,7 @@ export default function App() {
       {/* Fullscreen 3D Game Experience when toggled */}
       {isGameMode && (
         <Suspense fallback={null}>
-          <World3D
-            isGameMode={true}
-            onExitGameMode={() => setIsGameMode(false)}
-          />
+          <JourneyWorld3D onExit={() => setIsGameMode(false)} />
         </Suspense>
       )}
 

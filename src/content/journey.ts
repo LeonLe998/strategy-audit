@@ -125,3 +125,31 @@ export const STAGE2 = {
     'Cả ba lá đều thua nhiều lệnh hơn thắng, vậy mà một lá vẫn qua. Vì qua hay rớt không nằm ở tỉ lệ thắng, mà ở chỗ cộng cả chuỗi lệnh lại có hơn vào lệnh bừa hay không, và còn đúng trên phần giá chưa dùng lúc chỉnh luật hay không. Lá qua lại là lá đơn giản nhất: chỉ nhìn lịch để mua, không cần chỉ báo nào.',
   cta: 'Qua màn 3 · Sáu Ô',
 };
+
+// ───────────────────── Thế giới 3D · chữ trên bản đồ đảo ─────────────────────
+
+export const WORLD = {
+  title: 'Hành trình Đo trước khi tin',
+  guideName: 'Leon',
+  /** Lời dẫn đường theo màn đang mở */
+  guide: {
+    'khai-niem': 'Chào bạn! Đi tới hòn đảo có cột sáng để bắt đầu. Ở đó có một câu hỏi: theo bạn, điều gì quan trọng nhất khi xây một hệ thống giao dịch?',
+    'vi-sao-kiem-dinh': 'Cầu đã sáng. Qua đảo thứ hai, bạn sẽ đoán thử ba cách đánh quen thuộc: cách nào qua được bài kiểm tra?',
+    'sau-o': 'Đảo Sáu Ô: trả lời sáu ô về cách bạn đang trade, mình chỉ ra chỗ nên đem đi đo trước.',
+    'thu-vien': 'Đây là thư viện. Mỗi ô sáng trên tường là một chiến lược đã đo. Dùng Điểm Đo để mở hồ sơ bạn quan tâm.',
+    'kiem-diem': 'Muốn mở thêm hồ sơ thì cần thêm điểm. Đảo này có những cách kiếm thêm.',
+    'chuyen-doi': 'Cuối đường là toàn bộ thư viện dành cho thành viên.',
+  },
+  /** Nhiệm vụ của từng màn. Ô cuối luôn là "qua màn". */
+  quests: {
+    'khai-niem': ['Trả lời câu hỏi đầu tiên', 'Qua Màn 1'],
+    'vi-sao-kiem-dinh': ['Đoán đủ 3 lá bài', 'Qua Màn 2'],
+    'sau-o': ['Làm bài Sáu Ô', 'Qua Màn 3'],
+    'thu-vien': ['Mở một hồ sơ bằng Điểm Đo', 'Qua Màn 4'],
+    'kiem-diem': ['Kiếm thêm điểm', 'Qua Màn 5'],
+    'chuyen-doi': ['Xem gói thành viên', 'Qua Màn 6'],
+  },
+  dock: ['Bài học', 'Thử thách', 'Hồ sơ của tôi', 'Thành tích'],
+  hint: 'Chạm vào đảo để đi tới, hoặc dùng phím W A S D. Cầu chỉ sáng khi bạn qua màn trước.',
+  lockedBridge: (title: string) => `Cầu chưa sáng. Qua màn ${title} trước nhé.`,
+};

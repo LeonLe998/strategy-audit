@@ -4,6 +4,22 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 
 ---
 
+## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · Bản đồ đảo 3D
+
+**Xem thử:** http://localhost:5173/hanh-trinh?3d, hoặc bấm nút "Chơi trên bản đồ đảo 3D" trên trang hành trình, hoặc nút Game 3D trên menu.
+
+**Đã làm**
+- `src/game/world/JourneyWorld3D.tsx`: 6 đảo nổi low-poly = 6 màn, nối bằng cầu ván treo. Cầu tới đảo chưa mở thì gãy và không đi qua được. Nhân vật đi bằng chạm/bấm (tự tìm đường qua cầu) hoặc phím W A S D. Góc nhìn chéo kiểu isometric. Đứng trên đảo đang mở thì hiện nút vào màn; màn chơi mở ngay trên bản đồ. Qua màn thì có pháo giấy, cầu kế tiếp sáng lên.
+- Giao diện trên bản đồ: điểm, thanh tiến độ, ô nhiệm vụ, bản đồ nhỏ (bấm để đi tới), lời dẫn của Leon, thanh công cụ 4 nhánh phụ (đang khoá "Sắp mở"). Chữ nằm trong `WORLD` ở `src/content/journey.ts`.
+- `src/game/JourneyStages.tsx`: nội dung chơi Màn 1–2 tách ra để bản 2D và 3D dùng chung.
+- Nút Game 3D trên menu giờ mở bản đồ này, thay cho thế giới quant cũ. `components/Game3D/World3D` cũ vẫn còn ở khung hero trang chủ.
+- Dung lượng: bản đồ 8,6 KB gzip + three.js 149 KB gzip, chỉ tải khi bấm mở.
+
+**Việc cho Leon / Gemini / Antigravity**
+- `docs/THANH_PHAN_HINH_ANH.md`: danh sách ảnh và model cần tạo, kèm luật cấm, thông số, prompt. Asset nào xong thì code thay vào theo mã.
+
+---
+
 ## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · GĐ1 phần logic
 
 **Xem thử:** `npm run dev` → http://localhost:5173/hanh-trinh (trang chủ chưa đổi).

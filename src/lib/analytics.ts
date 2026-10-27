@@ -11,4 +11,5 @@ export const funnel = {
   pollAnswer: (poll: string, answer: string) => track('poll_answer', { poll, answer }),
   cardGuess: (card: string, guess: string, correct: boolean) => track('card_guess', { card, guess, correct }),
   pointsEarn: (source: string, delta: number) => track('points_earn', { source, delta }),
+  worldOpen: () => track('world_open', {}),
 };
