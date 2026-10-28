@@ -11,7 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { Gamepad2, ArrowUp, Compass, FileCode } from 'lucide-react';
 
 export interface ScrollAnimationEngineProps {
-  onToggleGameMode: () => void;
+  /** Có thì hiện nút Chơi Game 3D. Trang chủ đã là bản đồ nên App không truyền nữa. */
+  onToggleGameMode?: () => void;
   isGameMode: boolean;
   onSectionChange?: (index: number) => void;
   onOpenCustomInstructions?: () => void;
@@ -126,7 +127,7 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
         )}
 
         {/* Toggle Game 3D Mode */}
-        <button
+        {onToggleGameMode && <button
           onClick={onToggleGameMode}
           className="group relative flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-neon-green to-emerald-400 text-black font-extrabold text-xs shadow-[0_0_25px_rgba(0,255,163,0.45)] hover:shadow-[0_0_35px_rgba(0,255,163,0.65)] hover:scale-105 active:scale-95 transition-all duration-300"
         >
@@ -136,7 +137,7 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
           </span>
-        </button>
+        </button>}
 
         {/* Scroll To Top Meter */}
         {showScrollTop && (

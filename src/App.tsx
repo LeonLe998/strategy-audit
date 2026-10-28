@@ -205,7 +205,6 @@ export default function App() {
       {/* Scroll-Driven Animation Engine (Progress bar, Chapter pill, 3D Game toggle) */}
       <ScrollAnimationEngine
         isGameMode={false}
-        onToggleGameMode={() => navigate('home')}
         onSectionChange={setActiveSectionIndex}
       />
 
@@ -239,7 +238,6 @@ export default function App() {
             {(activeTab === 'about' || activeTab === 'home') && (
               <Home
                 setActiveTab={setActiveTab}
-                onToggleGameMode={CAN_3D ? () => navigate('home') : undefined}
                         activeSectionIndex={activeSectionIndex}
               />
             )}

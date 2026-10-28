@@ -10,11 +10,13 @@ import { FilterScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
 
 const S = START_HERE;
+/** Hiệu ứng chỉ chạy khi phần đó đã lên tới khoảng giữa màn hình, không chạy sớm lúc vừa ló ở mép dưới */
+const REACHED = '0px 0px -30% 0px';
 
 /** Đếm số từ 0 lên khi cuộn tới */
 function CountUp({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true });
+  const inView = useInView(ref, { once: true, margin: REACHED });
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!inView) return;
@@ -44,7 +46,7 @@ function Line({ title, body }: { title: string; body: string }) {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.5 }}
+      viewport={{ once: true, margin: REACHED }}
       transition={{ duration: 0.5 }}
       className="mx-auto max-w-2xl text-center"
     >
@@ -57,7 +59,7 @@ function Line({ title, body }: { title: string; body: string }) {
 /** Cái cân: bên trái nhiều khối thắng nhỏ, bên phải vài khối thua to, cân nghiêng về phía thua */
 function Scale() {
   const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const inView = useInView(ref, { once: true, amount: 0.8, margin: REACHED });
   const tilt = inView ? 9 : 0;
   const small = Array.from({ length: 9 }, (_, i) => ({ x: (i % 3) * 22, y: -Math.floor(i / 3) * 18 }));
   return (
@@ -104,8 +106,10 @@ function Scale() {
 
 /** Bốn thẻ trường phái, con dấu KHÔNG QUA đóng lần lượt khi cuộn tới */
 function StampedCards() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.7, margin: REACHED });
   return (
-    <div className="grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+    <div ref={ref} className="grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
       {S.popular.cards.map((c, i) => (
         <div key={c.name} className="relative flex min-h-[11rem] flex-col justify-between gap-1 overflow-hidden rounded-2xl sm:aspect-[3/4] border border-[#3df2ff]/30 bg-[#0b1a28] p-4">
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#3df2ff]/0 via-[#3df2ff]/60 to-[#3df2ff]/0" />
@@ -113,9 +117,8 @@ function StampedCards() {
           <div className="pointer-events-none flex w-full justify-center py-2">
             <motion.div
               initial={{ opacity: 0, scale: 2.2, rotate: -24 }}
-              whileInView={{ opacity: 1, scale: 1, rotate: -14 }}
-              viewport={{ once: true, amount: 'some' }}
-              transition={{ delay: 0.35 + i * 0.35, type: 'spring', stiffness: 260, damping: 14 }}
+              animate={inView ? { opacity: 1, scale: 1, rotate: -14 } : { opacity: 0, scale: 2.2, rotate: -24 }}
+              transition={{ delay: 0.3 + i * 0.45, type: 'spring', stiffness: 260, damping: 14 }}
               className="whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#0b1a28]/70 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] sm:text-base"
             >
               {S.popular.stamp}
