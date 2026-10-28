@@ -14,7 +14,8 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { useJourney } from '../useJourney';
 import { useLibrarySummary } from '../useLibraryCards';
 import { POINT_NAME, type StageId } from '../journeyConfig';
-import { HUB } from '../../content/journey';
+import { CONTACT, HUB } from '../../content/journey';
+import ContactLinks from '../../components/ContactLinks';
 import { funnel } from '../../lib/analytics';
 
 const COLOR = {
@@ -482,6 +483,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
   /** -1 = câu mở đầu ở toàn cảnh, 0…5 = đang dừng ở đảo đó, null = xong vòng giới thiệu */
   const [tour, setTour] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   tourRef.current = tour;
 
   const endTour = useCallback((action: 'done' | 'skip') => {
@@ -910,12 +912,30 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            data-hub-contact
+            aria-expanded={contactOpen}
+            onClick={() => {
+              setContactOpen((v) => !v);
+              setMenuOpen(false);
+            }}
+            className="whitespace-nowrap rounded-lg bg-[#0068FF] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0055D0]"
+          >
+            {CONTACT.title}
+          </button>
           {journey.points > 0 && (
             <span data-points className="rounded-lg border border-[#3df2ff]/30 bg-[#040914]/80 px-2.5 py-1.5 font-mono text-xs font-bold text-[#2BFFEA]">
               ⬡ {journey.points} {POINT_NAME}
             </span>
           )}
-          <button type="button" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)} className="rounded-lg border border-white/20 bg-[#040914]/80 px-3 py-1.5 text-xs font-semibold md:hidden">
+          <button
+            type="button"
+            aria-expanded={menuOpen}
+            onClick={() => {
+              setMenuOpen((v) => !v);
+              setContactOpen(false);
+            }} className="rounded-lg border border-white/20 bg-[#040914]/80 px-3 py-1.5 text-xs font-semibold md:hidden">
             {menuOpen ? 'Đóng' : 'Menu'}
           </button>
         </div>
@@ -928,6 +948,13 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
             </button>
           ))}
         </nav>
+      )}
+
+      {contactOpen && (
+        <div data-hub-contact-panel className="absolute right-3 top-14 z-10 w-[min(92vw,22rem)] rounded-xl border border-[#3df2ff]/30 bg-[#040914]/95 p-4">
+          <p className="text-sm text-gray-200">{CONTACT.ask}</p>
+          <ContactLinks from="hub" className="mt-3" />
+        </div>
       )}
 
       {/* Lời dẫn của vòng giới thiệu */}

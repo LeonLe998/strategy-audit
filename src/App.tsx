@@ -14,6 +14,7 @@ import SauO from './pages/SauOStitch';
 import AmbientBackground from './components/SoftBackdrop';
 import BottomNavigation from './components/BottomNavigation';
 import NextStep from './components/NextStep';
+import ContactLinks from './components/ContactLinks';
 import { CustomInstructionsPanel } from './components/CustomInstructionsPanel';
 import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
 
@@ -293,7 +294,7 @@ export default function App() {
           <div className="space-y-4 md:text-right">
             <div className="text-gray-400 leading-relaxed font-sans space-y-1">
               <p className="font-bold text-white text-xs">Hỗ trợ & Đăng ký:</p>
-              <p><a className="text-neon-green hover:text-white" href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Nhắn Strategy Audit trên Telegram</a></p>
+              <ContactLinks from="footer" className="md:justify-end" />
               <p className="text-[10px] text-gray-500">© {new Date().getFullYear()} Leon · Strategy Audit. Không chia sẻ trái phép.</p>
             </div>
           </div>

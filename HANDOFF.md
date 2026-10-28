@@ -18,6 +18,7 @@ Leon chốt: bản đồ không còn là game đi bộ 6 màn, chỉ là cửa v
 - GA4 thêm `hub_tour` (done/skip/replay) và `hub_island` (đảo nào, bấm từ đâu).
 - Đã thử trên khung điện thoại (vòng giới thiệu, bấm đảo → /vip, về bản đồ) và khung 1280 (chụp mờ, bố cục 3×2 vừa khung). Chưa thử máy thật.
 - Ô "Bước tiếp theo" (`src/components/NextStep.tsx`, chữ ở `NEXT_STEP`): cuối mỗi trang trong khung App, chỉ sang đảo kế tiếp theo thứ tự `HUB.islands`, kèm nút "Về bản đồ". Trang Thành viên và các trang ngoài bản đồ gợi ý Tự kiểm 6 ô. Trang Sáu Ô không gắn vì đã có ô liên hệ và link thư viện riêng ở cuối bài. GA4 `next_step` (from, to).
+- Liên hệ (`src/components/ContactLinks.tsx`, chữ và link ở `CONTACT`): nút "Liên hệ" trên thanh trên của bản đồ mở bảng Zalo + Telegram; ô cuối mỗi trang có dòng liên hệ; chân trang đổi từ chỉ Telegram sang cả Zalo + Telegram. GA4 `contact_click` (channel, from).
 - Chưa làm: làm xong Sáu Ô chưa tự ghi điểm/qua màn.
 
 ## 27/10/2026 · Claude · nhánh `claude/gd1-journey` · Bản đồ đảo 3D (đã thay bằng sảnh ở trên)

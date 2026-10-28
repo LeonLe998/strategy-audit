@@ -208,3 +208,13 @@ export const NEXT_STEP = {
   go: 'Đi tiếp',
   backToMap: 'Về bản đồ',
 };
+
+/** Kênh liên hệ dùng chung: bản đồ, cuối mỗi trang, chân trang */
+export const CONTACT = {
+  title: 'Liên hệ',
+  ask: 'Có câu hỏi về thư viện hay gói thành viên? Nhắn trực tiếp cho Strategy Audit.',
+  channels: [
+    { id: 'zalo', label: 'Nhắn Zalo', href: 'https://zalo.me/0566665511' },
+    { id: 'telegram', label: 'Nhắn Telegram', href: 'https://t.me/strategyaudit' },
+  ] as const,
+};

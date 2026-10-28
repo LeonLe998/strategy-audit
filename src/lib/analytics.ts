@@ -16,5 +16,7 @@ export const funnel = {
   hubTour: (action: 'done' | 'skip' | 'replay') => track('hub_tour', { action }),
   /** Ô Bước tiếp theo cuối trang: từ trang nào sang trang nào ('home' = về bản đồ) */
   nextStep: (from: string, to: string) => track('next_step', { from, to }),
+  /** Bấm nút liên hệ: kênh nào, từ đâu (hub / tên trang) */
+  contactClick: (channel: 'zalo' | 'telegram', from: string) => track('contact_click', { channel, from }),
   hubIsland: (island: string, via: 'island' | 'label' | 'menu' | 'caption') => track('hub_island', { island, via }),
 };
