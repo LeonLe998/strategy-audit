@@ -25,7 +25,7 @@ const Vault = lazy(() => import('./components/Vault'));
 const IntakeWizard = lazy(() => import('./pages/IntakeWizard'));
 const VIPLibrary = lazy(() => import('./pages/VIPLibrary'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const JourneyPage = lazy(() => import('./pages/JourneyPage'));
+const StartHerePage = lazy(() => import('./pages/StartHerePage'));
 
 const PageLoading = () => <div className="py-24 text-center text-sm text-gray-500">Đang tải…</div>;
 const HubLoading = () => (
@@ -260,7 +260,7 @@ export default function App() {
               />
             )}
             {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
-            {activeTab === 'journey' && <JourneyPage />}
+            {activeTab === 'journey' && <StartHerePage onGo={setActiveTab} />}
             {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
             {activeTab === 'membership' && <MembershipPage setActiveTab={setActiveTab} />}
             {activeTab === 'audit' && (

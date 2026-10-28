@@ -141,10 +141,10 @@ export const HUB = {
       landmark: 'khai-niem',
       tab: 'journey',
       title: 'Bắt đầu ở đây',
-      sub: 'Hai câu đố cho người mới',
+      sub: 'Lướt 1 phút cho người mới',
       /** Ghi chú hiện khi khách mới rê chuột (hoặc chạm lần 1) lên đảo */
-      note: 'Hai câu đố ngắn: biết cách đánh chưa có nghĩa là biết nó có ăn không. Người mới nên bắt đầu ở đây.',
-      caption: 'Biết cách đánh chưa có nghĩa là biết nó có ăn không. Bắt đầu bằng hai câu đố ngắn.',
+      note: 'Năm hình ngắn: vì sao thắng nhiều chưa chắc đã ăn, và vì sao cách đánh nào cũng cần bằng chứng. Người mới nên bắt đầu ở đây.',
+      caption: 'Bạn không thiếu cách đánh. Bạn thiếu bằng chứng. Lướt một phút để thấy vì sao.',
     },
     {
       key: 'vi-sao',
@@ -247,3 +247,56 @@ export const CONTACT = {
     { id: 'telegram', label: 'Nhắn Telegram', href: 'https://t.me/strategyaudit' },
   ] as const,
 };
+
+// ───────────────────── Đảo 1 · Bắt đầu ở đây (trang thu hút) ─────────────────────
+
+/**
+ * Trang /hanh-trinh, thay trò chơi Màn 1–2. Mỗi màn hình một hình lớn + một câu.
+ * Số lấy từ kho số đã kiểm: 300 đưa vào · 242 đo đầy đủ · 15 qua; 4 trường phái nóng
+ * 42 chiến lược · 22.938 lệnh · 0 qua; chốt lời sớm thắng ~48/100 lệnh nhưng gần như tệ nhất;
+ * mua cuối tháng (SEA003) qua cả hai kỳ thi. Không R, không % lãi lỗ, không biểu đồ giá.
+ */
+export const START_HERE = {
+  hero: {
+    kicker: 'Bắt đầu ở đây',
+    title: 'Bạn không thiếu cách đánh. Bạn thiếu bằng chứng.',
+    body: '300 chiến lược đã đưa vào thư viện. Đo xong 242 cái, chỉ 15 cái qua.',
+    stats: [
+      { n: 300, label: 'đưa vào' },
+      { n: 242, label: 'đã đo đầy đủ' },
+      { n: 15, label: 'qua bài kiểm tra' },
+    ],
+    scroll: 'Cuộn xuống',
+  },
+  winRate: {
+    title: 'Thắng nhiều chưa chắc đã ăn.',
+    body: 'Cùng một cách vào lệnh, chốt lời sớm thì cứ 100 lệnh thắng khoảng 48, nhiều hơn mọi cách chốt khác. Nhưng thắng thì lời ít, thua thì lỗ đủ. Cộng cả chuỗi lại, nó gần như tệ nhất.',
+    wins: 'Nhiều lệnh thắng nhỏ',
+    losses: 'Vài lệnh thua to',
+  },
+  popular: {
+    title: 'Những cách được dạy nhiều nhất cũng không qua.',
+    body: 'Bốn trường phái nóng nhất mạng xã hội: 42 chiến lược, máy làm đúng luật qua 22.938 lệnh. Không cái nào qua bài kiểm tra.',
+    stamp: 'KHÔNG QUA',
+    cards: [
+      { name: 'SMC · ICT', count: 18 },
+      { name: 'Phá vỡ đầu phiên', count: 7 },
+      { name: 'RSI', count: 12 },
+      { name: 'MACD', count: 5 },
+    ],
+    unit: 'chiến lược · 0 qua',
+  },
+  calendar: {
+    title: 'Còn cách qua được lại là cách đơn giản nhất.',
+    body: 'Mua ở 2 ngày giao dịch cuối tháng, bán ra ở ngày giao dịch thứ 3 của tháng mới. Không chỉ báo nào, chỉ nhìn lịch. Qua bài kiểm tra, và chấm lại trên giá vàng mới vẫn qua.',
+    buy: 'Mua',
+    sell: 'Bán',
+  },
+  cta: {
+    title: 'Cách bạn đang đánh nằm ở nhóm nào?',
+    body: 'Đem nó đi đo trước khi tin.',
+    primary: { tab: 'sauo', label: 'Tự kiểm 6 ô · miễn phí' },
+    secondary: { tab: 'viplibrary', label: 'Xem thư viện 300' },
+  },
+};
+
