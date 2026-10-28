@@ -142,6 +142,8 @@ export const HUB = {
       tab: 'journey',
       title: 'Bắt đầu ở đây',
       sub: 'Hai câu đố cho người mới',
+      /** Ghi chú hiện khi khách mới rê chuột (hoặc chạm lần 1) lên đảo */
+      note: 'Hai câu đố ngắn: biết cách đánh chưa có nghĩa là biết nó có ăn không. Người mới nên bắt đầu ở đây.',
       caption: 'Biết cách đánh chưa có nghĩa là biết nó có ăn không. Bắt đầu bằng hai câu đố ngắn.',
     },
     {
@@ -150,6 +152,7 @@ export const HUB = {
       tab: 'about',
       title: 'Vì sao cần đo',
       sub: 'Bản đọc đầy đủ',
+      note: 'Bản đọc đầy đủ: vì sao một chiến lược phải đem đi đo trước khi tin.',
       caption: 'Thời AI, ai cũng tạo được một chiến lược trong năm phút. Chiến lược thì không thiếu, cái thiếu là bộ lọc.',
     },
     {
@@ -158,6 +161,7 @@ export const HUB = {
       tab: 'sauo',
       title: 'Tự kiểm 6 ô',
       sub: 'Miễn phí',
+      note: 'Sáu câu hỏi về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu. Miễn phí.',
       caption: 'Trả lời sáu câu về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu.',
     },
     {
@@ -166,15 +170,17 @@ export const HUB = {
       tab: 'viplibrary',
       title: 'Thư viện 300',
       sub: '15 chiến lược qua bài kiểm tra',
+      note: 'Tra cứu kết quả đo của từng chiến lược: 300 đưa vào, 242 đã đo đầy đủ, 15 qua bài kiểm tra.',
       caption: '300 chiến lược đưa vào thư viện, 242 cái đã đo đầy đủ. Chỉ 15 cái qua bài kiểm tra. Mỗi ô sáng trên tường là một chiến lược.',
     },
     {
       key: 'tai-lieu',
       landmark: 'kiem-diem',
       tab: 'vault',
-      title: 'Tài liệu',
-      sub: 'Dành cho thành viên',
-      caption: 'Kho tài liệu cốt lõi dành cho thành viên.',
+      title: 'Lộ trình 18 tháng',
+      sub: 'Giáo trình & Lộ trình Quant',
+      note: 'Giáo trình và lộ trình 18 tháng từ người mới đến Quant Developer & Systematic Trader có kiểm định.',
+      caption: 'Lộ trình 18 tháng từ người mới đến Quant Developer & Systematic Trader có kiểm định.',
     },
     {
       key: 'thanh-vien',
@@ -182,6 +188,7 @@ export const HUB = {
       tab: 'membership',
       title: 'Thành viên',
       sub: 'Mở toàn bộ thư viện',
+      note: 'Mở toàn bộ hồ sơ thư viện. Membership 100 đô một tháng. Tháng đầu 50.',
       caption: 'Mở toàn bộ hồ sơ thư viện. Membership 100 đô một tháng. Tháng đầu 50.',
     },
   ] as const,
@@ -190,12 +197,34 @@ export const HUB = {
   menu: [
     { tab: 'viplibrary', label: 'Thư viện 300' },
     { tab: 'sauo', label: 'Tự kiểm 6 ô' },
-    { tab: 'vault', label: 'Tài liệu' },
+    { tab: 'vault', label: 'Lộ trình 18 tháng' },
     { tab: 'membership', label: 'Thành viên' },
     { tab: 'about', label: 'Bản đọc' },
   ],
   skip: 'Bỏ qua',
   replay: 'Xem lại vòng giới thiệu',
+};
+
+/**
+ * SA bot (Strategy Audit bot): robot đứng trước cụm đảo, hỏi đúng một câu.
+ * Có rồi → mở hết, khách tự chọn. Chưa từng → sáng đảo "Bắt đầu ở đây" + ghi chú khi rê/chạm lên đảo.
+ * Vòng giới thiệu không tự chạy nữa, khách mới bấm "Đi một vòng xem trước" thì mới chạy.
+ */
+export const SA_BOT = {
+  name: 'SA bot',
+  ask: 'Chào bạn! Mình là SA bot. Bạn đã từng tham quan Strategy Audit chưa?',
+  yes: 'Có rồi',
+  no: 'Chưa từng',
+  yesReply: 'Chào mừng bạn quay lại! Toàn bộ đảo đã mở, bạn chọn đảo muốn vào nhé.',
+  noReply: (touch: boolean) =>
+    touch
+      ? 'Vậy mình bắt đầu từ đảo đang sáng nhé. Chạm một lần lên đảo khác để xem đảo đó dùng làm gì, chạm lần nữa để vào.'
+      : 'Vậy mình bắt đầu từ đảo đang sáng nhé. Rê chuột lên các đảo khác để xem đảo đó dùng làm gì.',
+  enterFirst: 'Vào Bắt đầu ở đây',
+  tour: 'Đi một vòng xem trước',
+  reask: 'Trả lời lại',
+  startHere: 'Nên bắt đầu ở đây',
+  chip: 'Hỏi SA bot',
 };
 
 /** Ô cuối mỗi trang: dẫn sang đảo kế tiếp theo thứ tự HUB.islands */

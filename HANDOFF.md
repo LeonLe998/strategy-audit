@@ -8,7 +8,11 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 
 Leon chốt: bản đồ không còn là game đi bộ 6 màn, chỉ là cửa vào cho người mới nhìn toàn cảnh rồi dẫn vào các trang.
 
-**Xem thử:** http://localhost:5173/ (lần đầu có vòng giới thiệu; xoá `sa_hub_tour_v1` trong localStorage để xem lại, hoặc bấm "Xem lại vòng giới thiệu").
+**Xem thử:** http://localhost:5173/ (xoá `sa_hub_visited_v1` trong localStorage để SA bot hỏi lại từ đầu).
+
+- **SA bot** (Leon đặt tên, chốt 28/10): robot 3D đứng trước cụm đảo, hỏi đúng một câu "Bạn đã từng tham quan Strategy Audit chưa?". *Có rồi* → mở hết, khách tự chọn. *Chưa từng* → đảo "Bắt đầu ở đây" sáng + gắn nhãn "Nên bắt đầu ở đây", rê chuột lên đảo khác hiện ghi chú đảo dùng làm gì (điện thoại: chạm lần 1 hiện ghi chú, chạm lần 2 mới vào). Câu trả lời lưu ở `sa_hub_visited_v1`, lần sau không hỏi lại; có nút "Trả lời lại". Bấm robot hoặc nút "Hỏi SA bot" để mở lại bong bóng. Chữ ở `SA_BOT` và `note` của từng đảo trong `HUB`. GA4 `hub_bot`.
+- Vòng giới thiệu **không tự chạy nữa** (thay bằng câu hỏi của SA bot); chạy khi khách mới bấm "Đi một vòng xem trước" hoặc link "Xem lại vòng giới thiệu".
+- Đảo 5 đã được bên khác đổi thành "Lộ trình 18 tháng" (trỏ `/vault`); `Vault.tsx` đang sửa dở ở bên đó, Claude không commit file này.
 
 - `src/game/world/IslandHub3D.tsx` (thay `JourneyWorld3D.tsx`): 6 đảo xếp hình rắn, máy ngang 3×2, máy dọc 2×3. Lần đầu: máy quay lướt toàn cảnh rồi dừng ở từng đảo kèm một câu (bỏ qua được, Esc cũng bỏ qua), xong thì dừng ở toàn cảnh. Bấm đảo, bảng tên, nút "Vào trang này" hoặc menu thì máy quay sà xuống đảo rồi chuyển trang.
 - Đảo → trang: Bắt đầu ở đây → `/hanh-trinh` (Màn 1–2) · Vì sao cần đo → `/gioi-thieu` · Tự kiểm 6 ô → `/sauo` · Thư viện 300 → `/vip` · Tài liệu → `/vault` · Thành viên → `/membership`. Chữ ở `HUB` trong `src/content/journey.ts`.

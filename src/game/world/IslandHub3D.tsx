@@ -14,7 +14,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { useJourney } from '../useJourney';
 import { useLibrarySummary } from '../useLibraryCards';
 import { POINT_NAME, type StageId } from '../journeyConfig';
-import { CONTACT, HUB } from '../../content/journey';
+import { CONTACT, HUB, SA_BOT } from '../../content/journey';
 import ContactLinks from '../../components/ContactLinks';
 import { funnel } from '../../lib/analytics';
 
@@ -39,13 +39,15 @@ const TOP = 0.3;
 const SAG = 0.35;
 const ISO = new THREE.Vector3(14, 16, 14);
 const S2 = Math.SQRT1_2;
-/** Đã xem vòng giới thiệu thì lần sau vào thẳng toàn cảnh */
-const TOUR_KEY = 'sa_hub_tour_v1';
+/** Câu trả lời của khách cho SA bot ('yes' | 'no'), lần sau không hỏi lại */
+const VISIT_KEY = 'sa_hub_visited_v1';
 const INTRO_MS = 2600;
 const SHOT_MS = 3400;
 /** Chừa chỗ cho thanh trên và dòng chữ dưới khi canh toàn cảnh (px) */
 const TOP_PX = 64;
 const BOTTOM_PX = 96;
+/** Màn hẹp: bong bóng SA bot nằm sát đáy nên chừa thêm chỗ */
+const BUBBLE_PX = 200;
 
 interface Isle {
   c: THREE.Vector2;
@@ -70,7 +72,9 @@ function makeLayout(wide: boolean) {
     const d = b.c.clone().sub(a.c).normalize();
     return { s: a.c.clone().addScaledVector(d, ISLAND_R - 0.35), e: b.c.clone().addScaledVector(d, -(ISLAND_R - 0.35)), ys: a.y + TOP, ye: b.y + TOP };
   });
-  return { isles, bridges };
+  const [bu, bv] = wide ? [-8.5, 0] : [-7, 0];
+  const bot = new THREE.Vector3((-bu + bv) * S2, 0.9, (-bu - bv) * S2);
+  return { isles, bridges, bot };
 }
 
 /** Nhiễu cố định theo toạ độ đỉnh để các đỉnh trùng nhau lệch giống nhau (không hở mép) */
@@ -431,6 +435,57 @@ function buildBridge(b: Bridge, scene: THREE.Scene) {
   scene.add(group);
 }
 
+/** SA bot: robot low-poly lơ lửng trước cụm đảo, mắt và lõi là dải sáng. Mọi khối gắn userData.bot để bấm được. */
+function buildBot(scene: THREE.Scene, at: THREE.Vector3): Spin {
+  const g = new THREE.Group();
+  g.position.copy(at);
+  g.rotation.y = Math.PI / 4;
+  g.scale.setScalar(1.7);
+  const shell = flat(0xd3e2ec, { roughness: 0.55 });
+  const dark = flat(0x13202e);
+  const body = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 1), shell);
+  body.scale.set(1, 0.9, 0.9);
+  body.position.y = 0.9;
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.7, 0.8), shell);
+  head.position.y = 1.75;
+  const face = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.46, 0.05), dark);
+  face.position.set(0, 1.75, 0.41);
+  const eyeMat = glow(COLOR.accent, 2);
+  const eyes = [-0.18, 0.18].map((x) => {
+    const e = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.03), eyeMat);
+    e.position.set(x, 1.78, 0.44);
+    return e;
+  });
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.3, 5), dark);
+  antenna.position.y = 2.25;
+  const tipMat = glow(COLOR.accent, 2);
+  const tip = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 8), tipMat);
+  tip.position.y = 2.42;
+  const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.13), glow(COLOR.line, 1.6));
+  core.position.set(0, 0.95, 0.5);
+  const hands = [-1, 1].map((k) => {
+    const h = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8), shell);
+    h.position.set(k * 0.78, 0.95, 0.05);
+    return h;
+  });
+  const pad = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.035, 6, 32), glow(COLOR.line, 1.2));
+  pad.rotation.x = Math.PI / 2;
+  pad.position.y = 0.15;
+  g.add(body, head, face, ...eyes, antenna, tip, core, ...hands, pad);
+  g.traverse((o) => {
+    o.castShadow = true;
+    o.userData.bot = true;
+  });
+  scene.add(g);
+  return (t) => {
+    g.position.y = at.y + Math.sin(t * 1.8) * 0.12;
+    hands.forEach((h, k) => (h.position.y = 0.95 + Math.sin(t * 1.8 + k * 1.6) * 0.07));
+    tipMat.emissiveIntensity = 1.4 + Math.sin(t * 3) * 0.8;
+    // Chớp mắt mỗi 4 giây
+    eyes.forEach((e) => (e.scale.y = t % 4 < 0.12 ? 0.15 : 1));
+  };
+}
+
 /** Rải các khối theo đúng số CHẤT / TÌNH HUỐNG / CHÁT của thư viện, thứ tự cố định */
 function paintLibrary(wall: THREE.InstancedMesh, verdict: Record<string, number>) {
   const list: number[] = [
@@ -457,13 +512,25 @@ function paintLibrary(wall: THREE.InstancedMesh, verdict: Record<string, number>
   if (wall.instanceColor) wall.instanceColor.needsUpdate = true;
 }
 
-type Via = 'island' | 'label' | 'menu' | 'caption';
+type Via = 'island' | 'label' | 'menu' | 'caption' | 'bot';
 
-const markTourSeen = () => {
+type Visit = 'yes' | 'no';
+/** ask = đang hỏi câu 1 · new = khách mới (sáng đảo đầu + ghi chú) · free = đã từng vào, mở hết */
+type BotMode = 'ask' | 'new' | 'free';
+
+const readVisit = (): Visit | null => {
   try {
-    localStorage.setItem(TOUR_KEY, '1');
+    const v = localStorage.getItem(VISIT_KEY);
+    return v === 'yes' || v === 'no' ? v : null;
   } catch {
-    /* trình duyệt chặn lưu thì lần sau xem lại vòng giới thiệu */
+    return null;
+  }
+};
+const saveVisit = (v: Visit) => {
+  try {
+    localStorage.setItem(VISIT_KEY, v);
+  } catch {
+    /* trình duyệt chặn lưu thì lần sau SA bot hỏi lại */
   }
 };
 
@@ -484,11 +551,26 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
   const [tour, setTour] = useState<number | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [touch] = useState(() => window.matchMedia('(hover: none)').matches);
+  const [narrow] = useState(() => window.innerWidth < 640);
+  const [mode, setMode] = useState<BotMode>(() => {
+    const v = readVisit();
+    return v === 'yes' ? 'free' : v === 'no' ? 'new' : 'ask';
+  });
+  /** Bong bóng SA bot đang mở. Lần đầu (chưa trả lời) thì mở sẵn. */
+  const [botOpen, setBotOpen] = useState(() => readVisit() === null);
+  /** Đảo đang hiện ghi chú: rê chuột (máy tính) hoặc chạm lần 1 (điện thoại) */
+  const [hoverIsle, setHoverIsle] = useState<number | null>(null);
+  const [note, setNote] = useState<number | null>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const modeRef = useRef(mode);
+  const botOpenRef = useRef(botOpen);
   tourRef.current = tour;
+  modeRef.current = mode;
+  botOpenRef.current = botOpen;
 
   const endTour = useCallback((action: 'done' | 'skip') => {
     setTour(null);
-    markTourSeen();
     funnel.hubTour(action);
   }, []);
 
@@ -498,15 +580,31 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       leaving.current = true;
       const isle = HUB.islands[i];
       funnel.hubIsland(isle.key, via);
-      if (tourRef.current !== null) markTourSeen();
       setMenuOpen(false);
       shotRef.current(i, 1.6);
       leaveTimer.current = window.setTimeout(() => onNavigate(isle.tab), 700);
     },
     [onNavigate],
   );
-  const goRef = useRef(go);
-  goRef.current = go;
+  /** Khách mới trên điện thoại: chạm lần 1 hiện ghi chú, chạm lần 2 mới vào. Đảo đầu tiên vào luôn. */
+  const tap = (i: number, via: Via) => {
+    if (mode === 'new' && touch && i !== 0 && note !== i) {
+      setNote(i);
+      return;
+    }
+    go(i, via);
+  };
+  const tapRef = useRef(tap);
+  tapRef.current = tap;
+  const botTapRef = useRef(() => setBotOpen((v) => !v));
+  const hoverRef = useRef(setHoverIsle);
+
+  const answer = (v: Visit) => {
+    saveVisit(v);
+    funnel.hubBot(v === 'yes' ? 'visited_yes' : 'visited_no');
+    setMode(v === 'yes' ? 'free' : 'new');
+    setNote(null);
+  };
 
   // Dựng cảnh một lần
   useEffect(() => {
@@ -532,7 +630,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     renderer.domElement.style.touchAction = 'manipulation';
     mount.appendChild(renderer.domElement);
 
-    const { isles, bridges } = makeLayout(mount.clientWidth >= mount.clientHeight);
+    const { isles, bridges, bot } = makeLayout(mount.clientWidth >= mount.clientHeight);
     const center = isles.reduce((a, s) => a.add(new THREE.Vector3(s.c.x, s.y, s.c.y)), new THREE.Vector3()).divideScalar(isles.length);
 
     const scene = new THREE.Scene();
@@ -662,6 +760,8 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       fx.push({ rune, beam });
     });
     bridges.forEach((b) => buildBridge(b, scene));
+    spins.push(buildBot(scene, bot));
+    scene.traverse((o) => o.userData.bot && pickables.push(o));
 
     // Toàn cảnh: lấy khung bao của mọi đảo (cả đáy đá và bảng tên) theo trục màn hình, canh vừa phần giữa thanh trên và dòng chữ dưới
     const samples: THREE.Vector3[] = [];
@@ -669,6 +769,8 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       [[ISLAND_R, 0], [-ISLAND_R, 0], [0, ISLAND_R], [0, -ISLAND_R]].forEach(([dx, dz]) => samples.push(new THREE.Vector3(s.c.x + dx, s.y + TOP, s.c.y + dz)));
       samples.push(new THREE.Vector3(s.c.x, s.y - 4.6, s.c.y), new THREE.Vector3(s.c.x, s.y + 6, s.c.y));
     });
+    samples.push(bot.clone().setY(bot.y - 0.3), bot.clone().setY(bot.y + 4.4));
+    const bottomPx = () => (narrow && botOpenRef.current && tourRef.current === null ? BUBBLE_PX : BOTTOM_PX);
     const overview = () => {
       let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
       samples.forEach((p) => {
@@ -679,9 +781,9 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
         y1 = Math.max(y1, y);
       });
       const W = mount.clientWidth, H = mount.clientHeight;
-      const zoom = Math.min((F * (W - 24)) / (H * (x1 - x0)), (F * (H - TOP_PX - BOTTOM_PX)) / (H * (y1 - y0)));
+      const zoom = Math.min((F * (W - 24)) / (H * (x1 - x0)), (F * (H - TOP_PX - bottomPx())) / (H * (y1 - y0)));
       const ppu = (H * zoom) / F;
-      const target = right.clone().multiplyScalar((x0 + x1) / 2).addScaledVector(up, (y0 + y1) / 2 - (BOTTOM_PX - TOP_PX) / 2 / ppu);
+      const target = right.clone().multiplyScalar((x0 + x1) / 2).addScaledVector(up, (y0 + y1) / 2 - (bottomPx() - TOP_PX) / 2 / ppu);
       return { target, zoom };
     };
     // Cận cảnh một đảo: khoảng 14 đơn vị theo cạnh ngắn, đẩy lên trên để chừa ô chữ phía dưới
@@ -716,19 +818,24 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       ndc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
       ray.setFromCamera(ndc, camera);
       const hit = ray.intersectObjects(pickables, true)[0];
+      if (hit?.object.userData.bot) return 'bot' as const;
       return (hit?.object.userData.isle as number | undefined) ?? null;
     };
     let downAt: { x: number; y: number } | null = null;
     const onPointerMove = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse') return;
-      hover = pick(e);
-      renderer.domElement.style.cursor = hover !== null ? 'pointer' : '';
+      const hit = pick(e);
+      const next = typeof hit === 'number' ? hit : null;
+      if (next !== hover) hoverRef.current(next);
+      hover = next;
+      renderer.domElement.style.cursor = hit !== null ? 'pointer' : '';
     };
     const onPointerDown = (e: PointerEvent) => (downAt = { x: e.clientX, y: e.clientY });
     const onPointerUp = (e: PointerEvent) => {
       if (!downAt || Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 8) return;
-      const i = pick(e);
-      if (i !== null) goRef.current(i, 'island');
+      const hit = pick(e);
+      if (hit === 'bot') botTapRef.current();
+      else if (hit !== null) tapRef.current(hit, 'island');
     };
     renderer.domElement.addEventListener('pointermove', onPointerMove);
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
@@ -767,7 +874,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       camera.position.copy(cam.target).add(ISO);
       camera.lookAt(cam.target);
 
-      const focus = goalKind ?? hover;
+      const focus = goalKind ?? hover ?? (modeRef.current === 'new' ? 0 : null);
       fx.forEach((f, i) => {
         const on = i === focus;
         f.beam.visible = on;
@@ -805,17 +912,20 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
         el.dataset.hover = String(i === hover);
         el.style.transform = `translate(-50%, -100%) translate(${((proj.x + 1) / 2) * w}px, ${((1 - proj.y) / 2) * h}px)`;
       });
+
+      // Bong bóng SA bot (màn rộng) đứng bên phải đầu robot, không tràn mép
+      const bubble = bubbleRef.current;
+      if (bubble && !narrow) {
+        proj.set(bot.x, bot.y + 3, bot.z).project(camera);
+        const bx = ((proj.x + 1) / 2) * w + 56;
+        const by = ((1 - proj.y) / 2) * h;
+        bubble.style.left = `${Math.min(bx, w - bubble.offsetWidth - 12)}px`;
+        bubble.style.top = `${Math.min(Math.max(by - bubble.offsetHeight / 2, TOP_PX), h - bubble.offsetHeight - 12)}px`;
+      }
     };
     tick();
     setReady(true);
 
-    let seen = false;
-    try {
-      seen = localStorage.getItem(TOUR_KEY) === '1';
-    } catch {
-      seen = false;
-    }
-    if (!seen && !reduceMotion) setTour(-1);
 
     return () => {
       cancelAnimationFrame(frame);
@@ -849,6 +959,11 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
   useEffect(() => {
     if (ready && summary && libraryWall.current) paintLibrary(libraryWall.current, summary.verdict);
   }, [ready, summary]);
+
+  // Màn hẹp: mở/đóng bong bóng thì canh lại toàn cảnh để chừa chỗ
+  useEffect(() => {
+    if (ready && narrow && tour === null && !leaving.current) shotRef.current(null);
+  }, [botOpen, ready, narrow, tour]);
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -892,11 +1007,19 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
             }}
             type="button"
             data-hub-label={isle.key}
-            onClick={() => go(i, 'label')}
-            className="absolute left-0 top-0 whitespace-nowrap rounded-lg border border-[#3df2ff]/40 bg-[#040914]/85 px-2 py-1 text-center sm:rounded-xl sm:px-3 sm:py-1.5 opacity-0 transition-[opacity,border-color] duration-300 hover:border-[#2BFFEA] data-[hover=true]:border-[#2BFFEA]"
+            onClick={() => tap(i, 'label')}
+            onMouseEnter={() => setHoverIsle(i)}
+            onMouseLeave={() => setHoverIsle(null)}
+            className={`absolute left-0 top-0 rounded-lg border bg-[#040914]/85 px-2 py-1 text-center opacity-0 transition-[opacity,border-color] duration-300 hover:border-[#2BFFEA] data-[hover=true]:border-[#2BFFEA] sm:rounded-xl sm:px-3 sm:py-1.5 ${
+              mode === 'new' && i === 0 ? 'border-[#2BFFEA] shadow-[0_0_18px_rgba(43,255,234,0.35)]' : 'border-[#3df2ff]/40'
+            } ${mode === 'new' && (hoverIsle === i || note === i) ? 'w-56 sm:w-64' : 'whitespace-nowrap'}`}
           >
+            {mode === 'new' && i === 0 && <span className="block text-[10px] font-bold uppercase tracking-wide text-[#2BFFEA]">{SA_BOT.startHere}</span>}
             <span className="block text-xs font-semibold sm:text-sm">{isle.title}</span>
             <span className="hidden text-[11px] text-gray-400 sm:block">{isle.sub}</span>
+            {mode === 'new' && (hoverIsle === i || note === i) && (
+              <span data-hub-note className="mt-1 block border-t border-white/10 pt-1 text-left text-[11px] leading-snug text-gray-200 sm:text-xs">{isle.note}</span>
+            )}
           </button>
         ))}
       </div>
@@ -957,15 +1080,70 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
         </div>
       )}
 
+      {/* SA bot: hỏi một câu, rồi dẫn đường */}
+      {ready && tour === null && botOpen && !leaving.current && (
+        <div
+          ref={bubbleRef}
+          data-sa-bot={mode}
+          className={`absolute z-10 rounded-2xl border border-[#2BFFEA]/50 bg-[#040914]/92 p-4 shadow-[0_0_28px_rgba(43,255,234,0.18)] backdrop-blur-sm ${
+            narrow ? 'inset-x-3 bottom-3' : 'w-[22rem]'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[11px] font-semibold text-[#2BFFEA]">{SA_BOT.name}</p>
+            <button type="button" onClick={() => setBotOpen(false)} className="text-gray-500 hover:text-gray-200" aria-label="Thu nhỏ SA bot">
+              ×
+            </button>
+          </div>
+          <p className="mt-1 text-sm leading-relaxed text-gray-100">
+            {mode === 'ask' ? SA_BOT.ask : mode === 'new' ? SA_BOT.noReply(touch) : SA_BOT.yesReply}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {mode === 'ask' && (
+              <>
+                <button type="button" data-bot-answer="yes" onClick={() => answer('yes')} className="rounded-xl border border-[#2BFFEA]/60 px-4 py-2 text-sm font-semibold text-[#2BFFEA]">
+                  {SA_BOT.yes}
+                </button>
+                <button type="button" data-bot-answer="no" onClick={() => answer('no')} className="rounded-xl bg-[#2BFFEA] px-4 py-2 text-sm font-bold text-black">
+                  {SA_BOT.no}
+                </button>
+              </>
+            )}
+            {mode === 'new' && (
+              <>
+                <button type="button" onClick={() => go(0, 'bot')} className="rounded-xl bg-[#2BFFEA] px-4 py-2 text-sm font-bold text-black">
+                  {SA_BOT.enterFirst}
+                </button>
+                <button type="button" onClick={replay} className="rounded-xl border border-white/20 px-4 py-2 text-sm text-gray-200">
+                  {SA_BOT.tour}
+                </button>
+              </>
+            )}
+            {mode !== 'ask' && (
+              <button
+                type="button"
+                onClick={() => {
+                  funnel.hubBot('reask');
+                  setMode('ask');
+                  setNote(null);
+                }}
+                className="px-1 py-2 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-200"
+              >
+                {SA_BOT.reask}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Lời dẫn của vòng giới thiệu */}
       {ready && tour !== null && (
         <div data-hub-caption className="absolute inset-x-0 bottom-0 flex justify-center p-3 pb-5 sm:p-4 sm:pb-6">
           <div className="w-[min(94vw,34rem)] rounded-2xl border border-[#3df2ff]/40 bg-[#040914]/90 p-4 backdrop-blur-sm">
-            {tour >= 0 && (
-              <p className="font-mono text-[11px] font-semibold text-[#3df2ff]">
-                {tour + 1}/{HUB.islands.length} · {HUB.islands[tour].title}
-              </p>
-            )}
+            <p className="font-mono text-[11px] font-semibold text-[#3df2ff]">
+              {SA_BOT.name}
+              {tour >= 0 && ` · ${tour + 1}/${HUB.islands.length} · ${HUB.islands[tour].title}`}
+            </p>
             <p key={tour} className="mt-1 text-sm leading-relaxed text-gray-100 sm:text-base">
               {tour < 0 ? HUB.intro : HUB.islands[tour].caption}
             </p>
@@ -990,13 +1168,28 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
         </div>
       )}
 
-      {/* Sau vòng giới thiệu: gợi ý + xem lại */}
-      {ready && tour === null && (
+      {/* Gợi ý dưới đáy + gọi lại SA bot khi đã thu nhỏ */}
+      {ready && tour === null && !(narrow && botOpen) && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 p-4 pb-5">
           <p className="rounded-xl bg-[#040914]/80 px-4 py-2 text-center text-sm text-gray-200">{HUB.outro}</p>
-          <button type="button" onClick={replay} className="pointer-events-auto text-xs text-gray-400 underline underline-offset-2 hover:text-gray-200">
-            {HUB.replay}
-          </button>
+          <div className="pointer-events-auto flex items-center gap-3 text-xs">
+            {!botOpen && (
+              <button
+                type="button"
+                data-bot-chip
+                onClick={() => {
+                  funnel.hubBot('open');
+                  setBotOpen(true);
+                }}
+                className="rounded-lg border border-[#2BFFEA]/50 px-3 py-1 font-semibold text-[#2BFFEA]"
+              >
+                {SA_BOT.chip}
+              </button>
+            )}
+            <button type="button" onClick={replay} className="text-gray-400 underline underline-offset-2 hover:text-gray-200">
+              {HUB.replay}
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -18,5 +18,7 @@ export const funnel = {
   nextStep: (from: string, to: string) => track('next_step', { from, to }),
   /** Bấm nút liên hệ: kênh nào, từ đâu (hub / tên trang) */
   contactClick: (channel: 'zalo' | 'telegram', from: string) => track('contact_click', { channel, from }),
-  hubIsland: (island: string, via: 'island' | 'label' | 'menu' | 'caption') => track('hub_island', { island, via }),
+  hubIsland: (island: string, via: 'island' | 'label' | 'menu' | 'caption' | 'bot') => track('hub_island', { island, via }),
+  /** SA bot: khách trả lời đã từng vào chưa, hỏi lại, mở lại bong bóng */
+  hubBot: (action: 'visited_yes' | 'visited_no' | 'reask' | 'open') => track('hub_bot', { action }),
 };
