@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { glow as glowSprite, rimMaterial, studioEnv } from './glassKit';
+import { glassMaterial, glow as glowSprite, rimMaterial, studioEnv } from './glassKit';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { useJourney } from '../useJourney';
 import { useLibrarySummary } from '../useLibraryCards';
@@ -119,19 +119,6 @@ const crystal = (color = 0x123a52, opacity = 0.9) =>
 const shard = (accent: number = COLOR.line) =>
   new THREE.MeshPhysicalMaterial({ color: 0x9fe9ff, emissive: accent, emissiveIntensity: 0.3, roughness: 0.08, clearcoat: 1, flatShading: true, transparent: true, opacity: 0.75, envMapIntensity: 1.6 });
 
-const STONE = 0x2b3647;
-
-/** Khối đá có viền sáng mảnh — kiểu bệ đá trong bộ hình vật mốc */
-function stone(mats: THREE.Material[], geo: THREE.BufferGeometry, edgeOpacity = 0.35) {
-  const m = flat(STONE, { transparent: true });
-  const lm = new THREE.LineBasicMaterial({ color: COLOR.line, transparent: true, opacity: edgeOpacity });
-  mats.push(m, lm);
-  const mesh = new THREE.Mesh(geo, m);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), lm));
-  return mesh;
-}
 /** Khối phát sáng (bloom làm loé) */
 function lit(mats: THREE.Material[], geo: THREE.BufferGeometry, color: number, intensity = 1) {
   const m = glow(color, intensity);
@@ -140,216 +127,206 @@ function lit(mats: THREE.Material[], geo: THREE.BufferGeometry, color: number, i
   mesh.castShadow = true;
   return mesh;
 }
-/** Khung viền sáng quanh một khối (lá bài, bảng) */
-function frame(mats: THREE.Material[], geo: THREE.BufferGeometry, color: number) {
-  const lm = new THREE.LineBasicMaterial({ color, transparent: true });
-  mats.push(lm);
-  return new THREE.LineSegments(new THREE.EdgesGeometry(geo), lm);
-}
 
-/** Mỗi màn một vật mốc đặt trên mặt đảo, gốc ở mặt cỏ. Quay 45° để mặt chính hướng về máy quay. */
-function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.Material[], library: { current: THREE.InstancedMesh | null }): Spin {
+/**
+ * Vật mốc kiểu kính: mỗi đảo một khối điêu khắc lớn, một hình rõ, nói đúng trang nó dẫn tới, theo màu nhấn của đảo.
+ * Bắt đầu = phễu · Vì sao = quả cầu bi · Sáu ô = sáu khối · Thư viện = tủ kính tường kết quả · Lộ trình = cột thang xoắn · Thành viên = cổng vòm.
+ * Quay 45° để mặt chính hướng về máy quay.
+ */
+function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.Material[], library: { current: THREE.InstancedMesh | null }, A: number): Spin {
   group.rotation.y = Math.PI / 4;
+  group.scale.setScalar(1.3);
+  // Kính nhuộm màu nhấn của đảo (pha sáng) để vật mốc có màu, không nhạt như bóng ma
+  const tint = new THREE.Color(A).lerp(new THREE.Color(0xffffff), 0.35).getHex();
+  /** Khối kính: thân nhuộm màu + viền sáng màu nhấn */
+  const shape = (geo: THREE.BufferGeometry, opacity = 0.34, amp = 1.5) => {
+    const body = glassMaterial(tint, Math.min(opacity * 2.1, 0.6));
+    body.emissive.setHex(A);
+    body.emissiveIntensity = 0.12;
+    const edge = rimMaterial(A, amp * 1.4, 2);
+    mats.push(body, edge);
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(geo, body), new THREE.Mesh(geo, edge));
+    return g;
+  };
+  const light = (geo: THREE.BufferGeometry, k = 1.3) => lit(mats, geo, A, k);
+  const bead = (r: number, k = 1.6) => light(new THREE.SphereGeometry(r, 12, 10), k);
+
+  // Bệ chung: đĩa kính tối thấp, vành sáng màu nhấn (tối để không lấn vật mốc)
+  const plinthMat = new THREE.MeshPhysicalMaterial({ color: 0x0b2232, roughness: 0.15, metalness: 0.3, clearcoat: 1, transparent: true, opacity: 0.92, envMapIntensity: 0.8 });
+  mats.push(plinthMat);
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.2, 0.16, 32), plinthMat);
+  plinth.position.y = 0.09;
+  const plinthRing = light(new THREE.TorusGeometry(1.12, 0.022, 6, 64), 1.2);
+  plinthRing.rotation.x = Math.PI / 2;
+  plinthRing.position.y = 0.17;
+  group.add(plinth, plinthRing);
+
   switch (id) {
     case 'khai-niem': {
-      // Trạm khởi hành: ba bệ Học · Đo · Thực hành quanh viên tinh thể câu hỏi
-      const pedestal = (x: number, z: number, r: number, h: number) => {
-        const p = stone(mats, new THREE.CylinderGeometry(r, r * 1.12, h, 8));
-        p.position.set(x, h / 2, z);
-        group.add(p);
-        return h;
-      };
-      // Học: cuốn sách mở
-      const hb = pedestal(-1.15, 0.35, 0.42, 0.42);
-      const pageMat = flat(0xd6e2ee, { emissive: 0x3df2ff, emissiveIntensity: 0.15, transparent: true });
-      mats.push(pageMat);
-      [-1, 1].forEach((k) => {
-        const page = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.03, 0.42), pageMat);
-        page.position.set(-1.15 + k * 0.15, hb + 0.05, 0.35);
-        page.rotation.z = k * -0.18;
-        page.castShadow = true;
-        group.add(page);
+      // Phễu kính trên chân mảnh, bi sáng xoáy rơi qua cổ phễu
+      const prof = [
+        [1.05, 2.7],
+        [0.92, 2.35],
+        [0.6, 1.85],
+        [0.24, 1.42],
+        [0.15, 1.05],
+      ].map(([r, y]) => new THREE.Vector2(r, y));
+      const funnel = shape(new THREE.LatheGeometry(prof, 48), 0.3, 1.4);
+      const stem = shape(new THREE.CylinderGeometry(0.07, 0.12, 0.88, 12), 0.2, 0.8);
+      stem.position.y = 0.62;
+      group.add(funnel, stem);
+      [[1.05, 2.7], [0.6, 1.85]].forEach(([r, y]) => {
+        const ring = light(new THREE.TorusGeometry(r, 0.03, 6, 48), 1.4);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.y = y;
+        group.add(ring);
       });
-      // Đo: mặt đồng hồ có kim
-      const hg = pedestal(0, -1.0, 0.42, 0.55);
-      const dial = stone(mats, new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20));
-      dial.rotation.x = Math.PI / 2;
-      dial.position.set(0, hg + 0.36, -1.0);
-      const face = lit(mats, new THREE.TorusGeometry(0.27, 0.025, 6, 32), COLOR.line, 1.3);
-      face.position.set(0, hg + 0.36, -0.95);
-      const needle = lit(mats, new THREE.BoxGeometry(0.03, 0.24, 0.02), COLOR.accent, 1.4);
-      needle.geometry.translate(0, 0.1, 0);
-      needle.position.set(0, hg + 0.33, -0.94);
-      group.add(dial, face, needle);
-      // Thực hành: bàn nhỏ có đèn
-      const hd = pedestal(1.15, 0.35, 0.45, 0.45);
-      const desk = stone(mats, new THREE.BoxGeometry(0.62, 0.05, 0.42));
-      desk.position.set(1.15, hd + 0.28, 0.35);
-      group.add(desk);
-      [[-0.26, -0.17], [0.26, -0.17], [-0.26, 0.17], [0.26, 0.17]].forEach(([dx, dz]) => {
-        const leg = stone(mats, new THREE.BoxGeometry(0.04, 0.26, 0.04), 0.15);
-        leg.position.set(1.15 + dx, hd + 0.13, 0.35 + dz);
-        group.add(leg);
-      });
-      const lamp = lit(mats, new THREE.SphereGeometry(0.06, 10, 8), COLOR.accent, 2);
-      lamp.position.set(1.32, hd + 0.42, 0.25);
-      group.add(lamp);
-      // Giữa: tinh thể câu hỏi trên bệ thấp
-      pedestal(0, 0.25, 0.5, 0.22);
-      const ring = lit(mats, new THREE.TorusGeometry(0.42, 0.03, 6, 32), COLOR.line, 1.2);
-      ring.rotation.x = Math.PI / 2;
-      ring.position.set(0, 0.24, 0.25);
-      const crystal = lit(mats, new THREE.OctahedronGeometry(0.32), COLOR.accent, 1.6);
-      crystal.scale.y = 1.6;
-      group.add(ring, crystal);
-      return (t) => {
-        crystal.position.set(0, 1.05 + Math.sin(t * 1.6) * 0.1, 0.25);
-        crystal.rotation.y = t * 0.9;
-        needle.rotation.z = Math.sin(t * 0.8) * 0.9;
-      };
+      const radiusAt = (y: number) => THREE.MathUtils.clamp(0.15 + ((y - 1.05) / 1.65) * 0.9, 0.15, 1.05);
+      const beads = Array.from({ length: 7 }, () => bead(0.07));
+      beads.forEach((b) => group.add(b));
+      return (t) =>
+        beads.forEach((b, k) => {
+          const p = (t * 0.32 + k / beads.length) % 1;
+          const y = THREE.MathUtils.lerp(3.0, 1.05, Math.pow(p, 1.4));
+          const a = k * 0.9 + p * 9;
+          const rr = radiusAt(y) * 0.6;
+          b.position.set(Math.cos(a) * rr, y, Math.sin(a) * rr);
+          b.scale.setScalar(p > 0.9 ? (1 - p) * 10 : 1);
+        });
     }
     case 'vi-sao-kiem-dinh': {
-      // Phòng thi: bục đá, ba lá bài viền sáng xoè quạt, con dấu
-      const slab = stone(mats, new THREE.BoxGeometry(2.6, 0.28, 1.7));
-      slab.position.y = 0.14;
-      group.add(slab);
-      const cards: THREE.Group[] = [];
-      [-1, 0, 1].forEach((k) => {
-        const g = new THREE.Group();
-        const geo = new THREE.BoxGeometry(0.72, 1.05, 0.05);
-        const fill = new THREE.MeshStandardMaterial({ color: 0x0b2236, emissive: COLOR.glow, emissiveIntensity: 0.5, transparent: true });
-        mats.push(fill);
-        const card = new THREE.Mesh(geo, fill);
-        card.castShadow = true;
-        g.add(card, frame(mats, geo, k === 1 ? COLOR.accent : COLOR.line));
-        g.position.set(k * 0.62, 0.95, -0.25 - Math.abs(k) * 0.08);
-        g.rotation.set(0, -k * 0.22, -k * 0.12);
-        cards.push(g);
-        group.add(g);
-      });
-      const stampBase = stone(mats, new THREE.CylinderGeometry(0.22, 0.26, 0.14, 16));
-      stampBase.position.set(0.8, 0.35, 0.45);
-      const stem = stone(mats, new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8), 0.15);
-      stem.position.set(0.8, 0.57, 0.45);
-      const knob = lit(mats, new THREE.SphereGeometry(0.11, 12, 10), COLOR.line, 0.9);
-      knob.position.set(0.8, 0.76, 0.45);
-      group.add(stampBase, stem, knob);
-      return (t) => cards.forEach((c, i) => (c.position.y = 0.95 + Math.sin(t * 1.4 + i) * 0.06));
+      // Quả cầu kính trên chân, vòng bi bay quanh: đa số xám, vài viên sáng (như số chiến lược đạt)
+      const stem = shape(new THREE.CylinderGeometry(0.1, 0.16, 0.75, 12), 0.2, 0.8);
+      stem.position.y = 0.55;
+      const orbGeo = new THREE.IcosahedronGeometry(0.72, 1);
+      const orb = shape(orbGeo, 0.16, 1.3);
+      orb.position.y = 1.65;
+      const coreMat = new THREE.LineBasicMaterial({ color: A, transparent: true, opacity: 0.9 });
+      mats.push(coreMat);
+      const core = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(0.4, 0)), coreMat);
+      core.position.y = 1.65;
+      const ring = new THREE.Group();
+      ring.position.y = 1.65;
+      ring.rotation.set(0.45, 0, 0.2);
+      const greyMat = flat(0x6b7684, { roughness: 0.4, metalness: 0.4 });
+      mats.push(greyMat);
+      const N = 26;
+      for (let k = 0; k < N; k++) {
+        const a = (k / N) * Math.PI * 2;
+        const b = k % 9 === 0 ? bead(0.07, 2) : new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 6), greyMat);
+        b.position.set(Math.cos(a) * 1.15, 0, Math.sin(a) * 1.15);
+        ring.add(b);
+      }
+      group.add(stem, orb, core, ring);
+      return (t) => {
+        orb.rotation.set(t * 0.2, t * 0.3, 0);
+        core.rotation.set(-t * 0.4, -t * 0.5, 0);
+        ring.rotation.y = t * 0.5;
+      };
     }
     case 'sau-o': {
-      // Tổ ong: sáu ô lục giác rỗng có khe sáng, cổng khoá ở mép bệ
-      const base = stone(mats, new THREE.CylinderGeometry(1.75, 1.85, 0.24, 6));
-      base.position.y = 0.12;
-      group.add(base);
-      const slots: THREE.MeshStandardMaterial[] = [];
-      const cells = [
-        [-0.62, -0.32], [0, -0.32], [0.62, -0.32],
-        [-0.31, 0.22], [0.31, 0.22], [0.93, 0.22],
-      ];
-      cells.forEach(([x, z]) => {
-        const cell = stone(mats, new THREE.CylinderGeometry(0.33, 0.33, 0.5, 6));
-        cell.position.set(x - 0.15, 0.49, z);
-        const slotMat = glow(COLOR.line, 0.3);
-        mats.push(slotMat);
-        slots.push(slotMat);
-        const slot = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.02, 6), slotMat);
-        slot.position.set(x - 0.15, 0.75, z);
-        group.add(cell, slot);
-      });
-      // Cổng khoá: hai cột + xà + ổ khoá lục giác
-      [-0.32, 0.32].forEach((dx) => {
-        const post = stone(mats, new THREE.BoxGeometry(0.12, 0.75, 0.12));
-        post.position.set(dx - 0.2, 0.6, 1.25);
-        group.add(post);
-      });
-      const lintel = stone(mats, new THREE.BoxGeometry(0.82, 0.12, 0.16));
-      lintel.position.set(-0.2, 1.0, 1.25);
-      const lock = lit(mats, new THREE.CylinderGeometry(0.13, 0.13, 0.05, 6), COLOR.accent, 1.4);
-      lock.rotation.x = Math.PI / 2;
-      lock.position.set(-0.2, 0.6, 1.25);
-      group.add(lintel, lock);
+      // Sáu khối kính xếp 3 × 2, lõi sáng bật lần lượt như khi trả lời từng ô
+      const cores: { core: THREE.Mesh; cube: THREE.Group; m: THREE.MeshStandardMaterial }[] = [];
+      for (let k = 0; k < 6; k++) {
+        const x = ((k % 3) - 1) * 0.66;
+        const z = (Math.floor(k / 3) - 0.5) * 0.66;
+        const cube = shape(new THREE.BoxGeometry(0.52, 0.52, 0.52), 0.14, 1.1);
+        cube.position.set(x, 0.48, z);
+        const core = light(new THREE.BoxGeometry(0.3, 0.3, 0.3), 0.2);
+        core.position.copy(cube.position);
+        group.add(cube, core);
+        cores.push({ core, cube, m: core.material as THREE.MeshStandardMaterial });
+      }
       return (t) => {
-        const on = Math.floor(t * 1.2) % 7;
-        slots.forEach((m, i) => (m.emissiveIntensity = i < on ? 1.6 : 0.3));
+        const on = Math.floor(t * 1.1) % 8;
+        cores.forEach(({ core, cube, m }, i) => {
+          const lit = i < on;
+          m.emissiveIntensity = THREE.MathUtils.lerp(m.emissiveIntensity, lit ? 1.8 : 0.15, 0.12);
+          const y = lit ? 0.62 : 0.48;
+          cube.position.y = THREE.MathUtils.lerp(cube.position.y, y, 0.12);
+          core.position.y = cube.position.y;
+        });
       };
     }
     case 'thu-vien': {
-      // Toà lưu trữ: mặt trước là tường ngăn kéo hồ sơ, tô màu theo kết quả thư viện khi dữ liệu về
-      const step = stone(mats, new THREE.BoxGeometry(2.4, 0.12, 1.6), 0.2);
-      step.position.y = 0.06;
-      const body = stone(mats, new THREE.BoxGeometry(2.1, 1.55, 1.3));
-      body.position.y = 0.88;
-      const roof = stone(mats, new THREE.BoxGeometry(2.3, 0.14, 1.5));
-      roof.position.y = 1.72;
-      group.add(step, body, roof);
-      const m = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x05121b, roughness: 0.4, transparent: true });
+      // Tủ kính: bên trong là bức tường ô màu theo kết quả thư viện thật (tô khi dữ liệu về)
+      const caseBox = shape(new THREE.BoxGeometry(2.15, 1.35, 0.8), 0.12, 0.9);
+      caseBox.position.y = 0.95;
+      const lid = light(new THREE.BoxGeometry(2.25, 0.05, 0.9), 0.7);
+      lid.position.y = 1.66;
+      const sill = light(new THREE.BoxGeometry(2.25, 0.05, 0.9), 0.5);
+      sill.position.y = 0.26;
+      const m = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x0a2230, roughness: 0.3, transparent: true });
       mats.push(m);
       const wall = new THREE.InstancedMesh(new THREE.BoxGeometry(0.068, 0.068, 0.03), m, 300);
       wall.count = 0;
-      wall.position.set(0, 0.9, 0.66);
+      wall.position.set(0, 0.95, 0.05);
       library.current = wall;
-      group.add(wall);
-      return () => undefined;
+      group.add(caseBox, lid, sill, wall);
+      return (t) => (m.emissiveIntensity = 0.8 + Math.sin(t * 1.5) * 0.2);
     }
     case 'kiem-diem': {
-      // Trạm nhiệm vụ: cột tín hiệu, vòng sáng xoay, bảng nhiệm vụ
-      const base = stone(mats, new THREE.CylinderGeometry(0.62, 0.72, 0.22, 10));
-      base.position.y = 0.11;
-      const pillar = stone(mats, new THREE.CylinderGeometry(0.16, 0.2, 2.1, 10));
-      pillar.position.y = 1.27;
-      const orb = lit(mats, new THREE.SphereGeometry(0.24, 16, 12), COLOR.accent, 1.5);
-      orb.position.y = 2.5;
-      group.add(base, pillar, orb);
-      const rings: THREE.Mesh[] = [0.6, 0.48].map((r, i) => {
-        const ring = lit(mats, new THREE.TorusGeometry(r, 0.035, 6, 40), COLOR.line, 1.4);
-        ring.position.y = 1.55 + i * 0.4;
-        group.add(ring);
-        return ring;
-      });
-      const boardGeo = new THREE.BoxGeometry(0.62, 0.46, 0.05);
-      const board = stone(mats, boardGeo, 0);
-      board.position.set(0.55, 0.8, 0.35);
-      board.rotation.y = -0.3;
-      board.add(frame(mats, boardGeo, COLOR.line));
-      const post = stone(mats, new THREE.BoxGeometry(0.06, 0.6, 0.06), 0.15);
-      post.position.set(0.55, 0.3, 0.33);
-      group.add(board, post);
+      // Cột kính có bậc thang xoắn, cứ ba bậc một mốc sáng; một đốm sáng leo dần lên đỉnh
+      const pillar = shape(new THREE.CylinderGeometry(0.15, 0.2, 2.3, 16), 0.2, 1);
+      pillar.position.y = 1.3;
+      const top = bead(0.2, 1.8);
+      top.position.y = 2.6;
+      group.add(pillar, top);
+      const steps: THREE.Vector3[] = [];
+      for (let k = 0; k < 12; k++) {
+        const a = k * 0.62;
+        const y = 0.32 + k * 0.17;
+        const step = shape(new THREE.BoxGeometry(0.46, 0.05, 0.22), 0.25, 1);
+        step.position.set(Math.cos(a) * 0.52, y, Math.sin(a) * 0.52);
+        step.rotation.y = -a;
+        group.add(step);
+        steps.push(new THREE.Vector3(Math.cos(a) * 0.6, y + 0.1, Math.sin(a) * 0.6));
+        if (k % 3 === 2) {
+          const mark = bead(0.055, 1.6);
+          mark.position.set(Math.cos(a) * 0.78, y + 0.06, Math.sin(a) * 0.78);
+          group.add(mark);
+        }
+      }
+      const climber = bead(0.09, 2.2);
+      group.add(climber);
       return (t) => {
-        rings[0].rotation.set(Math.PI / 2 + Math.sin(t) * 0.25, 0, t * 0.8);
-        rings[1].rotation.set(Math.PI / 2 - Math.sin(t) * 0.25, 0, -t * 1.1);
+        const p = ((t * 0.12) % 1) * (steps.length - 1);
+        const k = Math.floor(p);
+        climber.position.lerpVectors(steps[k], steps[Math.min(k + 1, steps.length - 1)], p - k);
+        (top.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.4 + Math.sin(t * 2) * 0.5;
       };
     }
     case 'chuyen-doi': {
-      // Cổng cuối: vòm đá, màn sáng, tinh thể quanh chân
-      const base = stone(mats, jitter(new THREE.CylinderGeometry(1.5, 1.65, 0.3, 9), 0.12, (y) => y > 0));
-      base.position.y = 0.15;
-      group.add(base);
-      [-0.95, 0.95].forEach((x) => {
-        const p = stone(mats, new THREE.BoxGeometry(0.32, 1.9, 0.36));
-        p.position.set(x, 1.25, 0);
+      // Cổng vòm kính, màn sáng màu nhấn lung linh bên trong
+      [-0.82, 0.82].forEach((x) => {
+        const p = shape(new THREE.BoxGeometry(0.24, 1.6, 0.3), 0.2, 1.1);
+        p.position.set(x, 1.0, 0);
         group.add(p);
       });
-      const arch = stone(mats, new THREE.TorusGeometry(0.95, 0.17, 6, 14, Math.PI));
-      arch.position.y = 2.2;
+      const arch = shape(new THREE.TorusGeometry(0.82, 0.13, 10, 28, Math.PI), 0.2, 1.2);
+      arch.position.y = 1.8;
       group.add(arch);
-      const veilMat = glow(COLOR.accent, 1.1);
-      veilMat.opacity = 0.55;
+      const veilMat = glow(A, 1);
+      veilMat.opacity = 0.35;
       veilMat.side = THREE.DoubleSide;
       veilMat.depthWrite = false;
       mats.push(veilMat);
-      const veilRect = new THREE.Mesh(new THREE.PlaneGeometry(1.58, 1.9), veilMat);
-      veilRect.position.y = 1.25;
-      const veilTop = new THREE.Mesh(new THREE.CircleGeometry(0.79, 24, 0, Math.PI), veilMat);
-      veilTop.position.y = 2.2;
+      const veilRect = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.6), veilMat);
+      veilRect.position.y = 1.0;
+      const veilTop = new THREE.Mesh(new THREE.CircleGeometry(0.7, 28, 0, Math.PI), veilMat);
+      veilTop.position.y = 1.8;
       group.add(veilRect, veilTop);
-      [[-1.25, 0.5, 0.5], [1.2, 0.6, 0.4], [-0.7, 0.9, 0.35], [1.0, -0.6, 0.3]].forEach(([x, z, s]) => {
-        const c = lit(mats, new THREE.OctahedronGeometry(s), COLOR.line, 1.1);
-        c.scale.y = 1.8;
-        c.position.set(x, 0.3 + s * 0.9, z);
-        c.rotation.z = x * 0.15;
-        group.add(c);
-      });
-      return (t) => (veilMat.emissiveIntensity = 0.9 + Math.sin(t * 2) * 0.35);
+      const sparks = Array.from({ length: 5 }, () => bead(0.05, 2));
+      sparks.forEach((s) => group.add(s));
+      return (t) => {
+        veilMat.opacity = 0.3 + Math.sin(t * 2) * 0.08;
+        sparks.forEach((s, k) => {
+          const p = (t * 0.25 + k / sparks.length) % 1;
+          s.position.set(Math.sin(k * 2.1) * 0.5, 0.3 + p * 2, 0.05);
+          s.scale.setScalar(Math.sin(Math.PI * p));
+        });
+      };
     }
   }
 }
@@ -829,7 +806,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       const rune = buildIsland(isle, i, angles, scene, pickables);
       const group = new THREE.Group();
       group.position.set(isle.c.x, isle.y + TOP, isle.c.y);
-      spins.push(buildLandmark(HUB.islands[i].landmark, group, [], libraryWall));
+      spins.push(buildLandmark(HUB.islands[i].landmark, group, [], libraryWall, ACCENTS[i % ACCENTS.length]));
       group.traverse((o) => (o.userData.isle = i));
       pickables.push(group);
       scene.add(group);
