@@ -30,7 +30,7 @@ interface Strat {
 }
 
 /** Nhãn chữ dạng viên thuốc, luôn quay mặt về máy quay */
-function chip(text: string, o: { bg: string; border: string; color?: string; size?: number; anchor?: [number, number]; k?: number }) {
+function chip(text: string, o: { bg: string; border: string; color?: string; size?: number; anchor?: [number, number]; k?: number; top?: boolean }) {
   const fs = o.size ?? 30;
   const c = document.createElement('canvas');
   const g = c.getContext('2d');
@@ -60,6 +60,11 @@ function chip(text: string, o: { bg: string; border: string; color?: string; siz
   s.scale.set(w * k, h * k, 1);
   s.userData.base = [w * k, h * k];
   if (o.anchor) s.center.set(...o.anchor);
+  // Nhãn cố định vẽ đè lên mọi thứ để viên chữ bay ngang hay khay đáy không che mất
+  if (o.top) {
+    s.material.depthTest = false;
+    s.renderOrder = 10;
+  }
   return s;
 }
 
@@ -122,9 +127,10 @@ function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failC
     ring.rotation.x = Math.PI / 2;
     ring.position.y = t.y;
     scene.add(ring);
-    const label = chip(t.label, { bg: 'rgba(4,9,20,0.85)', border: 'rgba(61,242,255,0.5)', size: 26, k: K, anchor: narrow ? [0, 0] : [1, 0.5] });
+    const label = chip(t.label, { bg: 'rgba(4,9,20,0.85)', border: 'rgba(61,242,255,0.5)', size: 26, k: K, anchor: narrow ? [0, 0] : [1, 0.5], top: true });
+    // Máy tính: nhãn tầng dưới lùi ra cột ngoài, tránh đường rơi của viên tên chiến lược
     if (narrow) label.position.set(-4.1, t.y + 0.2, 0.5);
-    else label.position.set(-t.r - 0.35, t.y, 0);
+    else label.position.set(-Math.max(t.r + 0.35, 3.4), t.y, 0);
     scene.add(label);
     const next = TIERS[i + 1];
     if (next) {
@@ -151,8 +157,8 @@ function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failC
       new THREE.MeshStandardMaterial({ color: b.color, emissive: b.color, emissiveIntensity: b.color === ACCENT ? 0.9 : 0.15, transparent: true, opacity: 0.75 }),
     );
     tray.position.set(b.x, BIN_Y, 0);
-    const label = chip(b.text, { bg: b.bg, border: b.border, color: b.fg, size: narrow ? 24 : 30, k: K });
-    label.position.set(b.x, BIN_Y - 0.75, 0);
+    const label = chip(b.text, { bg: b.bg, border: b.border, color: b.fg, size: narrow ? 24 : 30, k: K, top: true });
+    label.position.set(b.x, BIN_Y - 0.95, 0);
     scene.add(tray, label);
   });
   // Mũi chia đôi ngay dưới tầng đo

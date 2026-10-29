@@ -4,7 +4,7 @@
  * Chữ ở START_HERE trong content/journey.ts.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { motion, useInView } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { START_HERE } from '../content/journey';
 import { FilterScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
@@ -13,24 +13,168 @@ const S = START_HERE;
 /** Hiệu ứng chỉ chạy khi phần đó đã lên tới khoảng giữa màn hình, không chạy sớm lúc vừa ló ở mép dưới */
 const REACHED = '0px 0px -30% 0px';
 
-/** Đếm số từ 0 lên khi cuộn tới */
-function CountUp({ to }: { to: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: REACHED });
-  const [n, setN] = useState(0);
+/** Đếm từ `from` tới `to` khi `run` bật */
+function Counter({ from, to, run, ms }: { from: number; to: number; run: boolean; ms: number }) {
+  const [n, setN] = useState(from);
   useEffect(() => {
-    if (!inView) return;
+    if (!run) return;
     const start = performance.now();
     let raf = 0;
     const step = (now: number) => {
-      const k = Math.min((now - start) / 1400, 1);
-      setN(Math.round(to * (1 - Math.pow(1 - k, 3))));
+      const k = Math.min((now - start) / ms, 1);
+      setN(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))));
       if (k < 1) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [inView, to]);
-  return <span ref={ref}>{n}</span>;
+  }, [run, from, to, ms]);
+  return <>{n}</>;
+}
+
+/** Thứ tự rơi rụng cố định của lưới chấm: hạng nhỏ bị loại trước, chỉ những hạng cuối còn sáng tới ô cuối */
+const [N0, N1, N2] = S.hero.stats.map((s) => s.n);
+const RANK = (() => {
+  const idx = Array.from({ length: N0 }, (_, i) => i);
+  let seed = 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = idx.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  const rank: number[] = [];
+  idx.forEach((d, r) => (rank[d] = r));
+  return rank;
+})();
+const COLS = 30;
+
+type Dot = 'off' | 'on' | 'dim' | 'hot';
+/** Trạng thái một chấm ở ô `card` theo bước của chuỗi hiệu ứng (1: ô 1 sáng · 2–3: ô 2 rụng · 4–5: ô 3 còn lại) */
+function dotState(card: number, step: number, r: number): Dot {
+  const cut1 = r < N0 - N1;
+  if (card === 0) return step >= 1 ? 'on' : 'off';
+  if (card === 1) return step < 2 ? 'off' : step === 2 || !cut1 ? 'on' : 'dim';
+  if (step < 4) return 'off';
+  if (step === 4) return cut1 ? 'dim' : 'on';
+  return r >= N0 - N2 ? 'hot' : 'dim';
+}
+const DOT_STYLE: Record<Dot, { fill: string; opacity: number }> = {
+  off: { fill: '#9fb0bf', opacity: 0.08 },
+  on: { fill: '#cfe3ee', opacity: 0.8 },
+  dim: { fill: '#3a4656', opacity: 0.45 },
+  hot: { fill: '#2BFFEA', opacity: 1 },
+};
+
+function DotGrid({ card, step }: { card: number; step: number }) {
+  return (
+    <svg viewBox={`0 0 ${COLS * 10} ${Math.ceil(N0 / COLS) * 10}`} className="mt-2 w-full" aria-hidden>
+      {RANK.map((r, d) => {
+        const st = dotState(card, step, r);
+        const col = d % COLS;
+        const row = Math.floor(d / COLS);
+        // Sáng lên theo làn sóng chéo; rụng xuống lác đác theo thứ hạng
+        const delay = st === 'on' ? (col + row) * 14 : (r % 45) * 13;
+        return (
+          <rect
+            key={d}
+            x={col * 10 + 2}
+            y={row * 10 + 2}
+            width={6}
+            height={6}
+            rx={1.5}
+            className={st === 'hot' ? 'animate-pulse' : undefined}
+            style={{
+              ...DOT_STYLE[st],
+              transition: `fill .5s ${delay}ms, opacity .5s ${delay}ms`,
+              filter: st === 'hot' ? 'drop-shadow(0 0 3px #2BFFEA)' : undefined,
+            }}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+/** Mũi tên nối hai ô: luồng sáng chạy qua khi tới lượt, kèm số bị rụng */
+function Pass({ on, drop }: { on: boolean; drop: number }) {
+  return (
+    <div className="flex w-6 flex-col items-center justify-center gap-1 sm:w-12">
+      <div className="relative h-0.5 w-full overflow-hidden rounded bg-white/10">
+        {on && (
+          <motion.span
+            initial={{ x: '-100%' }}
+            animate={{ x: '200%' }}
+            transition={{ duration: 0.6, ease: 'easeIn' }}
+            className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-[#2BFFEA] to-transparent"
+          />
+        )}
+      </div>
+      <motion.span
+        initial={{ opacity: 0, y: -4 }}
+        animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: -4 }}
+        transition={{ delay: 0.5, duration: 0.4 }}
+        className="font-mono text-[10px] font-semibold text-[#ff5a6a] sm:text-xs"
+      >
+        −{drop}
+      </motion.span>
+    </div>
+  );
+}
+
+/** Ba ô 300 → 242 → 15: mỗi ô một lưới 300 chấm, chấm rụng dần qua từng ô, ô cuối chỉ còn 15 chấm sáng */
+function FunnelStats() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5, margin: '0px 0px -10% 0px' });
+  const reduce = useReducedMotion();
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    if (!inView) return;
+    if (reduce) {
+      setStep(5);
+      return;
+    }
+    const ts = [0, 1300, 1900, 3000, 3700].map((ms, i) => window.setTimeout(() => setStep(i + 1), ms));
+    return () => ts.forEach(clearTimeout);
+  }, [inView, reduce]);
+  const counters = [
+    { from: 0, run: step >= 1, ms: 1100 },
+    { from: N0, run: step >= 3, ms: 900 },
+    { from: N1, run: step >= 5, ms: 1400 },
+  ];
+  const opens = [1, 2, 4];
+  const card = (i: number) => {
+    const s = S.hero.stats[i];
+    const done = i === 2 && step >= 5;
+    return (
+      <div
+        className={`relative overflow-hidden rounded-xl border px-2 pb-2 pt-3 text-center transition-[opacity,border-color,background-color,box-shadow] duration-700 ${
+          step >= opens[i] ? 'opacity-100' : 'opacity-35'
+        } ${done ? 'border-[#2BFFEA]/70 bg-[#2BFFEA]/10 shadow-[0_0_36px_rgba(43,255,234,0.35)]' : 'border-white/10 bg-white/[0.03]'}`}
+      >
+        <p className={`font-mono text-2xl font-bold sm:text-3xl ${i === 2 ? 'text-[#2BFFEA]' : 'text-white'}`}>
+          {step >= opens[i] ? <Counter from={counters[i].from} to={s.n} run={counters[i].run} ms={counters[i].ms} /> : '–'}
+        </p>
+        <p className="mt-0.5 text-[11px] leading-tight text-gray-400 sm:text-xs">{s.label}</p>
+        <DotGrid card={i} step={step} />
+        {done && (
+          <motion.div
+            initial={{ x: '-120%' }}
+            animate={{ x: '220%' }}
+            transition={{ delay: 1.2, duration: 1.1, ease: 'easeInOut' }}
+            className="pointer-events-none absolute inset-y-0 left-0 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          />
+        )}
+      </div>
+    );
+  };
+  return (
+    <div ref={ref} className="flex w-full max-w-3xl items-stretch">
+      <div className="flex-1">{card(0)}</div>
+      <Pass on={step >= 2} drop={N0 - N1} />
+      <div className="flex-1">{card(1)}</div>
+      <Pass on={step >= 4} drop={N1 - N2} />
+      <div className="flex-1">{card(2)}</div>
+    </div>
+  );
 }
 
 function Screen({ children, id }: { children: ReactNode; id: string }) {
@@ -146,16 +290,7 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
         <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#3df2ff]">{S.hero.kicker}</p>
         <h1 className="mt-3 max-w-3xl text-center text-3xl font-bold leading-tight text-white sm:text-5xl">{S.hero.title}</h1>
         <FilterScene className="mt-2 h-[58vh] min-h-[340px] w-full max-w-4xl" />
-        <div className="grid w-full max-w-xl grid-cols-3 gap-2 text-center">
-          {S.hero.stats.map((s, i) => (
-            <div key={s.label} className={`rounded-xl border px-2 py-3 ${i === 2 ? 'border-[#2BFFEA]/60 bg-[#2BFFEA]/10' : 'border-white/10 bg-white/[0.03]'}`}>
-              <p className={`font-mono text-2xl font-bold sm:text-3xl ${i === 2 ? 'text-[#2BFFEA]' : 'text-white'}`}>
-                <CountUp to={s.n} />
-              </p>
-              <p className="mt-0.5 text-[11px] text-gray-400 sm:text-xs">{s.label}</p>
-            </div>
-          ))}
-        </div>
+        <FunnelStats />
         <p className="mt-8 animate-pulse text-xs text-gray-500">{S.hero.scroll}</p>
       </Screen>
 
