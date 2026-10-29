@@ -10,6 +10,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { glow as glowSprite, rimMaterial, studioEnv } from './glassKit';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { useJourney } from '../useJourney';
 import { useLibrarySummary } from '../useLibraryCards';
@@ -104,6 +105,14 @@ const glow = (color: number, intensity = 0.6) =>
   new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: intensity, roughness: 0.35, transparent: true });
 
 type Spin = (t: number) => void;
+
+/** Vật liệu hướng kính (Leon chọn 29/10): mặt đảo là phiến kính xanh, đáy là pha lê tối có viền sáng */
+const glassTop = () =>
+  new THREE.MeshPhysicalMaterial({ color: 0x1f6f80, roughness: 0.14, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.1, flatShading: true, transparent: true, opacity: 0.85, envMapIntensity: 0.9 });
+const crystal = (color = 0x123a52, opacity = 0.9) =>
+  new THREE.MeshPhysicalMaterial({ color, emissive: 0x00384f, emissiveIntensity: 0.35, roughness: 0.16, metalness: 0.1, clearcoat: 1, flatShading: true, transparent: true, opacity, envMapIntensity: 1.3 });
+const shard = () =>
+  new THREE.MeshPhysicalMaterial({ color: 0x9fe9ff, emissive: COLOR.line, emissiveIntensity: 0.25, roughness: 0.08, clearcoat: 1, flatShading: true, transparent: true, opacity: 0.75, envMapIntensity: 1.6 });
 
 const STONE = 0x2b3647;
 
@@ -347,14 +356,25 @@ function buildIsland(isle: Isle, i: number, bridgeAngles: number[], scene: THREE
   root.position.set(isle.c.x, isle.y, isle.c.y);
 
   const topGeo = jitter(new THREE.CylinderGeometry(ISLAND_R, ISLAND_R - 0.2, 0.6, 12), 0.18, (y) => y > 0);
-  const top = new THREE.Mesh(topGeo, flat(COLOR.grass));
+  const top = new THREE.Mesh(topGeo, glassTop());
   top.receiveShadow = true;
-  const dirt = new THREE.Mesh(jitter(new THREE.CylinderGeometry(ISLAND_R - 0.15, ISLAND_R - 0.45, 0.5, 12), 0.25, () => false), flat(COLOR.dirt));
+  // Lõi sáng nằm trong phiến kính: nhìn xuyên mặt đảo thấy ánh xanh từ bên trong
+  const heart = new THREE.Mesh(new THREE.CylinderGeometry(ISLAND_R - 0.55, ISLAND_R - 0.7, 0.12, 12), glow(COLOR.line, 0.45));
+  heart.material.opacity = 0.3;
+  const dirtGeo = jitter(new THREE.CylinderGeometry(ISLAND_R - 0.15, ISLAND_R - 0.45, 0.5, 12), 0.25, () => false);
+  const dirt = new THREE.Mesh(dirtGeo, crystal(0x0d2a3b, 0.95));
   dirt.position.y = -0.52;
-  const rock = new THREE.Mesh(jitter(new THREE.ConeGeometry(ISLAND_R - 0.4, 3.8, 10, 3), 0.5, () => false), flat(COLOR.rock));
+  const seam = new THREE.Mesh(new THREE.TorusGeometry(ISLAND_R - 0.17, 0.035, 6, 48), glow(COLOR.line, 1.1));
+  seam.rotation.x = Math.PI / 2;
+  seam.position.y = -0.3;
+  const rockGeo = jitter(new THREE.ConeGeometry(ISLAND_R - 0.4, 3.8, 10, 3), 0.5, () => false);
+  const rock = new THREE.Mesh(rockGeo, crystal());
+  rock.add(new THREE.Mesh(rockGeo, rimMaterial(COLOR.line, 0.55, 2.2)));
   rock.rotation.x = Math.PI;
   rock.position.y = -2.7;
-  root.add(top, dirt, rock);
+  const under = glowSprite(COLOR.line, 6, 0.18);
+  under.position.y = -3.2;
+  root.add(top, heart, dirt, seam, rock, under);
 
   // Vệt sáng dưới đáy đá
   const vein = new THREE.Mesh(new THREE.ConeGeometry(0.08, 2.6, 4), glow(COLOR.line, 1.2));
@@ -384,12 +404,11 @@ function buildIsland(isle: Isle, i: number, bridgeAngles: number[], scene: THREE
       root.add(c);
     } else {
       const h = 0.7 + r() * 0.6;
-      const tree = new THREE.Mesh(new THREE.ConeGeometry(0.32, h, 6), flat(COLOR.tree));
-      tree.position.set(x, TOP + 0.15 + h / 2, z);
+      const tree = new THREE.Mesh(new THREE.ConeGeometry(0.26, h, 5), shard());
+      tree.position.set(x, TOP + h / 2, z);
+      tree.rotation.set((r() - 0.5) * 0.3, r() * Math.PI, (r() - 0.5) * 0.3);
       tree.castShadow = true;
-      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.2, 5), flat(COLOR.dirt));
-      trunk.position.set(x, TOP + 0.1, z);
-      root.add(tree, trunk);
+      root.add(tree);
     }
   }
   root.traverse((o) => (o.userData.isle = i));
@@ -399,13 +418,13 @@ function buildIsland(isle: Isle, i: number, bridgeAngles: number[], scene: THREE
 }
 
 /** Cầu ván treo có tay vịn sáng và đèn ở bốn góc đầu cầu */
-function buildBridge(b: Bridge, scene: THREE.Scene) {
+function buildBridge(b: Bridge, scene: THREE.Scene): Spin {
   const len = b.s.distanceTo(b.e);
   const n = Math.ceil(len / 0.34);
   const yaw = Math.atan2(b.e.x - b.s.x, b.e.y - b.s.y);
   const group = new THREE.Group();
   const plankGeo = new THREE.BoxGeometry(1.15, 0.08, 0.26);
-  const plankMat = flat(0x2c3c52);
+  const plankMat = new THREE.MeshPhysicalMaterial({ color: 0x8fe3f0, roughness: 0.1, clearcoat: 1, flatShading: true, transparent: true, opacity: 0.6, envMapIntensity: 1.5 });
   const railPts: THREE.Vector3[][] = [[], []];
   const side = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw)).multiplyScalar(0.58);
   for (let k = 0; k <= n; k++) {
@@ -422,7 +441,11 @@ function buildBridge(b: Bridge, scene: THREE.Scene) {
     railPts[1].push(new THREE.Vector3(x, y + 0.45, z).sub(side));
   }
   const railMat = glow(COLOR.line, 0.55);
-  railPts.forEach((pts) => group.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, 0.028, 5, false), railMat)));
+  const curves = railPts.map((pts) => new THREE.CatmullRomCurve3(pts));
+  curves.forEach((c) => group.add(new THREE.Mesh(new THREE.TubeGeometry(c, n * 2, 0.028, 5, false), railMat)));
+  // Đốm sáng chạy dọc hai tay vịn, ngược chiều nhau
+  const pulses = curves.map(() => glowSprite(COLOR.accent, 0.7, 0.9));
+  pulses.forEach((p) => group.add(p));
   const postMat = flat(0x2b3647);
   const bulbMat = glow(COLOR.accent, 1.3);
   [railPts[0][0], railPts[1][0], railPts[0][n], railPts[1][n]].forEach((p) => {
@@ -433,6 +456,13 @@ function buildBridge(b: Bridge, scene: THREE.Scene) {
     group.add(post, bulb);
   });
   scene.add(group);
+  const phase = (b.s.x + b.s.y) * 0.13;
+  return (t) => {
+    pulses.forEach((p, k) => {
+      const u = (((t * 0.28 + phase) % 1) + 1) % 1;
+      p.position.copy(curves[k].getPointAt(k ? 1 - u : u));
+    });
+  };
 }
 
 /** SA bot: robot low-poly lơ lửng trước cụm đảo, mắt và lõi là dải sáng. Mọi khối gắn userData.bot để bấm được. */
@@ -441,8 +471,8 @@ function buildBot(scene: THREE.Scene, at: THREE.Vector3): Spin {
   g.position.copy(at);
   g.rotation.y = Math.PI / 4;
   g.scale.setScalar(1.7);
-  const shell = flat(0xd3e2ec, { roughness: 0.55 });
-  const dark = flat(0x13202e);
+  const shell = new THREE.MeshPhysicalMaterial({ color: 0xe6f3fa, roughness: 0.25, metalness: 0.08, clearcoat: 1, clearcoatRoughness: 0.08, flatShading: true, envMapIntensity: 1.4 });
+  const dark = new THREE.MeshPhysicalMaterial({ color: 0x06121c, roughness: 0.05, metalness: 0.5, clearcoat: 1, envMapIntensity: 1.8 });
   const body = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 1), shell);
   body.scale.set(1, 0.9, 0.9);
   body.position.y = 0.9;
@@ -471,7 +501,9 @@ function buildBot(scene: THREE.Scene, at: THREE.Vector3): Spin {
   const pad = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.035, 6, 32), glow(COLOR.line, 1.2));
   pad.rotation.x = Math.PI / 2;
   pad.position.y = 0.15;
-  g.add(body, head, face, ...eyes, antenna, tip, core, ...hands, pad);
+  const halo = glowSprite(COLOR.accent, 2.4, 0.3);
+  halo.position.y = 0.15;
+  g.add(body, head, face, ...eyes, antenna, tip, core, ...hands, pad, halo);
   g.traverse((o) => {
     o.castShadow = true;
     o.userData.bot = true;
@@ -650,6 +682,8 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     skyTex.colorSpace = THREE.SRGBColorSpace;
     scene.background = skyTex;
     scene.fog = new THREE.Fog(COLOR.bg, 40, 95);
+    scene.environment = studioEnv(renderer);
+    scene.environmentIntensity = 0.55;
 
     // Lưới mờ phía dưới, như mặt sàn dữ liệu
     const floor = new THREE.GridHelper(260, 130, COLOR.glow, COLOR.glow);
@@ -667,9 +701,9 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       const z = center.z + Math.sin(ang) * rad;
       const r = 1.2 + far() * 1.8;
       const fy = -3.5 - far() * 4;
-      const cap = new THREE.Mesh(jitter(new THREE.CylinderGeometry(r, r * 0.9, 0.4, 9), 0.15, (yy) => yy > 0), flat(0x173a36));
+      const cap = new THREE.Mesh(jitter(new THREE.CylinderGeometry(r, r * 0.9, 0.4, 9), 0.15, (yy) => yy > 0), crystal(0x164a5a, 0.85));
       cap.position.set(x, fy, z);
-      const under = new THREE.Mesh(jitter(new THREE.ConeGeometry(r * 0.9, r * 2.2, 9, 2), 0.3, () => false), flat(0x1a2030));
+      const under = new THREE.Mesh(jitter(new THREE.ConeGeometry(r * 0.9, r * 2.2, 9, 2), 0.3, () => false), crystal(0x0e2636, 0.85));
       under.rotation.x = Math.PI;
       under.position.set(x, fy - 0.2 - r * 1.1, z);
       scene.add(cap, under);
@@ -727,7 +761,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     const debris: THREE.Mesh[] = [];
     const dr = rng(5);
     for (let k = 0; k < 14; k++) {
-      const m = new THREE.Mesh(jitter(new THREE.DodecahedronGeometry(0.3 + dr() * 0.5, 0), 0.15, () => false), flat(COLOR.rock));
+      const m = new THREE.Mesh(jitter(new THREE.DodecahedronGeometry(0.3 + dr() * 0.5, 0), 0.15, () => false), crystal());
       const isle = isles[Math.floor(dr() * isles.length)];
       m.position.set(isle.c.x + (dr() - 0.5) * 14, isle.y - 2 - dr() * 4, isle.c.y + (dr() - 0.5) * 14);
       m.userData.phase = dr() * 6;
@@ -759,7 +793,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       scene.add(beam);
       fx.push({ rune, beam });
     });
-    bridges.forEach((b) => buildBridge(b, scene));
+    bridges.forEach((b) => spins.push(buildBridge(b, scene)));
     spins.push(buildBot(scene, bot));
     scene.traverse((o) => o.userData.bot && pickables.push(o));
 
@@ -1010,7 +1044,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
             onClick={() => tap(i, 'label')}
             onMouseEnter={() => setHoverIsle(i)}
             onMouseLeave={() => setHoverIsle(null)}
-            className={`absolute left-0 top-0 rounded-lg border bg-[#040914]/85 px-2 py-1 text-center opacity-0 transition-[opacity,border-color] duration-300 hover:border-[#2BFFEA] data-[hover=true]:border-[#2BFFEA] sm:rounded-xl sm:px-3 sm:py-1.5 ${
+            className={`sa-glass-dark absolute left-0 top-0 rounded-lg border px-2 py-1 text-center opacity-0 transition-[opacity,border-color] duration-300 hover:border-[#2BFFEA] data-[hover=true]:border-[#2BFFEA] sm:rounded-xl sm:px-3 sm:py-1.5 ${
               mode === 'new' && i === 0 ? 'border-[#2BFFEA] shadow-[0_0_18px_rgba(43,255,234,0.35)]' : 'border-[#3df2ff]/40'
             } ${mode === 'new' && (hoverIsle === i || note === i) ? 'w-56 sm:w-64' : 'whitespace-nowrap'}`}
           >
@@ -1025,11 +1059,11 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       </div>
 
       {/* Thanh trên: logo · menu tới các trang · điểm */}
-      <header className="absolute inset-x-0 top-0 flex h-16 items-center justify-between gap-3 bg-gradient-to-b from-[#040914] to-transparent px-3 sm:px-5">
+      <header className="absolute inset-x-0 top-0 flex h-16 items-center justify-between gap-3 bg-gradient-to-b from-[#040914]/95 via-[#040914]/60 to-transparent px-3 sm:px-5">
         <img src="/assets/strategy-audit-logo.png" alt="Strategy Audit" className="h-8 w-auto max-w-[150px] object-contain object-left" />
         <nav data-hub-menu className="hidden items-center gap-1 md:flex">
           {HUB.menu.map((m) => (
-            <button key={m.tab} type="button" onClick={() => menuGo(m.tab)} className="rounded-lg px-3 py-2 text-xs font-medium text-gray-300 hover:bg-white/5 hover:text-white">
+            <button key={m.tab} type="button" onClick={() => menuGo(m.tab)} className="rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-gray-300 transition-[background,border-color,box-shadow] hover:border-[#9ff6ff]/30 hover:bg-[linear-gradient(160deg,rgba(43,255,234,0.12),rgba(255,255,255,0.03))] hover:text-white hover:shadow-[0_0_14px_rgba(43,255,234,0.15)]">
               {m.label}
             </button>
           ))}
@@ -1043,12 +1077,12 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
               setContactOpen((v) => !v);
               setMenuOpen(false);
             }}
-            className="whitespace-nowrap rounded-lg bg-[#0068FF] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#0055D0]"
+            className="whitespace-nowrap rounded-lg bg-[linear-gradient(180deg,#3b8bff,#0068FF_60%,#0050c8)] px-3 py-1.5 text-xs font-semibold text-white shadow-[0_0_18px_rgba(0,104,255,0.35),inset_0_1px_0_rgba(255,255,255,0.45)]"
           >
             {CONTACT.title}
           </button>
           {journey.points > 0 && (
-            <span data-points className="rounded-lg border border-[#3df2ff]/30 bg-[#040914]/80 px-2.5 py-1.5 font-mono text-xs font-bold text-[#2BFFEA]">
+            <span data-points className="sa-glass-dark rounded-lg px-2.5 py-1.5 font-mono text-xs font-bold text-[#2BFFEA]">
               ⬡ {journey.points} {POINT_NAME}
             </span>
           )}
@@ -1058,13 +1092,13 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
             onClick={() => {
               setMenuOpen((v) => !v);
               setContactOpen(false);
-            }} className="rounded-lg border border-white/20 bg-[#040914]/80 px-3 py-1.5 text-xs font-semibold md:hidden">
+            }} className="sa-glass-dark rounded-lg px-3 py-1.5 text-xs font-semibold md:hidden">
             {menuOpen ? 'Đóng' : 'Menu'}
           </button>
         </div>
       </header>
       {menuOpen && (
-        <nav className="absolute right-3 top-14 z-10 flex w-48 flex-col rounded-xl border border-[#3df2ff]/30 bg-[#040914]/95 p-1.5 md:hidden">
+        <nav className="sa-glass-dark absolute right-3 top-14 z-10 flex w-48 flex-col rounded-xl p-1.5 md:hidden">
           {HUB.menu.map((m) => (
             <button key={m.tab} type="button" onClick={() => menuGo(m.tab)} className="rounded-lg px-3 py-2.5 text-left text-sm text-gray-200 hover:bg-white/5">
               {m.label}
@@ -1074,7 +1108,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       )}
 
       {contactOpen && (
-        <div data-hub-contact-panel className="absolute right-3 top-14 z-10 w-[min(92vw,22rem)] rounded-xl border border-[#3df2ff]/30 bg-[#040914]/95 p-4">
+        <div data-hub-contact-panel className="sa-glass-dark absolute right-3 top-14 z-10 w-[min(92vw,22rem)] rounded-xl p-4">
           <p className="text-sm text-gray-200">{CONTACT.ask}</p>
           <ContactLinks from="hub" className="mt-3" />
         </div>
@@ -1085,7 +1119,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
         <div
           ref={bubbleRef}
           data-sa-bot={mode}
-          className={`absolute z-10 rounded-2xl border border-[#2BFFEA]/50 bg-[#040914]/92 p-4 shadow-[0_0_28px_rgba(43,255,234,0.18)] backdrop-blur-sm ${
+          className={`sa-glass-dark sa-glass-dark-lit absolute z-10 rounded-2xl p-4 ${
             narrow ? 'inset-x-3 bottom-3' : 'w-[22rem]'
           }`}
         >
@@ -1101,20 +1135,20 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
           <div className="mt-3 flex flex-wrap gap-2">
             {mode === 'ask' && (
               <>
-                <button type="button" data-bot-answer="yes" onClick={() => answer('yes')} className="rounded-xl border border-[#2BFFEA]/60 px-4 py-2 text-sm font-semibold text-[#2BFFEA]">
+                <button type="button" data-bot-answer="yes" onClick={() => answer('yes')} className="sa-glass-ghost rounded-xl px-4 py-2 text-sm font-semibold text-[#2BFFEA]">
                   {SA_BOT.yes}
                 </button>
-                <button type="button" data-bot-answer="no" onClick={() => answer('no')} className="rounded-xl bg-[#2BFFEA] px-4 py-2 text-sm font-bold text-black">
+                <button type="button" data-bot-answer="no" onClick={() => answer('no')} className="sa-glass-btn rounded-xl px-4 py-2 text-sm font-bold">
                   {SA_BOT.no}
                 </button>
               </>
             )}
             {mode === 'new' && (
               <>
-                <button type="button" onClick={() => go(0, 'bot')} className="rounded-xl bg-[#2BFFEA] px-4 py-2 text-sm font-bold text-black">
+                <button type="button" onClick={() => go(0, 'bot')} className="sa-glass-btn rounded-xl px-4 py-2 text-sm font-bold">
                   {SA_BOT.enterFirst}
                 </button>
-                <button type="button" onClick={replay} className="rounded-xl border border-white/20 px-4 py-2 text-sm text-gray-200">
+                <button type="button" onClick={replay} className="sa-glass-ghost rounded-xl px-4 py-2 text-sm text-gray-200">
                   {SA_BOT.tour}
                 </button>
               </>
@@ -1139,7 +1173,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       {/* Lời dẫn của vòng giới thiệu */}
       {ready && tour !== null && (
         <div data-hub-caption className="absolute inset-x-0 bottom-0 flex justify-center p-3 pb-5 sm:p-4 sm:pb-6">
-          <div className="w-[min(94vw,34rem)] rounded-2xl border border-[#3df2ff]/40 bg-[#040914]/90 p-4 backdrop-blur-sm">
+          <div className="sa-glass-dark sa-glass-dark-lit w-[min(94vw,34rem)] rounded-2xl p-4">
             <p className="font-mono text-[11px] font-semibold text-[#3df2ff]">
               {SA_BOT.name}
               {tour >= 0 && ` · ${tour + 1}/${HUB.islands.length} · ${HUB.islands[tour].title}`}
@@ -1155,7 +1189,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
               </div>
               <div className="flex gap-2">
                 {tour >= 0 && (
-                  <button type="button" onClick={() => go(tour, 'caption')} className="whitespace-nowrap rounded-lg border border-[#2BFFEA]/50 px-3 py-1.5 text-xs font-semibold text-[#2BFFEA]">
+                  <button type="button" onClick={() => go(tour, 'caption')} className="sa-glass-ghost whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold text-[#2BFFEA]">
                     Vào trang này
                   </button>
                 )}
@@ -1171,7 +1205,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       {/* Gợi ý dưới đáy + gọi lại SA bot khi đã thu nhỏ */}
       {ready && tour === null && !(narrow && botOpen) && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center gap-1.5 p-4 pb-5">
-          <p className="rounded-xl bg-[#040914]/80 px-4 py-2 text-center text-sm text-gray-200">{HUB.outro}</p>
+          <p className="sa-glass-dark rounded-xl px-4 py-2 text-center text-sm text-gray-200">{HUB.outro}</p>
           <div className="pointer-events-auto flex items-center gap-3 text-xs">
             {!botOpen && (
               <button
@@ -1181,7 +1215,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
                   funnel.hubBot('open');
                   setBotOpen(true);
                 }}
-                className="rounded-lg border border-[#2BFFEA]/50 px-3 py-1 font-semibold text-[#2BFFEA]"
+                className="sa-glass-dark sa-glass-dark-lit rounded-lg px-3 py-1 font-semibold text-[#2BFFEA]"
               >
                 {SA_BOT.chip}
               </button>

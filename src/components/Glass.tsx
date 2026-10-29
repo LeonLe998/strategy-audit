@@ -35,7 +35,7 @@ export function GlassCard({
       ref={ref}
       onPointerMove={move}
       onPointerLeave={leave}
-      className={`sa-glass group overflow-hidden rounded-2xl transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out ${tint === 'cyan' ? 'sa-glass-cyan' : ''} ${className}`}
+      className={`sa-glass group relative overflow-hidden rounded-2xl transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out ${tint === 'cyan' ? 'sa-glass-cyan' : ''} ${className}`}
     >
       {/* Vệt phản chiếu chéo cố định + đốm sáng theo chuột */}
       <div className="sa-glass-streak pointer-events-none absolute -left-1/4 top-0 h-full w-1/3 -skew-x-[20deg]" />
