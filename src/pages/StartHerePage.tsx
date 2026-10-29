@@ -128,6 +128,42 @@ function Pass({ on, drop }: { on: boolean; drop: number }) {
   );
 }
 
+/** Tấm kính: nền mờ trong, mép trên bắt sáng, nghiêng nhẹ theo chuột và có đốm sáng chạy theo con trỏ.
+ *  Chỉ đổi transform + biến CSS trên chính tấm này nên không làm cả trang vẽ lại. */
+function GlassCard({ children, className = '', tint = 'clear' }: { children: ReactNode; className?: string; tint?: 'clear' | 'cyan' }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const move = (e: React.PointerEvent) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    el.style.transform = `perspective(700px) rotateX(${(0.5 - y) * 10}deg) rotateY(${(x - 0.5) * 12}deg) translateZ(0)`;
+    el.style.setProperty('--gx', `${x * 100}%`);
+    el.style.setProperty('--gy', `${y * 100}%`);
+  };
+  const leave = () => {
+    if (ref.current) ref.current.style.transform = '';
+  };
+  return (
+    <div
+      ref={ref}
+      onPointerMove={move}
+      onPointerLeave={leave}
+      className={`group relative overflow-hidden rounded-2xl border backdrop-blur-md transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out will-change-transform ${
+        tint === 'cyan'
+          ? 'border-[#9ff6ff]/60 bg-[linear-gradient(150deg,rgba(43,255,234,0.22),rgba(43,255,234,0.05)_55%,rgba(255,255,255,0.03))] shadow-[0_0_40px_rgba(43,255,234,0.35),inset_0_1px_0_rgba(255,255,255,0.45)]'
+          : 'border-white/15 bg-[linear-gradient(150deg,rgba(255,255,255,0.10),rgba(255,255,255,0.025)_55%,rgba(255,255,255,0.01))] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.22)]'
+      } ${className}`}
+    >
+      {/* Vệt phản chiếu chéo cố định + đốm sáng theo chuột */}
+      <div className="pointer-events-none absolute -left-1/4 top-0 h-full w-1/3 -skew-x-[20deg] bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+      <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(circle_at_var(--gx,50%)_var(--gy,0%),rgba(255,255,255,0.16),transparent_55%)]" />
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
+
 /** Ba ô 300 → 242 → 15: mỗi ô một lưới 300 chấm, chấm rụng dần qua từng ô, ô cuối chỉ còn 15 chấm sáng.
  *  `step` (0–5) do vị trí cuộn quyết định, cuộn ngược thì chạy lùi. */
 function FunnelStats({ step }: { step: number }) {
@@ -141,15 +177,15 @@ function FunnelStats({ step }: { step: number }) {
     const s = S.hero.stats[i];
     const done = i === 2 && step >= 5;
     return (
-      <div
-        className={`relative overflow-hidden rounded-xl border px-2 pb-2 pt-3 text-center transition-[opacity,border-color,background-color,box-shadow] duration-700 ${
-          step >= opens[i] ? 'opacity-100' : 'opacity-35'
-        } ${done ? 'border-[#2BFFEA]/70 bg-[#2BFFEA]/10 shadow-[0_0_36px_rgba(43,255,234,0.35)]' : 'border-white/10 bg-white/[0.03]'}`}
-      >
-        <p className={`font-mono text-2xl font-bold sm:text-3xl ${i === 2 ? 'text-[#2BFFEA]' : 'text-white'}`}>
+      <GlassCard tint={done ? 'cyan' : 'clear'} className={`h-full px-2 pb-2 pt-3 text-center transition-opacity duration-700 ${step >= opens[i] ? 'opacity-100' : 'opacity-40'}`}>
+        <p
+          className={`bg-clip-text font-mono text-2xl font-bold text-transparent sm:text-4xl ${
+            i === 2 ? 'bg-gradient-to-b from-white to-[#2BFFEA] drop-shadow-[0_0_14px_rgba(43,255,234,0.55)]' : 'bg-gradient-to-b from-white to-[#9fc4d6]'
+          }`}
+        >
           {step >= opens[i] ? <Counter value={counters[i].value} ms={counters[i].ms} /> : '–'}
         </p>
-        <p className="mt-0.5 text-[11px] leading-tight text-gray-400 sm:text-xs">{s.label}</p>
+        <p className="mt-0.5 text-[11px] leading-tight text-gray-300/80 sm:text-xs">{s.label}</p>
         <DotGrid card={i} step={step} />
         {done && (
           <motion.div
@@ -159,11 +195,11 @@ function FunnelStats({ step }: { step: number }) {
             className="pointer-events-none absolute inset-y-0 left-0 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent"
           />
         )}
-      </div>
+      </GlassCard>
     );
   };
   return (
-    <div className="sa-stats flex w-full max-w-3xl items-stretch">
+    <div className="sa-stats mt-2 flex w-full max-w-3xl items-stretch">
       <div className="flex-1">{card(0)}</div>
       <Pass on={step >= 2} drop={N0 - N1} />
       <div className="flex-1">{card(1)}</div>

@@ -8,7 +8,7 @@ export type Frame = (t: number, dt: number) => void;
 
 export function startMiniScene(
   mount: HTMLElement,
-  build: (scene: THREE.Scene, camera: THREE.PerspectiveCamera) => Frame,
+  build: (scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: THREE.WebGLRenderer) => Frame,
   /** fitWidth: bề ngang (đơn vị cảnh) luôn phải lọt khung; màn hẹp thì lùi máy quay ra xa */
   opts: { fov?: number; pos?: [number, number, number]; look?: [number, number, number]; fitWidth?: number } = {},
 ) {
@@ -46,7 +46,7 @@ export function startMiniScene(
   rim.position.set(-6, 3, -6);
   scene.add(rim);
 
-  const frame = build(scene, camera);
+  const frame = build(scene, camera, renderer);
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clock = new THREE.Clock();
   let raf = 0;
@@ -91,6 +91,7 @@ export function startMiniScene(
         m.dispose();
       });
     });
+    scene.environment?.dispose();
     renderer.dispose();
     renderer.domElement.remove();
   };

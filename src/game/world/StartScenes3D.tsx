@@ -1,6 +1,7 @@
 /**
  * Hai cảnh 3D của trang Bắt đầu ở đây:
- *  - FilterScene: phễu 3 tầng. Ý tưởng gốc + khung nến rơi vào, ghép thành chiến lược có tên thật, đem đi đo rồi tách Đạt / Không đạt.
+ *  - FilterScene: phễu kính 3 tầng. Ý tưởng gốc + khung nến rơi vào, ghép thành chiến lược có tên thật, đem đi đo rồi rơi thành
+ *    viên bi vào bình kính Đạt / Không đạt; bình Không đạt đầy rất nhanh, bình Đạt lèo tèo vài viên.
  *  - CalendarScene: tờ lịch có 2 ngày giao dịch cuối tháng sáng "Mua", tờ tháng sau sáng ngày giao dịch thứ 3 "Bán".
  * Không biểu đồ giá, không mũi tên, không đồng xu.
  */
@@ -94,9 +95,9 @@ export function FilterScene({ className = '' }: { className?: string }) {
         const v = d.verdict_da_chay as Record<string, number>;
         // Màn hẹp: phễu thu bề ngang, chữ to hơn, nhãn tầng đặt phía trên vành thay vì bên trái
         const narrow = mount.clientWidth < 640;
-        stop = startMiniScene(mount, (scene) => buildFilter(scene, list, v['CHẤT'] ?? 0, (v['CHÁT'] ?? 0) + (v['TÌNH HUỐNG'] ?? 0), narrow), {
-          pos: [0, 1.4, 15],
-          look: [0, 0.4, 0],
+        stop = startMiniScene(mount, (scene, _camera, renderer) => buildFilter(scene, renderer, list, v['CHẤT'] ?? 0, (v['CHÁT'] ?? 0) + (v['TÌNH HUỐNG'] ?? 0), narrow), {
+          pos: [0, 0.6, 15],
+          look: [0, -0.4, 0],
           fov: 42,
           fitWidth: narrow ? 8.4 : 12.5,
         });
@@ -110,86 +111,247 @@ export function FilterScene({ className = '' }: { className?: string }) {
   return <div ref={ref} className={className} aria-hidden />;
 }
 
-function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failCount: number, narrow: boolean): Frame {
+/** Viền sáng kiểu kính: mép nghiêng so với mắt nhìn thì sáng, mặt chính diện thì trong (rẻ, không cần vẽ thêm lượt) */
+function rimMaterial(color: number, amp: number, pow = 2.4) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: new THREE.Color(color) }, uAmp: { value: amp }, uPow: { value: pow } },
+    vertexShader: `varying vec3 vN; varying vec3 vV;
+      void main() {
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vN = normalize(mat3(modelMatrix) * normal);
+        vV = normalize(cameraPosition - wp.xyz);
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }`,
+    fragmentShader: `uniform vec3 uColor; uniform float uAmp; uniform float uPow; varying vec3 vN; varying vec3 vV;
+      void main() {
+        float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), uPow) * uAmp;
+        gl_FragColor = vec4(uColor * f, f);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+  });
+}
+
+/** Thân kính: gần trong suốt, chỉ hiện vệt phản chiếu của môi trường và đèn */
+function glassMaterial(tint = 0xbfefff, opacity = 0.1) {
+  return new THREE.MeshPhysicalMaterial({
+    color: tint,
+    metalness: 0,
+    roughness: 0.05,
+    clearcoat: 1,
+    clearcoatRoughness: 0.05,
+    envMapIntensity: 1.6,
+    transparent: true,
+    opacity,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+}
+
+/** Một khối kính tròn xoay từ đường viền (r, y) + lớp viền sáng */
+function glassLathe(profile: THREE.Vector2[], rim: number, rimAmp: number, opacity?: number) {
+  const geo = new THREE.LatheGeometry(profile, 64);
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(geo, glassMaterial(undefined, opacity)), new THREE.Mesh(geo, rimMaterial(rim, rimAmp)));
+  return g;
+}
+
+/** Phòng sáng dựng tạm: hộp tối với vài tấm đèn, chỉ dùng để kính có vệt phản chiếu */
+function studioEnv(renderer: THREE.WebGLRenderer) {
+  const room = new THREE.Scene();
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  const walls = new THREE.Mesh(box, new THREE.MeshBasicMaterial({ color: 0x0a1622, side: THREE.BackSide }));
+  walls.scale.setScalar(20);
+  room.add(walls);
+  [
+    { p: [0, 9, 0], s: [12, 0.2, 6], c: 0xffffff },
+    { p: [-9, 2, 2], s: [0.2, 6, 3], c: 0x9ff6ff },
+    { p: [9, 3, -2], s: [0.2, 4, 6], c: 0xcfe3ee },
+    { p: [0, 1, 9], s: [6, 2, 0.2], c: 0x3df2ff },
+  ].forEach(({ p, s, c }) => {
+    const panel = new THREE.Mesh(box, new THREE.MeshBasicMaterial({ color: c }));
+    panel.position.set(p[0], p[1], p[2]);
+    panel.scale.set(s[0], s[1], s[2]);
+    room.add(panel);
+  });
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const tex = pmrem.fromScene(room, 0.04).texture;
+  pmrem.dispose();
+  box.dispose();
+  return tex;
+}
+
+let glowTex: THREE.CanvasTexture | null = null;
+/** Đốm sáng mềm dùng làm quầng sáng (cộng màu, không cần hậu kỳ) */
+function glow(color: number, size: number, opacity: number) {
+  if (!glowTex) {
+    const c = document.createElement('canvas');
+    c.width = c.height = 128;
+    const g = c.getContext('2d');
+    if (g) {
+      const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      grd.addColorStop(0, 'rgba(255,255,255,1)');
+      grd.addColorStop(0.35, 'rgba(255,255,255,0.35)');
+      grd.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = grd;
+      g.fillRect(0, 0, 128, 128);
+    }
+    glowTex = new THREE.CanvasTexture(c);
+  }
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending }));
+  s.scale.set(size, size, 1);
+  return s;
+}
+
+function buildFilter(scene: THREE.Scene, renderer: THREE.WebGLRenderer, list: Strat[], passCount: number, failCount: number, narrow: boolean): Frame {
   const W = narrow ? 0.66 : 1;
   const K = narrow ? 0.0135 : 0.0105;
-  // Ba tầng phễu: vành sáng + thân lưới nối giữa các tầng
+  // Ánh sáng môi trường để kính có vệt phản chiếu thật
+  scene.environment = studioEnv(renderer);
+
+  // Phễu kính: đường cong mềm từ miệng xuống cổ, ba vành sáng đánh dấu ba tầng
+  const curve = new THREE.SplineCurve(
+    [
+      [5.3, 3.75],
+      [4.3, 2.8],
+      [3.4, 1.2],
+      [2.5, 0],
+      [1.6, -1.2],
+      [0.8, -1.85],
+      [0.55, -2.4],
+    ].map(([r, y]) => new THREE.Vector2(r * W, y)),
+  );
+  const funnelGlass = glassLathe(curve.getPoints(48), CYAN, 1.2);
+  scene.add(funnelGlass);
+  const prof = curve.getPoints(120);
+  const radiusAt = (y: number) => prof.reduce((a, b) => (Math.abs(b.y - y) < Math.abs(a.y - y) ? b : a)).x;
+  // Bảng tra bán kính theo độ cao cho hạt sáng (tính sẵn, không tra mỗi khung hình)
+  const R_STEPS = 64;
+  const rTable = Array.from({ length: R_STEPS + 1 }, (_, i) => radiusAt(lerp(3.5, -1.8, i / R_STEPS)));
   const TIERS = [
-    { y: 3.6, r: 5.2 * W, label: '1 · Ý tưởng' },
-    { y: 1.2, r: 3.4 * W, label: '2 · Ghép thành chiến lược' },
-    { y: -1.2, r: 1.6 * W, label: '3 · Đem đi đo' },
-  ];
+    { y: 3.6, label: '1 · Ý tưởng' },
+    { y: 1.2, label: '2 · Ghép thành chiến lược' },
+    { y: -1.2, label: '3 · Đem đi đo' },
+  ].map((t) => ({ ...t, r: radiusAt(t.y) }));
   const ringMats: THREE.MeshStandardMaterial[] = [];
   TIERS.forEach((t, i) => {
-    const mat = new THREE.MeshStandardMaterial({ color: CYAN, emissive: CYAN, emissiveIntensity: i === 2 ? 1.6 : 1.1 });
+    const mat = new THREE.MeshStandardMaterial({ color: CYAN, emissive: CYAN, emissiveIntensity: i === 2 ? 1.6 : 1.1, toneMapped: false });
     ringMats.push(mat);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(t.r, 0.05, 8, 72), mat);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(t.r, i === 2 ? 0.06 : 0.035, 8, 96), mat);
     ring.rotation.x = Math.PI / 2;
     ring.position.y = t.y;
     scene.add(ring);
-    const label = chip(t.label, { bg: 'rgba(4,9,20,0.85)', border: 'rgba(61,242,255,0.5)', size: 26, k: K, anchor: narrow ? [0, 0] : [1, 0.5], top: true });
+    const label = chip(t.label, { bg: 'rgba(8,20,34,0.72)', border: 'rgba(160,240,255,0.55)', size: 26, k: K, anchor: narrow ? [0, 0] : [1, 0.5], top: true });
     // Máy tính: nhãn tầng dưới lùi ra cột ngoài, tránh đường rơi của viên tên chiến lược
     if (narrow) label.position.set(-4.1, t.y + 0.2, 0.5);
     else label.position.set(-Math.max(t.r + 0.35, 3.4), t.y, 0);
     scene.add(label);
-    const next = TIERS[i + 1];
-    if (next) {
-      const geo = new THREE.CylinderGeometry(t.r, next.r, t.y - next.y, 36, 3, true);
-      const body = new THREE.Mesh(
-        geo,
-        new THREE.MeshStandardMaterial({ color: 0x0b2236, emissive: 0x00486b, emissiveIntensity: 0.5, transparent: true, opacity: 0.32, side: THREE.DoubleSide, depthWrite: false }),
-      );
-      body.add(new THREE.LineSegments(new THREE.WireframeGeometry(geo), new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: 0.16 })));
-      body.position.y = (t.y + next.y) / 2;
-      scene.add(body);
+  });
+  // Vành đo: quầng sáng đổi màu theo kết quả
+  const measureGlow = glow(CYAN, 3.2 * W + 1, 0.35);
+  measureGlow.position.set(0, TIERS[2].y, 0);
+  scene.add(measureGlow);
+  // Hạt sáng lơ lửng trôi chậm xuống trong lòng phễu cho cảnh có hơi thở
+  const MOTES = 90;
+  const moteGeo = new THREE.BufferGeometry();
+  const motePos = new Float32Array(MOTES * 3);
+  const moteSeed = Array.from({ length: MOTES }, () => [Math.random(), Math.random() * Math.PI * 2, Math.random()]);
+  moteGeo.setAttribute('position', new THREE.BufferAttribute(motePos, 3));
+  const motes = new THREE.Points(moteGeo, new THREE.PointsMaterial({ color: 0x9ff6ff, size: 0.07, transparent: true, opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending }));
+  scene.add(motes);
+
+  // Đáy: hai bình kính, Đạt (trái) và Không đạt (phải); mỗi chiến lược đo xong rơi vào thành một viên bi
+  const JW = narrow ? 0.8 : 1.22;
+  const BIN_Y = -3.95;
+  // Thành bình không gồm đáy: đáy phẳng nhìn nghiêng bị viền sáng tô kín, trông như bình đã đầy
+  const jarProfile = [
+    [0.9, -0.95],
+    [1.02, -0.86],
+    [1.05, -0.6],
+    [1.05, 0.85],
+    [1.16, 0.97],
+  ].map(([r, y]) => new THREE.Vector2(r * JW, y * JW));
+  const BEAD = 0.15 * JW;
+  const slotsFor = (cap: number) => {
+    const R = 0.98 * JW - BEAD - 0.04;
+    const rings: [number, number][] = [
+      [0, 1],
+      [R * 0.5, 6],
+      [R, 12],
+    ];
+    const out: THREE.Vector3[] = [];
+    for (let layer = 0; out.length < cap; layer++) {
+      for (const [r, n] of rings) {
+        for (let i = 0; i < n && out.length < cap; i++) {
+          const a = (i / n) * Math.PI * 2 + layer * 0.55;
+          out.push(new THREE.Vector3(Math.cos(a) * r + (Math.random() - 0.5) * 0.04, -0.95 * JW + BEAD + layer * BEAD * 1.75, Math.sin(a) * r));
+        }
+      }
     }
+    return out;
+  };
+  const jars = [
+    { pass: true, x: -3.6 * (narrow ? 0.62 : 1), cap: 15, color: ACCENT, text: `ĐẠT · ${passCount}`, bg: 'rgba(43,255,234,0.16)', border: '#9ff6ff', fg: '#2BFFEA' },
+    { pass: false, x: 3.6 * (narrow ? 0.62 : 1), cap: 110, color: 0x8794a3, text: `KHÔNG ĐẠT · ${failCount}`, bg: 'rgba(120,135,150,0.2)', border: '#a9b6c2', fg: '#d5dee6' },
+  ].map((j) => {
+    const g = glassLathe(jarProfile, j.pass ? ACCENT : 0x9fb0bf, j.pass ? 1.6 : 0.9, 0.08);
+    g.position.set(j.x, BIN_Y, 0);
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(0.9 * JW, 48), glassMaterial(undefined, 0.12));
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.95 * JW;
+    g.add(floor);
+    const mat = j.pass
+      ? new THREE.MeshStandardMaterial({ color: ACCENT, emissive: ACCENT, emissiveIntensity: 1.4, roughness: 0.2, toneMapped: false })
+      : new THREE.MeshStandardMaterial({ color: 0x6b7684, roughness: 0.35, metalness: 0.4 });
+    const beads = new THREE.InstancedMesh(new THREE.SphereGeometry(BEAD, 16, 12), mat, j.cap);
+    beads.count = 0;
+    g.add(beads);
+    const halo = glow(j.color, 3.4 * JW, j.pass ? 0.12 : 0.05);
+    halo.position.set(0, -0.2 * JW, -0.3);
+    g.add(halo);
+    const label = chip(j.text, { bg: j.bg, border: j.border, color: j.fg, size: narrow ? 24 : 30, k: K, top: true });
+    label.position.set(j.x, BIN_Y - 0.95 * JW - 0.75, 0);
+    scene.add(g, label);
+    return { ...j, beads, halo, slots: slotsFor(j.cap), filled: 0, falling: [] as { slot: number; t: number }[] };
   });
+  const JAR_TOP = BIN_Y + 1.3 * JW;
+  let drain = 0;
+  const m4 = new THREE.Matrix4();
+  const v3 = new THREE.Vector3();
+  const q = new THREE.Quaternion();
+  const one = new THREE.Vector3(1, 1, 1);
+  const drop = (pass: boolean) => {
+    const j = jars[pass ? 0 : 1];
+    if (drain > 0 || j.filled + j.falling.length >= j.cap) return;
+    j.falling.push({ slot: j.filled + j.falling.length, t: 0 });
+  };
 
-  // Đáy: hai máng tách sang Đạt (trái, sáng) và Không đạt (phải, tối)
-  const BIN_Y = -4.1;
-  const bins = [
-    { x: -3.6 * (narrow ? 0.6 : 1), color: ACCENT, text: `ĐẠT · ${passCount}`, bg: 'rgba(43,255,234,0.18)', border: '#2BFFEA', fg: '#2BFFEA' },
-    { x: 3.6 * (narrow ? 0.6 : 1), color: 0x5a6676, text: `KHÔNG ĐẠT · ${failCount}`, bg: 'rgba(90,102,118,0.25)', border: '#7a8a9a', fg: '#c5d0da' },
-  ];
-  bins.forEach((b) => {
-    const tray = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.5 * W, 1.2 * W, 0.35, 32),
-      new THREE.MeshStandardMaterial({ color: b.color, emissive: b.color, emissiveIntensity: b.color === ACCENT ? 0.9 : 0.15, transparent: true, opacity: 0.75 }),
-    );
-    tray.position.set(b.x, BIN_Y, 0);
-    const label = chip(b.text, { bg: b.bg, border: b.border, color: b.fg, size: narrow ? 24 : 30, k: K, top: true });
-    label.position.set(b.x, BIN_Y - 0.95, 0);
-    scene.add(tray, label);
-  });
-  // Mũi chia đôi ngay dưới tầng đo
-  const splitter = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.6, 4), new THREE.MeshStandardMaterial({ color: CYAN, emissive: CYAN, emissiveIntensity: 1 }));
-  splitter.position.y = -2.3;
-  scene.add(splitter);
-
-  // Dòng chảy: mỗi lượt là 2 viên ý tưởng (ý tưởng + khung nến) → ghép thành 1 viên tên chiến lược → đo → sang máng
+  // Dòng chảy: mỗi lượt là 2 viên ý tưởng (ý tưởng + khung nến) → ghép thành 1 viên tên chiến lược → đo → rơi vào bình
   const order = list.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
   let next = 0;
-  type Flow = { s: Strat; a: THREE.Sprite; b: THREE.Sprite; c: THREE.Sprite; x: number; z: number; t: number; judged: boolean };
+  type Flow = { s: Strat; a: THREE.Sprite; b: THREE.Sprite; c: THREE.Sprite; x: number; z: number; t: number; judged: boolean; dropped: boolean };
   const flows: Flow[] = [];
   const DUR = 6.5;
   const spawn = () => {
     if (!list.length) return;
     const s = list[order[next % order.length]];
     next += 1;
-    const a = chip(IDEA[s.ho] ?? s.ho, { bg: 'rgba(11,34,54,0.92)', border: 'rgba(61,242,255,0.6)', size: 26, k: K });
-    const b = chip(TF[s.tf] ?? s.tf, { bg: 'rgba(11,34,54,0.92)', border: 'rgba(255,221,0,0.6)', size: 26, k: K });
+    const a = chip(IDEA[s.ho] ?? s.ho, { bg: 'rgba(200,240,255,0.14)', border: 'rgba(160,240,255,0.7)', size: 26, k: K });
+    const b = chip(TF[s.tf] ?? s.tf, { bg: 'rgba(255,240,180,0.12)', border: 'rgba(255,221,0,0.65)', color: '#fff6cc', size: 26, k: K });
     const name = s.ten.length > (narrow ? 22 : 34) ? `${s.ten.slice(0, narrow ? 21 : 33).trimEnd()}…` : s.ten;
-    const c = chip(name, { bg: 'rgba(214,226,238,0.95)', border: '#3df2ff', color: '#04131c', size: 28, k: K });
+    const c = chip(name, { bg: 'rgba(61,242,255,0.2)', border: 'rgba(200,250,255,0.9)', color: '#ffffff', size: 28, k: K });
     c.material.opacity = 0;
     const ang = Math.random() * Math.PI * 2;
     const x = Math.cos(ang) * (1 + Math.random() * 2.2) * W;
     const z = Math.sin(ang) * 1.2;
     scene.add(a, b, c);
-    flows.push({ s, a, b, c, x, z, t: 0, judged: false });
+    flows.push({ s, a, b, c, x, z, t: 0, judged: false, dropped: false });
   };
   const flash = { v: 0, pass: false };
   let gap = 0;
@@ -201,11 +363,25 @@ function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failC
       gap = 1.15;
     }
     ringMats.forEach((m, i) => (m.emissiveIntensity = (i === 2 ? 1.5 : 1) + Math.sin(t * 2 + i) * 0.2));
-    flash.v = Math.max(0, flash.v - dt * 2);
-    ringMats[2].color.setHex(flash.v > 0 && !flash.pass ? 0x8a96a4 : CYAN);
-    ringMats[2].emissive.setHex(flash.v > 0 && !flash.pass ? 0x3a4656 : flash.v > 0 ? ACCENT : CYAN);
+    flash.v = Math.max(0, flash.v - dt * 1.6);
+    const failFlash = flash.v > 0 && !flash.pass;
+    ringMats[2].color.setHex(failFlash ? 0x8a96a4 : CYAN);
+    ringMats[2].emissive.setHex(failFlash ? 0x3a4656 : flash.v > 0 ? ACCENT : CYAN);
     ringMats[2].emissiveIntensity += flash.v * 2;
-    splitter.rotation.y = t;
+    measureGlow.material.color.setHex(failFlash ? 0x6b7684 : flash.v > 0 ? ACCENT : CYAN);
+    measureGlow.material.opacity = 0.25 + flash.v * 0.55;
+    funnelGlass.rotation.y = t * 0.08;
+
+    // Hạt sáng: xoắn nhẹ và trôi xuống theo lòng phễu
+    for (let i = 0; i < MOTES; i++) {
+      const [h0, a0, rr] = moteSeed[i];
+      const h = (h0 + t * 0.04) % 1;
+      const y = lerp(3.5, -1.8, h);
+      const r = rTable[Math.round(h * R_STEPS)] * (0.25 + rr * 0.6);
+      const a = a0 + t * 0.25 + h * 2;
+      motePos.set([Math.cos(a) * r, y, Math.sin(a) * r], i * 3);
+    }
+    moteGeo.attributes.position.needsUpdate = true;
 
     for (let k = flows.length - 1; k >= 0; k--) {
       const f = flows[k];
@@ -221,9 +397,8 @@ function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failC
       f.b.position.set(bx, y12 + 0.05, f.z);
       // Tầng 2: hai viên chập lại, hiện viên tên chiến lược
       const m = seg(u, 0.46, 0.56);
-      const fadeAB = 1 - m;
-      f.a.material.opacity = fadeAB;
-      f.b.material.opacity = fadeAB;
+      f.a.material.opacity = 1 - m;
+      f.b.material.opacity = 1 - m;
       const cAppear = ease(m);
       // Tầng 3: viên chiến lược rơi qua vành đo
       const p3 = ease(seg(u, 0.56, 0.74));
@@ -233,17 +408,21 @@ function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failC
         f.judged = true;
         flash.v = 1;
         flash.pass = f.s.pass;
-        f.c.material.color.setHex(f.s.pass ? 0xb8fff6 : 0x6b7684);
+        f.c.material.color.setHex(f.s.pass ? 0xc8fff8 : 0x7a8590);
       }
-      // Tách sang máng Đạt / Không đạt
-      const bin = f.s.pass ? bins[0] : bins[1];
+      // Bay sang miệng bình, tan thành một viên bi rơi vào
+      const jar = jars[f.s.pass ? 0 : 1];
       const p4 = ease(seg(u, 0.76, 0.94));
-      const fx = lerp(cx, bin.x, p4);
-      const fy = lerp(cy, BIN_Y + 0.45, p4) + Math.sin(Math.PI * p4) * 0.5;
+      const fx = lerp(cx, jar.x, p4);
+      const fy = lerp(cy, JAR_TOP + 0.35, p4) + Math.sin(Math.PI * p4) * 0.6;
       f.c.position.set(fx, fy, f.z * (1 - p3));
+      if (!f.dropped && u >= 0.94) {
+        f.dropped = true;
+        drop(f.s.pass);
+      }
       const out = 1 - seg(u, 0.94, 1);
       f.c.material.opacity = Math.min(cAppear, out);
-      const grow = 0.6 + 0.4 * cAppear;
+      const grow = (0.6 + 0.4 * cAppear) * (0.5 + 0.5 * out);
       const [bw, bh] = f.c.userData.base as [number, number];
       f.c.scale.set(bw * grow, bh * grow, 1);
       if (u >= 1) {
@@ -255,6 +434,41 @@ function buildFilter(scene: THREE.Scene, list: Strat[], passCount: number, failC
         flows.splice(k, 1);
       }
     }
+
+    // Bi rơi vào bình, nảy nhẹ khi chạm đống; bình Không đạt đầy thì đổ hết, đếm lại từ đầu
+    jars.forEach((j) => {
+      for (let i = j.falling.length - 1; i >= 0; i--) {
+        const b = j.falling[i];
+        b.t += dt / 0.7;
+        const s = j.slots[b.slot];
+        const topY = 1.3 * JW;
+        const y = b.t < 1 ? lerp(topY, s.y, b.t * b.t) : s.y + Math.sin(Math.PI * Math.min((b.t - 1) * 3, 1)) * 0.08 * JW;
+        v3.set(lerp(0, s.x, Math.min(b.t, 1)), y, lerp(0, s.z, Math.min(b.t, 1)));
+        j.beads.setMatrixAt(b.slot, m4.compose(v3, q, one));
+        if (b.t >= 1.34) {
+          j.falling.splice(i, 1);
+          j.filled += 1;
+        }
+      }
+      j.beads.count = j.filled + j.falling.length;
+      if (drain > 0) {
+        const k = Math.max(drain - dt, 0) / 1.2;
+        for (let i = 0; i < j.beads.count; i++) j.beads.setMatrixAt(i, m4.compose(j.slots[i], q, v3.setScalar(k)));
+      }
+      j.beads.instanceMatrix.needsUpdate = true;
+      if (j.pass) j.halo.material.opacity = 0.12 + (j.filled / j.cap) * 0.35 + Math.sin(t * 2) * 0.03;
+    });
+    if (drain > 0) {
+      drain -= dt;
+      if (drain <= 0) {
+        drain = 0;
+        jars.forEach((j) => {
+          j.filled = 0;
+          j.falling.length = 0;
+          j.beads.count = 0;
+        });
+      }
+    } else if (jars[1].filled >= jars[1].cap) drain = 1.2;
   };
 }
 
