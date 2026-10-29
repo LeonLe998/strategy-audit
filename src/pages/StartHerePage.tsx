@@ -1,33 +1,43 @@
 /**
  * Đảo 1 · Bắt đầu ở đây (/hanh-trinh): trang thu hút cho người mới, thay trò chơi Màn 1–2.
  * Năm màn hình, mỗi màn một hình lớn + một câu: phễu lọc 3D · cái cân · bốn thẻ bị đóng dấu · tờ lịch 3D · câu hỏi chốt.
+ * Cuộn mượt bằng Lenis; phễu, cái cân và con dấu chạy theo vị trí cuộn bằng GSAP ScrollTrigger (cuộn ngược thì chạy lùi).
  * Chữ ở START_HERE trong content/journey.ts.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
+import { useGSAP } from '@gsap/react';
 import { START_HERE } from '../content/journey';
 import { FilterScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
+import { useSmoothScroll } from '../lib/smoothScroll';
+
+gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
 const S = START_HERE;
 /** Hiệu ứng chỉ chạy khi phần đó đã lên tới khoảng giữa màn hình, không chạy sớm lúc vừa ló ở mép dưới */
 const REACHED = '0px 0px -30% 0px';
 
-/** Đếm từ `from` tới `to` khi `run` bật */
-function Counter({ from, to, run, ms }: { from: number; to: number; run: boolean; ms: number }) {
-  const [n, setN] = useState(from);
+/** Số chạy mượt tới `value`; giá trị đổi (kể cả khi cuộn ngược) thì chạy tiếp từ số đang hiện */
+function Counter({ value, ms }: { value: number; ms: number }) {
+  const [n, setN] = useState(value);
+  const cur = useRef(value);
   useEffect(() => {
-    if (!run) return;
+    const from = cur.current;
     const start = performance.now();
     let raf = 0;
     const step = (now: number) => {
       const k = Math.min((now - start) / ms, 1);
-      setN(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3))));
+      cur.current = Math.round(from + (value - from) * (1 - Math.pow(1 - k, 3)));
+      setN(cur.current);
       if (k < 1) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [run, from, to, ms]);
+  }, [value, ms]);
   return <>{n}</>;
 }
 
@@ -120,25 +130,13 @@ function Pass({ on, drop }: { on: boolean; drop: number }) {
   );
 }
 
-/** Ba ô 300 → 242 → 15: mỗi ô một lưới 300 chấm, chấm rụng dần qua từng ô, ô cuối chỉ còn 15 chấm sáng */
-function FunnelStats() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.5, margin: '0px 0px -10% 0px' });
-  const reduce = useReducedMotion();
-  const [step, setStep] = useState(0);
-  useEffect(() => {
-    if (!inView) return;
-    if (reduce) {
-      setStep(5);
-      return;
-    }
-    const ts = [0, 1300, 1900, 3000, 3700].map((ms, i) => window.setTimeout(() => setStep(i + 1), ms));
-    return () => ts.forEach(clearTimeout);
-  }, [inView, reduce]);
+/** Ba ô 300 → 242 → 15: mỗi ô một lưới 300 chấm, chấm rụng dần qua từng ô, ô cuối chỉ còn 15 chấm sáng.
+ *  `step` (0–5) do vị trí cuộn quyết định, cuộn ngược thì chạy lùi. */
+function FunnelStats({ step }: { step: number }) {
   const counters = [
-    { from: 0, run: step >= 1, ms: 1100 },
-    { from: N0, run: step >= 3, ms: 900 },
-    { from: N1, run: step >= 5, ms: 1400 },
+    { value: step >= 1 ? N0 : 0, ms: 1100 },
+    { value: step >= 3 ? N1 : N0, ms: 900 },
+    { value: step >= 5 ? N2 : N1, ms: 1400 },
   ];
   const opens = [1, 2, 4];
   const card = (i: number) => {
@@ -151,7 +149,7 @@ function FunnelStats() {
         } ${done ? 'border-[#2BFFEA]/70 bg-[#2BFFEA]/10 shadow-[0_0_36px_rgba(43,255,234,0.35)]' : 'border-white/10 bg-white/[0.03]'}`}
       >
         <p className={`font-mono text-2xl font-bold sm:text-3xl ${i === 2 ? 'text-[#2BFFEA]' : 'text-white'}`}>
-          {step >= opens[i] ? <Counter from={counters[i].from} to={s.n} run={counters[i].run} ms={counters[i].ms} /> : '–'}
+          {step >= opens[i] ? <Counter value={counters[i].value} ms={counters[i].ms} /> : '–'}
         </p>
         <p className="mt-0.5 text-[11px] leading-tight text-gray-400 sm:text-xs">{s.label}</p>
         <DotGrid card={i} step={step} />
@@ -167,13 +165,55 @@ function FunnelStats() {
     );
   };
   return (
-    <div ref={ref} className="flex w-full max-w-3xl items-stretch">
+    <div className="flex w-full max-w-3xl items-stretch">
       <div className="flex-1">{card(0)}</div>
       <Pass on={step >= 2} drop={N0 - N1} />
       <div className="flex-1">{card(1)}</div>
       <Pass on={step >= 4} drop={N1 - N2} />
       <div className="flex-1">{card(2)}</div>
     </div>
+  );
+}
+
+/** Màn đầu: tiêu đề hiện từng chữ; khi phễu và ba ô lên đủ màn hình thì ghim lại,
+ *  cuộn tiếp sẽ cho ba ô lọc dần 300 → 242 → 15 thay vì trôi qua mất */
+function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const [step, setStep] = useState(0);
+  useGSAP(
+    () => {
+      if (reduce) {
+        setStep(5);
+        return;
+      }
+      const split = SplitText.create('.sa-title', { type: 'words' });
+      gsap.from(split.words, { y: 34, opacity: 0, filter: 'blur(6px)', stagger: 0.07, duration: 0.8, ease: 'power3.out', delay: 0.15 });
+      const at = (p: number) => (p < 0.12 ? 1 : p < 0.26 ? 2 : p < 0.42 ? 3 : p < 0.56 ? 4 : 5);
+      const st = ScrollTrigger.create({
+        trigger: ref.current,
+        start: 'clamp(bottom bottom)',
+        end: '+=110%',
+        pin: true,
+        onUpdate: (self) => setStep(at(self.progress)),
+        onEnter: () => setStep(1),
+        onLeaveBack: () => setStep(0),
+      });
+      // Màn đã vừa khung ngay từ đầu (máy tính) thì cho ô 1 sáng luôn
+      if (st.isActive) setStep(1);
+      // Phông chữ tải xong làm tiêu đề đổi chiều cao: đo lại điểm ghim
+      document.fonts?.ready.then(() => ScrollTrigger.refresh());
+    },
+    { scope: ref, dependencies: [reduce] },
+  );
+  return (
+    <section ref={ref} data-start="hero" className="flex min-h-[86vh] flex-col items-center justify-center py-14">
+      <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#3df2ff]">{S.hero.kicker}</p>
+      <h1 className="sa-title mt-3 max-w-3xl text-center text-3xl font-bold leading-tight text-white sm:text-5xl">{S.hero.title}</h1>
+      <FilterScene className="mt-2 h-[58vh] min-h-[340px] w-full max-w-4xl" />
+      <FunnelStats step={step} />
+      <p className="mt-8 animate-pulse text-xs text-gray-500">{S.hero.scroll}</p>
+    </section>
   );
 }
 
@@ -200,14 +240,28 @@ function Line({ title, body }: { title: string; body: string }) {
   );
 }
 
-/** Cái cân: bên trái nhiều khối thắng nhỏ, bên phải vài khối thua to, cân nghiêng về phía thua */
+/** Cái cân: khối thắng nhỏ rơi vào đĩa trái, vài khối thua to rơi vào đĩa phải, rồi cân nghiêng về phía thua.
+ *  Cả chuỗi chạy theo vị trí cuộn: cuộn tới đâu dựng tới đó, cuộn ngược thì tháo ra. */
 function Scale() {
   const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.8, margin: REACHED });
-  const tilt = inView ? 9 : 0;
+  const reduce = useReducedMotion();
+  useGSAP(
+    () => {
+      const tl = reduce ? gsap.timeline() : gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'top 80%', end: 'center 40%', scrub: 0.6 } });
+      if (!reduce) {
+        tl.from('.sa-win', { y: -90, opacity: 0, stagger: 0.06, ease: 'bounce.out', duration: 0.5 });
+        tl.from('.sa-loss', { y: -120, opacity: 0, stagger: 0.18, ease: 'bounce.out', duration: 0.6 }, '>-0.1');
+      }
+      tl.to('.sa-beam', { rotation: 9, svgOrigin: '210 118', ease: 'power2.inOut', duration: 1 });
+      tl.to('.sa-pan-l', { rotation: -9, svgOrigin: '75 118', ease: 'power2.inOut', duration: 1 }, '<');
+      tl.to('.sa-pan-r', { rotation: -9, svgOrigin: '345 118', ease: 'power2.inOut', duration: 1 }, '<');
+      if (reduce) tl.progress(1);
+    },
+    { scope: ref, dependencies: [reduce] },
+  );
   const small = Array.from({ length: 9 }, (_, i) => ({ x: (i % 3) * 22, y: -Math.floor(i / 3) * 18 }));
   return (
-    <svg ref={ref} viewBox="0 0 420 260" className="w-full max-w-xl" role="img" aria-label={`${S.winRate.wins} và ${S.winRate.losses}, cân nghiêng về phía thua`}>
+    <svg ref={ref} viewBox="0 0 420 260" className="w-full max-w-xl overflow-visible" role="img" aria-label={`${S.winRate.wins} và ${S.winRate.losses}, cân nghiêng về phía thua`}>
       <defs>
         <filter id="sa-glow" x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="3" result="b" />
@@ -220,53 +274,61 @@ function Scale() {
       {/* Chân cân */}
       <path d="M190 236 L230 236 L214 120 L206 120 Z" fill="#1b2a3a" stroke="#3df2ff" strokeOpacity="0.4" />
       <rect x="160" y="236" width="100" height="10" rx="4" fill="#1b2a3a" stroke="#3df2ff" strokeOpacity="0.4" />
-      <motion.g style={{ originX: '210px', originY: '118px' }} animate={{ rotate: tilt }} transition={{ type: 'spring', stiffness: 40, damping: 8, delay: 0.3 }}>
+      <g className="sa-beam">
         <rect x="40" y="114" width="340" height="8" rx="4" fill="#3df2ff" filter="url(#sa-glow)" />
         <circle cx="210" cy="118" r="9" fill="#2BFFEA" filter="url(#sa-glow)" />
         {/* Đĩa trái: lệnh thắng nhỏ */}
-        <motion.g animate={{ rotate: -tilt }} style={{ originX: '75px', originY: '118px' }} transition={{ type: 'spring', stiffness: 40, damping: 8, delay: 0.3 }}>
+        <g className="sa-pan-l">
           <line x1="75" y1="118" x2="40" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
           <line x1="75" y1="118" x2="110" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
           <rect x="30" y="176" width="90" height="6" rx="3" fill="#2b3647" />
           {small.map((b, i) => (
-            <rect key={i} x={45 + b.x} y={158 + b.y} width="16" height="16" rx="3" fill="#2BFFEA" fillOpacity="0.85" filter="url(#sa-glow)" />
+            <rect key={i} className="sa-win" x={45 + b.x} y={158 + b.y} width="16" height="16" rx="3" fill="#2BFFEA" fillOpacity="0.85" filter="url(#sa-glow)" />
           ))}
-        </motion.g>
+        </g>
         {/* Đĩa phải: lệnh thua to */}
-        <motion.g animate={{ rotate: -tilt }} style={{ originX: '345px', originY: '118px' }} transition={{ type: 'spring', stiffness: 40, damping: 8, delay: 0.3 }}>
+        <g className="sa-pan-r">
           <line x1="345" y1="118" x2="310" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
           <line x1="345" y1="118" x2="380" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
           <rect x="300" y="176" width="90" height="6" rx="3" fill="#2b3647" />
-          <rect x="306" y="136" width="38" height="40" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
-          <rect x="346" y="146" width="38" height="30" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
-          <rect x="322" y="100" width="44" height="36" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
-        </motion.g>
-      </motion.g>
+          <rect className="sa-loss" x="306" y="136" width="38" height="40" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
+          <rect className="sa-loss" x="346" y="146" width="38" height="30" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
+          <rect className="sa-loss" x="322" y="100" width="44" height="36" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
+        </g>
+      </g>
       <text x="75" y="256" textAnchor="middle" fontSize="13" fill="#2BFFEA">{S.winRate.wins}</text>
       <text x="345" y="256" textAnchor="middle" fontSize="13" fill="#9fb0bf">{S.winRate.losses}</text>
     </svg>
   );
 }
 
-/** Bốn thẻ trường phái, con dấu KHÔNG QUA đóng lần lượt khi cuộn tới */
+/** Bốn thẻ trường phái, con dấu KHÔNG QUA đóng lần lượt theo nhịp cuộn, mỗi lần đóng thẻ khẽ rung và viền chuyển đỏ */
 function StampedCards() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.7, margin: REACHED });
+  const reduce = useReducedMotion();
+  useGSAP(
+    () => {
+      if (reduce) return;
+      const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'top 75%', end: 'bottom 45%', scrub: 0.5 } });
+      gsap.utils.toArray<HTMLElement>('.sa-card').forEach((card, i) => {
+        const at = i * 0.6;
+        tl.from(card.querySelector('.sa-stamp'), { opacity: 0, scale: 2.4, rotation: -30, ease: 'back.out(2.5)', duration: 0.45 }, at);
+        tl.to(card, { x: 4, yoyo: true, repeat: 3, duration: 0.04, ease: 'none' }, at + 0.4);
+        tl.to(card, { borderColor: 'rgba(255,90,106,0.55)', duration: 0.2 }, at + 0.4);
+      });
+    },
+    { scope: ref, dependencies: [reduce] },
+  );
   return (
     <div ref={ref} className="grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-      {S.popular.cards.map((c, i) => (
-        <div key={c.name} className="relative flex min-h-[11rem] flex-col justify-between gap-1 overflow-hidden rounded-2xl sm:aspect-[3/4] border border-[#3df2ff]/30 bg-[#0b1a28] p-4">
+      {S.popular.cards.map((c) => (
+        <div key={c.name} className="sa-card relative flex min-h-[11rem] flex-col justify-between gap-1 overflow-hidden rounded-2xl border border-[#3df2ff]/30 bg-[#0b1a28] p-4 sm:aspect-[3/4]">
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#3df2ff]/0 via-[#3df2ff]/60 to-[#3df2ff]/0" />
           <p className="text-base font-bold text-white sm:text-lg">{c.name}</p>
           <div className="pointer-events-none flex w-full justify-center py-2">
-            <motion.div
-              initial={{ opacity: 0, scale: 2.2, rotate: -24 }}
-              animate={inView ? { opacity: 1, scale: 1, rotate: -14 } : { opacity: 0, scale: 2.2, rotate: -24 }}
-              transition={{ delay: 0.3 + i * 0.45, type: 'spring', stiffness: 260, damping: 14 }}
-              className="whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#0b1a28]/70 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] sm:text-base"
-            >
+            <div className="sa-stamp -rotate-[14deg] whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#0b1a28]/70 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] sm:text-base">
               {S.popular.stamp}
-            </motion.div>
+            </div>
           </div>
           <p className="font-mono text-xs leading-snug text-gray-400">
             <span className="block text-2xl font-bold text-gray-200">{c.count}</span>
@@ -279,6 +341,7 @@ function StampedCards() {
 }
 
 export default function StartHerePage({ onGo }: { onGo: (tab: string) => void }) {
+  useSmoothScroll();
   const go = (tab: string) => {
     funnel.nextStep('journey', tab);
     onGo(tab);
@@ -286,13 +349,7 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
   return (
     <div data-start-here className="mx-auto max-w-5xl px-4">
       {/* 1 · Phễu lọc */}
-      <Screen id="hero">
-        <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#3df2ff]">{S.hero.kicker}</p>
-        <h1 className="mt-3 max-w-3xl text-center text-3xl font-bold leading-tight text-white sm:text-5xl">{S.hero.title}</h1>
-        <FilterScene className="mt-2 h-[58vh] min-h-[340px] w-full max-w-4xl" />
-        <FunnelStats />
-        <p className="mt-8 animate-pulse text-xs text-gray-500">{S.hero.scroll}</p>
-      </Screen>
+      <Hero />
 
       {/* 2 · Cái cân */}
       <Screen id="win-rate">
