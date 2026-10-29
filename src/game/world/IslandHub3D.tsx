@@ -35,6 +35,8 @@ const COLOR = {
   fail: 0x18222f,
 };
 
+/** Mỗi đảo một màu nhấn (theo thứ tự HUB.islands): Bắt đầu · Vì sao · Sáu ô · Thư viện · Lộ trình · Thành viên */
+const ACCENTS = [0x2bffea, 0x4da3ff, 0x9b8cff, 0xffc857, 0x4edea3, 0xff7eb6];
 const ISLAND_R = 3.2;
 const TOP = 0.3;
 const SAG = 0.35;
@@ -62,9 +64,12 @@ interface Bridge {
 }
 
 /** Xếp 6 đảo hình rắn theo thứ tự đọc: màn ngang 3 cột × 2 hàng, màn dọc 2 cột × 3 hàng. u = lên trên màn hình, v = sang phải. */
-function makeLayout(wide: boolean) {
+function makeLayout(aspect: number) {
+  const wide = aspect >= 1;
+  // Màn rất ngang (máy tính màn rộng): giãn khoảng cách cột để cụm đảo không dồn giữa, hai bên trống
+  const sv = aspect > 1.9 ? 15.5 : aspect > 1.5 ? 13.5 : 12;
   const grid = wide
-    ? [[12, -12], [12, 0], [12, 12], [0, 12], [0, 0], [0, -12]]
+    ? [[12, -sv], [12, 0], [12, sv], [0, sv], [0, 0], [0, -sv]]
     : [[22, -5.5], [22, 5.5], [11, 5.5], [11, -5.5], [0, -5.5], [0, 5.5]];
   const lift = [0.4, 0.9, 0.2, 1.0, 0.5, 1.3];
   const isles: Isle[] = grid.map(([u, v], i) => ({ c: new THREE.Vector2((-u + v) * S2, (-u - v) * S2), y: lift[i] }));
@@ -108,11 +113,11 @@ type Spin = (t: number) => void;
 
 /** Vật liệu hướng kính (Leon chọn 29/10): mặt đảo là phiến kính xanh, đáy là pha lê tối có viền sáng */
 const glassTop = () =>
-  new THREE.MeshPhysicalMaterial({ color: 0x1f6f80, roughness: 0.14, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.1, flatShading: true, transparent: true, opacity: 0.85, envMapIntensity: 0.9 });
+  new THREE.MeshPhysicalMaterial({ color: 0x174f5e, roughness: 0.14, metalness: 0.12, clearcoat: 1, clearcoatRoughness: 0.1, flatShading: true, transparent: true, opacity: 0.88, envMapIntensity: 0.85 });
 const crystal = (color = 0x123a52, opacity = 0.9) =>
   new THREE.MeshPhysicalMaterial({ color, emissive: 0x00384f, emissiveIntensity: 0.35, roughness: 0.16, metalness: 0.1, clearcoat: 1, flatShading: true, transparent: true, opacity, envMapIntensity: 1.3 });
-const shard = () =>
-  new THREE.MeshPhysicalMaterial({ color: 0x9fe9ff, emissive: COLOR.line, emissiveIntensity: 0.25, roughness: 0.08, clearcoat: 1, flatShading: true, transparent: true, opacity: 0.75, envMapIntensity: 1.6 });
+const shard = (accent: number = COLOR.line) =>
+  new THREE.MeshPhysicalMaterial({ color: 0x9fe9ff, emissive: accent, emissiveIntensity: 0.3, roughness: 0.08, clearcoat: 1, flatShading: true, transparent: true, opacity: 0.75, envMapIntensity: 1.6 });
 
 const STONE = 0x2b3647;
 
@@ -354,37 +359,38 @@ function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.Material[], 
 function buildIsland(isle: Isle, i: number, bridgeAngles: number[], scene: THREE.Scene, pickables: THREE.Object3D[]) {
   const root = new THREE.Group();
   root.position.set(isle.c.x, isle.y, isle.c.y);
+  const A = ACCENTS[i % ACCENTS.length];
 
   const topGeo = jitter(new THREE.CylinderGeometry(ISLAND_R, ISLAND_R - 0.2, 0.6, 12), 0.18, (y) => y > 0);
   const top = new THREE.Mesh(topGeo, glassTop());
   top.receiveShadow = true;
   // Lõi sáng nằm trong phiến kính: nhìn xuyên mặt đảo thấy ánh xanh từ bên trong
-  const heart = new THREE.Mesh(new THREE.CylinderGeometry(ISLAND_R - 0.55, ISLAND_R - 0.7, 0.12, 12), glow(COLOR.line, 0.45));
+  const heart = new THREE.Mesh(new THREE.CylinderGeometry(ISLAND_R - 0.55, ISLAND_R - 0.7, 0.12, 12), glow(A, 0.45));
   heart.material.opacity = 0.3;
   const dirtGeo = jitter(new THREE.CylinderGeometry(ISLAND_R - 0.15, ISLAND_R - 0.45, 0.5, 12), 0.25, () => false);
   const dirt = new THREE.Mesh(dirtGeo, crystal(0x0d2a3b, 0.95));
   dirt.position.y = -0.52;
-  const seam = new THREE.Mesh(new THREE.TorusGeometry(ISLAND_R - 0.17, 0.035, 6, 48), glow(COLOR.line, 1.1));
+  const seam = new THREE.Mesh(new THREE.TorusGeometry(ISLAND_R - 0.17, 0.035, 6, 48), glow(A, 1.1));
   seam.rotation.x = Math.PI / 2;
   seam.position.y = -0.3;
   const rockGeo = jitter(new THREE.ConeGeometry(ISLAND_R - 0.4, 3.8, 10, 3), 0.5, () => false);
   const rock = new THREE.Mesh(rockGeo, crystal());
-  rock.add(new THREE.Mesh(rockGeo, rimMaterial(COLOR.line, 0.55, 2.2)));
+  rock.add(new THREE.Mesh(rockGeo, rimMaterial(A, 0.55, 2.2)));
   rock.rotation.x = Math.PI;
   rock.position.y = -2.7;
-  const under = glowSprite(COLOR.line, 6, 0.18);
+  const under = glowSprite(A, 7, 0.22);
   under.position.y = -3.2;
   root.add(top, heart, dirt, seam, rock, under);
 
   // Vệt sáng dưới đáy đá
-  const vein = new THREE.Mesh(new THREE.ConeGeometry(0.08, 2.6, 4), glow(COLOR.line, 1.2));
+  const vein = new THREE.Mesh(new THREE.ConeGeometry(0.08, 2.6, 4), glow(A, 1.2));
   vein.rotation.x = Math.PI;
   vein.position.set(0.6, -2.4, 0.9);
   root.add(vein);
-  root.add(new THREE.LineSegments(new THREE.EdgesGeometry(topGeo, 30), new THREE.LineBasicMaterial({ color: COLOR.line, transparent: true, opacity: 0.8 })));
+  root.add(new THREE.LineSegments(new THREE.EdgesGeometry(topGeo, 30), new THREE.LineBasicMaterial({ color: A, transparent: true, opacity: 0.8 })));
 
   // Vòng phù văn lục giác quanh vật mốc, sáng lên khi đảo được chọn
-  const rune = new THREE.MeshBasicMaterial({ color: COLOR.line, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false });
+  const rune = new THREE.MeshBasicMaterial({ color: A, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false });
   const ring = new THREE.Mesh(new THREE.RingGeometry(2.05, 2.15, 6), rune);
   ring.rotation.x = -Math.PI / 2;
   ring.position.y = TOP + 0.02;
@@ -398,13 +404,13 @@ function buildIsland(isle: Isle, i: number, bridgeAngles: number[], scene: THREE
     const x = Math.cos(ang) * rad;
     const z = Math.sin(ang) * rad;
     if (k % 3 === 2) {
-      const c = new THREE.Mesh(new THREE.OctahedronGeometry(0.18 + r() * 0.1), glow(COLOR.line, 0.9));
+      const c = new THREE.Mesh(new THREE.OctahedronGeometry(0.18 + r() * 0.1), glow(A, 0.9));
       c.position.set(x, TOP + 0.3, z);
       c.scale.y = 1.8;
       root.add(c);
     } else {
       const h = 0.7 + r() * 0.6;
-      const tree = new THREE.Mesh(new THREE.ConeGeometry(0.26, h, 5), shard());
+      const tree = new THREE.Mesh(new THREE.ConeGeometry(0.26, h, 5), shard(A));
       tree.position.set(x, TOP + h / 2, z);
       tree.rotation.set((r() - 0.5) * 0.3, r() * Math.PI, (r() - 0.5) * 0.3);
       tree.castShadow = true;
@@ -662,7 +668,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     renderer.domElement.style.touchAction = 'manipulation';
     mount.appendChild(renderer.domElement);
 
-    const { isles, bridges, bot } = makeLayout(mount.clientWidth >= mount.clientHeight);
+    const { isles, bridges, bot } = makeLayout(mount.clientWidth / mount.clientHeight);
     const center = isles.reduce((a, s) => a.add(new THREE.Vector3(s.c.x, s.y, s.c.y)), new THREE.Vector3()).divideScalar(isles.length);
 
     const scene = new THREE.Scene();
@@ -677,6 +683,19 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       grad.addColorStop(1, '#040914');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 512, 512);
+      // Tinh vân: vài mảng màu mờ để nền có chiều sâu, khớp màu nhấn của các đảo
+      [
+        [90, 140, 200, 'rgba(77,163,255,0.22)'],
+        [430, 120, 190, 'rgba(155,140,255,0.18)'],
+        [420, 420, 220, 'rgba(255,126,182,0.10)'],
+        [110, 420, 200, 'rgba(78,222,163,0.12)'],
+      ].forEach(([x, y, rad, col]) => {
+        const g = ctx.createRadialGradient(+x, +y, 0, +x, +y, +rad);
+        g.addColorStop(0, String(col));
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 512, 512);
+      });
     }
     const skyTex = new THREE.CanvasTexture(sky);
     skyTex.colorSpace = THREE.SRGBColorSpace;
@@ -692,21 +711,52 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     floor.position.set(center.x, -12, center.z);
     scene.add(floor);
 
-    // Đảo xa làm phông quanh cụm đảo chính
+    // Phông nền: đảo pha lê xa + cột pha lê, rải theo chiều ngang màn hình (trục phải của góc nhìn isometric = (1,0,-1))
+    // để màn rộng không còn hai mảng trống. Đặt thấp và xa nên sương mù làm mờ, không tranh với 6 đảo chính.
     const far = rng(41);
-    for (let k = 0; k < 9; k++) {
-      const ang = (k / 9) * Math.PI * 2 + far() * 0.5;
-      const rad = 24 + far() * 8;
-      const x = center.x + Math.cos(ang) * rad;
-      const z = center.z + Math.sin(ang) * rad;
-      const r = 1.2 + far() * 1.8;
-      const fy = -3.5 - far() * 4;
-      const cap = new THREE.Mesh(jitter(new THREE.CylinderGeometry(r, r * 0.9, 0.4, 9), 0.15, (yy) => yy > 0), crystal(0x164a5a, 0.85));
-      cap.position.set(x, fy, z);
-      const under = new THREE.Mesh(jitter(new THREE.ConeGeometry(r * 0.9, r * 2.2, 9, 2), 0.3, () => false), crystal(0x0e2636, 0.85));
+    const screenRight = new THREE.Vector3(S2, 0, -S2);
+    const screenDeep = new THREE.Vector3(-S2, 0, -S2);
+    for (let k = 0; k < 16; k++) {
+      const side = k % 2 ? 1 : -1;
+      const sx = side * (15 + far() * 30);
+      const sd = 6 + far() * 26;
+      const pos = center.clone().addScaledVector(screenRight, sx).addScaledVector(screenDeep, sd);
+      const rr = 0.6 + far() * 1.1;
+      const fy = -6 - far() * 8;
+      const tint = ACCENTS[Math.floor(far() * ACCENTS.length)];
+      const capGeo = jitter(new THREE.CylinderGeometry(rr, rr * 0.9, 0.35, 8), 0.12, (yy) => yy > 0);
+      const cap = new THREE.Mesh(capGeo, crystal(0x164a5a, 0.8));
+      cap.position.set(pos.x, fy, pos.z);
+      const capEdge = new THREE.LineSegments(new THREE.EdgesGeometry(capGeo, 30), new THREE.LineBasicMaterial({ color: tint, transparent: true, opacity: 0.3 }));
+      capEdge.position.copy(cap.position);
+      const underGeo = jitter(new THREE.ConeGeometry(rr * 0.9, rr * 2.4, 8, 2), 0.25, () => false);
+      const under = new THREE.Mesh(underGeo, crystal(0x0e2636, 0.8));
+      under.add(new THREE.Mesh(underGeo, rimMaterial(tint, 0.28, 2.2)));
       under.rotation.x = Math.PI;
-      under.position.set(x, fy - 0.2 - r * 1.1, z);
-      scene.add(cap, under);
+      under.position.set(pos.x, fy - 0.2 - rr * 1.2, pos.z);
+      const halo = glowSprite(tint, rr * 3, 0.07);
+      halo.position.set(pos.x, fy - rr, pos.z);
+      scene.add(cap, capEdge, under, halo);
+      // Vài mảnh pha lê nhỏ trên mặt đảo xa
+      for (let q = 0; q < 2; q++) {
+        const h = 0.3 + far() * 0.5;
+        const sh = new THREE.Mesh(new THREE.ConeGeometry(0.13, h, 5), shard(tint));
+        sh.position.set(pos.x + (far() - 0.5) * rr, fy + 0.15 + h / 2, pos.z + (far() - 0.5) * rr);
+        scene.add(sh);
+      }
+    }
+    // Cột pha lê cao mọc từ dưới sương lên ở hai bên
+    for (let k = 0; k < 6; k++) {
+      const side = k % 2 ? 1 : -1;
+      const pos = center.clone().addScaledVector(screenRight, side * (26 + far() * 20)).addScaledVector(screenDeep, 18 + far() * 14);
+      const h = 6 + far() * 6;
+      const tint = ACCENTS[Math.floor(far() * ACCENTS.length)];
+      const geo = new THREE.ConeGeometry(0.35 + far() * 0.35, h, 6);
+      const spire = new THREE.Mesh(geo, crystal(0x123a52, 0.6));
+      spire.add(new THREE.Mesh(geo, rimMaterial(tint, 0.3, 2)));
+      spire.position.set(pos.x, -13 + h / 2, pos.z);
+      spire.rotation.set(0, far() * Math.PI, 0);
+      scene.add(spire);
     }
 
     // Máy quay chéo kiểu isometric. F = số đơn vị thấy theo chiều dọc khi zoom = 1.
@@ -877,7 +927,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
 
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    const bloom = new UnrealBloomPass(new THREE.Vector2(mount.clientWidth / 2, mount.clientHeight / 2), 0.6, 0.45, 0.85);
+    const bloom = new UnrealBloomPass(new THREE.Vector2(mount.clientWidth / 2, mount.clientHeight / 2), 0.5, 0.5, 0.86);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
 
