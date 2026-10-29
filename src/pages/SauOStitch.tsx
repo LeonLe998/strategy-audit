@@ -27,6 +27,23 @@ const isAnswerComplete = (index: number, value: string) => {
   return clean.length >= 8 && !['chưa có', 'không', 'chưa'].includes(clean);
 };
 
+/** Lưới 6 ô kính: ô nào đã mô tả rõ thì sáng xanh, ô đang trả lời thì viền nhấp nháy */
+function SixTiles({ answers, step }: { answers: string[]; step: number }) {
+  return (
+    <div className="sa-six-tiles" aria-hidden>
+      {questions.map((q, i) => {
+        const done = isAnswerComplete(i, answers[i]);
+        return (
+          <div key={q.title} className={`sa-six-tile${done ? ' is-done' : ''}${i + 1 === step ? ' is-current' : ''}`} style={{ animationDelay: `${i * 70}ms` }}>
+            <span>{String(i + 1).padStart(2, '0')}</span>
+            <b>{q.title}</b>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function SauOStitch() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>(Array(6).fill(''));
@@ -111,16 +128,16 @@ export default function SauOStitch() {
           </div>}
 
           {current && <div className="sa-six-grid sa-question-grid">
-            <section className="sa-six-card sa-question-card">
+            <section key={step} className="sa-six-card sa-question-card">
               <div className="sa-question-number">Ô {String(step).padStart(2, '0')} <span>/ 06</span></div><span className="sa-six-kicker">{current.title.toUpperCase()}</span><h2>{current.prompt}</h2><p className="sa-question-help" id="question-help">{current.help}</p>
               {current.options ? <div className="sa-options" role="group" aria-label={current.prompt}>{current.options.map((option) => <button key={option} className={`sa-option${answers[0] === option ? ' selected' : ''}`} aria-pressed={answers[0] === option} onClick={() => selectOption(option)}><span className="sa-option-radio">{answers[0] === option && <i />}</span>{option}<ArrowRight size={14} /></button>)}</div> : <><div className="sa-example"><span>VÍ DỤ CÂU TRẢ LỜI</span><p>“{current.example}”</p></div><label className="sa-visually-hidden" htmlFor="sa-answer">Câu trả lời cho: {current.prompt}</label><textarea id="sa-answer" value={draft} onChange={(event) => setDraft(event.target.value)} aria-describedby="question-help" placeholder="Viết bằng lời của bạn, một câu là đủ…" rows={4} /></>}
               {!current.options && <div className="sa-question-actions">{step > 1 && <button className="sa-action sa-action-quiet" onClick={() => { saveDraft(); changeStep(step - 1); }}><ArrowLeft size={16} /> Quay lại</button>}<button className="sa-action sa-action-skip" onClick={() => { updateAnswer(step - 1, 'chưa có'); setDraft(''); changeStep(step === 6 ? 7 : step + 1); }}>Chưa có</button><button className="sa-action sa-action-primary" onClick={() => { saveDraft(); changeStep(step === 6 ? 7 : step + 1); }}>{step === 6 ? 'Xem kết quả' : 'Tiếp tục'} <ArrowRight size={16} /></button></div>}
             </section>
-            <aside className="sa-six-card sa-checklist-card"><div className="sa-list-title"><div><span className="sa-six-kicker">TIẾN ĐỘ CỦA BẠN</span><h3>{answered} / 6 quy tắc đã mô tả rõ</h3></div><ClipboardCheck size={19} /></div><div className="sa-checklist">{topicList.map(({ question, index, done }) => <div className={`sa-check-row${index + 1 === step ? ' current' : ''}`} key={question.title}><span className="sa-check-icon">{done ? <Check size={13} /> : <span>{String(index + 1).padStart(2, '0')}</span>}</span><div><b>{question.title}</b><small>{done ? 'Đã mô tả' : index + 1 === step ? 'Đang xem' : 'Còn trống'}</small></div></div>)}</div><div className="sa-check-note"><ShieldCheck size={16} /><span>Đếm độ rõ của mô tả, không đo hiệu quả hay xác suất lời/lỗ.</span></div></aside>
+            <aside className="sa-six-card sa-checklist-card"><div className="sa-list-title"><div><span className="sa-six-kicker">TIẾN ĐỘ CỦA BẠN</span><h3>{answered} / 6 quy tắc đã mô tả rõ</h3></div><ClipboardCheck size={19} /></div><SixTiles answers={answers} step={step} /><div className="sa-checklist">{topicList.map(({ question, index, done }) => <div className={`sa-check-row${index + 1 === step ? ' current' : ''}`} key={question.title}><span className="sa-check-icon">{done ? <Check size={13} /> : <span>{String(index + 1).padStart(2, '0')}</span>}</span><div><b>{question.title}</b><small>{done ? 'Đã mô tả' : index + 1 === step ? 'Đang xem' : 'Còn trống'}</small></div></div>)}</div><div className="sa-check-note"><ShieldCheck size={16} /><span>Đếm độ rõ của mô tả, không đo hiệu quả hay xác suất lời/lỗ.</span></div></aside>
           </div>}
 
           {step === 7 && <div className="sa-six-grid sa-result-grid">
-            <section className="sa-six-card sa-result-card"><span className="sa-six-kicker">TÓM TẮT CÂU TRẢ LỜI</span><div className="sa-result-score"><b>{answered}</b><span>/ 6 ô mô tả đủ rõ</span></div><h2>{answered <= 2 ? 'Bạn mới mô tả được một phần cách giao dịch.' : answered <= 4 ? 'Bạn đã làm rõ một số quy tắc.' : 'Bạn đã mô tả phần lớn quy tắc.'}</h2><p>Đây chỉ là mức độ rõ của câu trả lời, không phải điểm chất lượng hay kết quả kiểm định phương pháp.</p><div className="sa-checklist sa-result-list">{topicList.map(({ question, done }) => <div className="sa-check-row" key={question.title}><span className={`sa-check-icon${done ? ' is-done' : ''}`}>{done ? <Check size={13} /> : <span>—</span>}</span><div><b>{question.title}</b><small>{done ? 'Đã mô tả' : 'Có thể làm rõ thêm'}</small></div></div>)}</div><div className="sa-check-note"><ShieldCheck size={16} /><span>Bài tự rà soát chưa xác nhận lợi thế hoặc kết quả giao dịch trong tương lai.</span></div></section>
+            <section className="sa-six-card sa-result-card"><span className="sa-six-kicker">TÓM TẮT CÂU TRẢ LỜI</span><div className="sa-result-score"><b>{answered}</b><span>/ 6 ô mô tả đủ rõ</span></div><SixTiles answers={answers} step={0} /><h2>{answered <= 2 ? 'Bạn mới mô tả được một phần cách giao dịch.' : answered <= 4 ? 'Bạn đã làm rõ một số quy tắc.' : 'Bạn đã mô tả phần lớn quy tắc.'}</h2><p>Đây chỉ là mức độ rõ của câu trả lời, không phải điểm chất lượng hay kết quả kiểm định phương pháp.</p><div className="sa-checklist sa-result-list">{topicList.map(({ question, done }) => <div className="sa-check-row" key={question.title}><span className={`sa-check-icon${done ? ' is-done' : ''}`}>{done ? <Check size={13} /> : <span>—</span>}</span><div><b>{question.title}</b><small>{done ? 'Đã mô tả' : 'Có thể làm rõ thêm'}</small></div></div>)}</div><div className="sa-check-note"><ShieldCheck size={16} /><span>Bài tự rà soát chưa xác nhận lợi thế hoặc kết quả giao dịch trong tương lai.</span></div></section>
             <section className="sa-six-card sa-contact-card"><span className="sa-six-kicker">BƯỚC TIẾP THEO · TÙY CHỌN</span><h2>Muốn được trao đổi về câu trả lời?</h2><p>Kết quả đã hiện ở bên cạnh. Nếu muốn Strategy Audit liên hệ để trao đổi thêm, để lại thông tin dưới đây.</p><label htmlFor="sa-name">Tên của bạn</label><input id="sa-name" ref={nameRef} autoComplete="name" value={name} onChange={(event) => { setName(event.target.value); if (error === 'ten') setError(''); }} placeholder="Ví dụ: Minh" />{error === 'ten' && <small className="sa-error">Nhập tên để tiếp tục.</small>}<label htmlFor="sa-contact">Số điện thoại / Zalo</label><input id="sa-contact" ref={contactRef} inputMode="tel" autoComplete="tel" value={contact} onChange={(event) => { setContact(event.target.value); if (error === 'contact') setError(''); }} placeholder="Số bạn muốn được liên hệ" />{error === 'contact' && <small className="sa-error">Nhập số điện thoại hợp lệ để tiếp tục.</small>}<label className={`sa-consent${error === 'consent' ? ' consent-error' : ''}`}><input type="checkbox" checked={consent} onChange={(event) => { setConsent(event.target.checked); if (error === 'consent') setError(''); }} /><span>Đồng ý để Strategy Audit dùng thông tin này liên hệ về yêu cầu của tôi.</span></label>{error === 'consent' && <small className="sa-error">Vui lòng xác nhận đồng ý trước khi gửi.</small>}{sendError && <p className="sa-error">{sendError}</p>}<div className="sa-contact-actions"><button className="sa-action sa-action-quiet" onClick={() => changeStep(6)}><ArrowLeft size={16} /> Quay lại</button><button className="sa-action sa-action-primary" disabled={isSubmitting} onClick={submit}>{isSubmitting ? 'Đang gửi…' : 'Gửi yêu cầu'} <ArrowRight size={16} /></button></div><p className="sa-contact-privacy">Thông tin chỉ dùng để phản hồi yêu cầu này. Bạn cũng có thể nhắn trực tiếp trên <a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer">Telegram</a>.</p></section>
           </div>}
 

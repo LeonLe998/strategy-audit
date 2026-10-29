@@ -29,6 +29,52 @@ const VERDICT_LABELS: Record<string, string> = {
   'CHƯA KIỂM ĐỊNH': 'Chưa kiểm định'
 };
 
+/** Năm ô kính đếm theo kết luận + một ống kính chia tỉ lệ Đạt / Tình huống / Chưa đạt trên số đã kiểm định */
+function LibraryStats({ data }: { data: any }) {
+  const v = data.verdict_da_chay;
+  const measured = v['CHẤT'] + v['TÌNH HUỐNG'] + v['CHÁT'];
+  const tiles = [
+    { n: v['CHẤT'], label: 'Đạt tiêu chí', color: VERDICT_COLORS['CHẤT'], lit: true },
+    { n: v['TÌNH HUỐNG'], label: 'Phụ thuộc tình huống', color: VERDICT_COLORS['TÌNH HUỐNG'] },
+    { n: v['CHÁT'], label: 'Chưa đạt', color: VERDICT_COLORS['CHÁT'] },
+    { n: data.gop, label: 'Biến thể đối ứng', color: '#cbd5e1' },
+    { n: data.chua, label: 'Chưa kiểm định', color: '#6b7280' },
+  ];
+  return (
+    <div className="hidden space-y-3 sm:block">
+      <div className="grid grid-cols-5 gap-3">
+        {tiles.map((t, i) => (
+          <motion.div
+            key={t.label}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 + i * 0.07, duration: 0.5 }}
+            className={`sa-glass rounded-2xl px-3 py-4 text-center ${t.lit ? 'sa-glass-cyan' : ''}`}
+          >
+            <p className="font-display text-3xl font-bold" style={{ color: t.color, textShadow: `0 0 18px ${t.color}66` }}>{t.n}</p>
+            <p className="mt-1 text-[11px] font-bold uppercase text-gray-400">{t.label}</p>
+          </motion.div>
+        ))}
+      </div>
+      <div className="sa-glass rounded-full p-1">
+        <div className="flex h-2.5 overflow-hidden rounded-full bg-white/5">
+          {['CHẤT', 'TÌNH HUỐNG', 'CHÁT'].map((k, i) => (
+            <motion.span
+              key={k}
+              initial={{ width: 0 }}
+              animate={{ width: `${(v[k] / measured) * 100}%` }}
+              transition={{ delay: 0.5 + i * 0.25, duration: 0.9, ease: 'easeOut' }}
+              className="h-full"
+              style={{ background: VERDICT_COLORS[k], boxShadow: `0 0 12px ${VERDICT_COLORS[k]}` }}
+            />
+          ))}
+        </div>
+      </div>
+      <p className="text-[11px] text-gray-500">Chia theo kết luận trên {measured} chiến lược đã kiểm định</p>
+    </div>
+  );
+}
+
 // Mỗi năm một ô: dương / âm. Không hiện con số R (luật kênh).
 const YearChips = ({ title, years }: { title: string; years?: Record<string, boolean> }) => (
   <div className="bg-[#0B0E14] border border-[#1F2937] p-6 rounded-2xl">
@@ -243,21 +289,9 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
       
       {/* Header */}
       <section className="text-center max-w-4xl mx-auto space-y-6 relative">
-        <div className="absolute top-0 right-0 -z-10 pointer-events-none transform translate-x-1/4 -translate-y-1/4 select-none">
-          {/* Dark mode glowing green holographic cube */}
-          <img 
-            src="/assets/quant_3d_cube.webp" 
-            alt="3D Quant Cube Dark" 
-            className="hidden dark:block w-64 h-64 object-contain blur-[0.5px] opacity-40 mix-blend-screen" 
-          />
-          {/* Light mode crystal emerald glass cube */}
-          <img 
-            src="/assets/quant_3d_cube_light.webp" 
-            alt="3D Quant Cube Light" 
-            className="block dark:hidden w-64 h-64 object-contain blur-[0.5px] opacity-65 mix-blend-multiply" 
-          />
-        </div>
-        <div className="inline-flex items-center space-x-2 bg-[#FFD700]/10 border border-[#FFD700]/30 px-4 py-2 rounded-full text-[#FFD700] text-xs font-bold font-mono tracking-widest uppercase mb-2">
+        <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full bg-[#2BFFEA]/15 blur-[90px]" />
+        <div aria-hidden className="pointer-events-none absolute -left-24 top-10 -z-10 h-64 w-64 rounded-full bg-[#FFD700]/10 blur-[90px]" />
+        <div className="inline-flex items-center space-x-2 bg-[linear-gradient(160deg,rgba(255,215,0,0.16),rgba(255,215,0,0.04))] border border-[#FFD700]/40 shadow-[0_0_20px_rgba(255,215,0,0.15),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur px-4 py-2 rounded-full text-[#FFD700] text-xs font-bold font-mono tracking-widest uppercase mb-2">
           <Star className="w-4 h-4 fill-current" />
           <span>Danh mục 300 chiến lược</span>
         </div>
@@ -268,30 +302,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
           Tìm theo tên hoặc nhóm, rồi xem kết quả và giới hạn của từng mục. Thư viện ghi rõ mục đã kiểm định, bản đối xứng và mục chưa đủ dữ liệu.
         </p>
 
-        {indexData && (
-          <div className="hidden sm:flex bg-[#131722] border border-[#1F2937] p-6 rounded-2xl flex-wrap justify-center gap-6 shadow-xl">
-            <div className="text-center">
-              <p className="text-3xl font-display font-bold" style={{ color: VERDICT_COLORS['CHẤT'] }}>{indexData.verdict_da_chay['CHẤT']}</p>
-              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Đạt tiêu chí</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-display font-bold" style={{ color: VERDICT_COLORS['TÌNH HUỐNG'] }}>{indexData.verdict_da_chay['TÌNH HUỐNG']}</p>
-              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Phụ thuộc tình huống</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-display font-bold" style={{ color: VERDICT_COLORS['CHÁT'] }}>{indexData.verdict_da_chay['CHÁT']}</p>
-              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Chưa đạt</p>
-            </div>
-            <div className="text-center border-l border-[#1F2937] pl-6">
-              <p className="text-3xl font-display font-bold text-gray-300">{indexData.gop}</p>
-              <p className="text-xs text-gray-400 font-bold uppercase mt-1">Biến thể đối ứng</p>
-            </div>
-            <div className="text-center">
-              <p className="text-3xl font-display font-bold text-gray-500">{indexData.chua}</p>
-              <p className="text-xs text-gray-400 font-bold font-mono uppercase mt-1">Chưa kiểm định</p>
-            </div>
-          </div>
-        )}
+        {indexData && <LibraryStats data={indexData} />}
 
         <p className="hidden sm:block mx-auto max-w-3xl text-xs leading-5 text-gray-500">
           Đây là nhãn kết luận trong bộ dữ liệu, không phải dự báo tương lai. Bấm vào một chiến lược để xem cách tính và giới hạn.
@@ -299,7 +310,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
 
         {indexData && <p className="sm:hidden text-xs text-gray-400">{indexData.da_chay} hồ sơ có kết quả kiểm định · bấm vào từng mục để xem cách đo và giới hạn.</p>}
 
-        <div className="hidden sm:block bg-[#0B0E14] border border-coral-red/30 p-5 rounded-xl text-left border-l-4 border-l-coral-red">
+        <div className="hidden sm:block sa-glass p-5 rounded-xl text-left border-l-4 border-l-coral-red">
           <p className="text-sm text-gray-300 leading-relaxed italic">
             "15 trong 242 chiến lược đã kiểm định được xếp loại Đạt tiêu chí trong bộ dữ liệu hiện tại. Mở từng mục để xem kết quả cụ thể, cách đo và giới hạn."
           </p>
@@ -308,22 +319,22 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
 
       {/* Main Content */}
       <section className="space-y-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-[#131722] p-4 rounded-xl border border-[#1F2937]">
+          <div className="sa-glass flex flex-col md:flex-row justify-between items-center gap-4 p-4 rounded-2xl">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input 
               type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
               aria-label="Tìm chiến lược theo tên hoặc mã"
               placeholder="Tìm theo tên hoặc mã chiến lược..." 
-              className="w-full bg-[#0B0E14] border border-[#1F2937] rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-neon-green transition-colors"
+              className="w-full bg-white/[0.04] border border-white/15 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-[#2BFFEA]/70 focus:shadow-[0_0_0_3px_rgba(43,255,234,0.15)] transition-[border-color,box-shadow]"
             />
           </div>
           <div className="flex flex-wrap gap-3 w-full md:w-auto">
-            <select aria-label="Lọc theo nhóm chiến lược" value={filterHo} onChange={e => setFilterHo(e.target.value)} className="bg-[#0B0E14] border border-[#1F2937] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none">
+            <select aria-label="Lọc theo nhóm chiến lược" value={filterHo} onChange={e => setFilterHo(e.target.value)} className="bg-[#0d2130] border border-white/15 text-gray-300 text-sm rounded-lg px-3 py-2 outline-none focus:border-[#2BFFEA]/70">
               <option value="All">Tất cả nhóm</option>
               {hoOptions.map((ho: any) => <option key={ho} value={ho}>{ho}</option>)}
             </select>
-            <select aria-label="Lọc theo kết luận" value={filterVerdict} onChange={e => setFilterVerdict(e.target.value)} className="bg-[#0B0E14] border border-[#1F2937] text-gray-300 text-sm rounded-lg px-3 py-2 outline-none">
+            <select aria-label="Lọc theo kết luận" value={filterVerdict} onChange={e => setFilterVerdict(e.target.value)} className="bg-[#0d2130] border border-white/15 text-gray-300 text-sm rounded-lg px-3 py-2 outline-none focus:border-[#2BFFEA]/70">
               <option value="All">Tất cả kết quả</option>
               <option value="CHẤT">Đạt tiêu chí</option>
               <option value="TÌNH HUỐNG">Phụ thuộc tình huống</option>
@@ -339,7 +350,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
         </div>
         <div className="md:hidden space-y-3">
           {pageItems.map((strat: any) => (
-            <button key={strat.id} type="button" disabled={strat.trang_thai === 'chua_kiem_dinh'} onClick={() => openReport(strat)} className="w-full rounded-2xl border border-[#1F2937] bg-[#131722] p-4 text-left transition hover:border-neon-green/50 disabled:opacity-60">
+            <button key={strat.id} type="button" disabled={strat.trang_thai === 'chua_kiem_dinh'} onClick={() => openReport(strat)} className={`sa-glass w-full rounded-2xl p-4 text-left transition-[border-color,box-shadow] hover:border-[#9ff6ff]/50 disabled:opacity-60 ${strat.verdict === 'CHẤT' ? 'sa-glass-cyan' : ''}`}>
               <span className="flex items-start justify-between gap-3">
                 <span><span className="block font-semibold text-white">{strat.ten}</span><span className="mt-1 block font-mono text-xs text-gray-500">{strat.id} · {strat.ho} · {strat.tf}</span></span>
                     <span className="shrink-0 rounded-full border px-2 py-1 text-[10px] font-bold" style={{ color: VERDICT_COLORS[strat.verdict], borderColor: `${VERDICT_COLORS[strat.verdict]}55`, backgroundColor: `${VERDICT_COLORS[strat.verdict]}15` }}>{VERDICT_LABELS[strat.verdict] || strat.verdict}</span>
@@ -352,13 +363,13 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
               {strat.trang_thai !== 'chua_kiem_dinh' && <span className="mt-3 block text-xs font-semibold text-neon-green">Xem dữ liệu và giới hạn →</span>}
             </button>
           ))}
-          {filteredList.length === 0 && <p className="rounded-xl border border-[#1F2937] p-8 text-center text-sm text-gray-400">Không tìm thấy chiến lược phù hợp. Thử bỏ bớt bộ lọc.</p>}
+          {filteredList.length === 0 && <p className="sa-glass rounded-xl p-8 text-center text-sm text-gray-400">Không tìm thấy chiến lược phù hợp. Thử bỏ bớt bộ lọc.</p>}
         </div>
-        <div className="hidden md:block bg-[#131722] border border-[#1F2937] rounded-2xl overflow-hidden shadow-xl">
+        <div className="hidden md:block sa-glass rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-[#0B0E14] text-gray-300 text-xs font-bold uppercase font-mono tracking-wider border-b border-[#1F2937]">
+                <tr className="bg-white/[0.04] text-gray-300 text-xs font-bold uppercase font-mono tracking-wider border-b border-white/10">
                   <th className="py-4 px-6 font-medium">Chiến Lược</th>
                   <th className="py-4 px-6 font-medium">Nhóm / TF</th>
                   <th className="py-4 px-6 font-medium">Kết luận</th>
@@ -367,12 +378,12 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                   <th className="py-4 px-6 font-medium">Số lệnh</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1F2937]">
+              <tbody className="divide-y divide-white/[0.06]">
                 {pageItems.map((strat: any) => {
                   return (
                   <tr 
                     key={strat.id} 
-                    className={`transition-colors ${strat.trang_thai === 'chua_kiem_dinh' ? 'opacity-60 bg-[#0B0E14]' : 'hover:bg-[#1F2937]/50 cursor-pointer group'}`}
+                    className={`transition-[background-color,box-shadow] ${strat.trang_thai === 'chua_kiem_dinh' ? 'opacity-60' : 'hover:bg-[linear-gradient(90deg,rgba(43,255,234,0.10),rgba(255,255,255,0.02))] hover:shadow-[inset_3px_0_0_#2BFFEA] cursor-pointer group'} ${strat.verdict === 'CHẤT' ? 'bg-[#1D9E75]/[0.07] shadow-[inset_3px_0_0_#1D9E75]' : ''}`}
                     onClick={() => openReport(strat)}
                   >
                     <td className="py-4 px-6">
@@ -381,7 +392,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                         {strat.tin_cay === 'thấp (n mỏng)' && <span title="Cảnh báo n mỏng"><AlertTriangle className="w-4 h-4 text-coral-red flex-shrink-0" /></span>}
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-xs text-gray-400 font-mono bg-[#0B0E14] px-1.5 py-0.5 rounded border border-gray-800">{strat.id}</span>
+                        <span className="text-xs text-gray-400 font-mono bg-white/[0.04] px-1.5 py-0.5 rounded border border-white/10">{strat.id}</span>
                         {strat.trang_thai === 'gop' && (
                           <span className="text-xs text-gray-400 italic">Biến thể đối ứng của {strat.goc}</span>
                         )}
@@ -437,10 +448,10 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
             </table>
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-[#1F2937] bg-[#131722] px-4 py-3">
-          <button type="button" disabled={safePage <= 1} onClick={() => setCurrentPage(safePage - 1)} className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white hover:border-neon-green/50 disabled:cursor-not-allowed disabled:opacity-40">← Trước</button>
+        <div className="sa-glass mt-4 flex items-center justify-between rounded-2xl px-4 py-3">
+          <button type="button" disabled={safePage <= 1} onClick={() => setCurrentPage(safePage - 1)} className="sa-glass-ghost rounded-lg px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-40">← Trước</button>
           <span className="text-sm text-gray-400">Trang {safePage} / {totalPages}</span>
-          <button type="button" disabled={safePage >= totalPages} onClick={() => setCurrentPage(safePage + 1)} className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white hover:border-neon-green/50 disabled:cursor-not-allowed disabled:opacity-40">Tiếp →</button>
+          <button type="button" disabled={safePage >= totalPages} onClick={() => setCurrentPage(safePage + 1)} className="sa-glass-ghost rounded-lg px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-40">Tiếp →</button>
         </div>
       </section>
 
@@ -458,7 +469,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
               initial={{ opacity: 0, y: 20, scale: 0.95 }} 
               animate={{ opacity: 1, y: 0, scale: 1 }} 
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              className="bg-[#131722] border border-[#1F2937] rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative z-10 shadow-2xl"
+              className="sa-glass sa-glass-solid rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto relative z-10"
             >
               <div className="sticky top-0 bg-[#131722]/95 backdrop-blur-md border-b border-[#1F2937] p-6 flex justify-between items-start z-20">
                 <div>
