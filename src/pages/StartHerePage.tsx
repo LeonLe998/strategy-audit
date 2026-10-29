@@ -1,6 +1,7 @@
 /**
  * Đảo 1 · Bắt đầu ở đây (/hanh-trinh): trang thu hút cho người mới, thay trò chơi Màn 1–2.
- * Năm màn hình, mỗi màn một hình lớn + một câu: phễu lọc 3D · cái cân · bốn thẻ bị đóng dấu · tờ lịch 3D · câu hỏi chốt.
+ * Năm màn hình, mỗi màn một hình lớn + một câu, cùng phong cách kính phát sáng: phễu kính 3D · cái cân 3D · bốn thẻ kính bị đóng dấu
+ * · lịch để bàn kính 3D · câu hỏi chốt.
  * Mỗi cảnh chạy một lần khi cuộn tới (GSAP). Giữ cuộn gốc của trình duyệt, không ghim, không gắn hiệu ứng vào vị trí cuộn:
  * đã thử Lenis + ghim, Leon thấy giật hơn. Không dùng bộ lọc mờ SVG/CSS trên thứ đang chuyển động vì mỗi khung hình phải vẽ lại.
  * Chữ ở START_HERE trong content/journey.ts.
@@ -12,7 +13,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { useGSAP } from '@gsap/react';
 import { START_HERE } from '../content/journey';
-import { FilterScene, CalendarScene } from '../game/world/StartScenes3D';
+import { FilterScene, ScaleScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
@@ -265,93 +266,75 @@ function Line({ title, body }: { title: string; body: string }) {
   );
 }
 
-/** Cái cân: khối thắng nhỏ rơi vào đĩa trái, vài khối thua to rơi vào đĩa phải, rồi cân nghiêng về phía thua.
- *  Chạy một lần khi cái cân lên tới giữa màn hình. */
+/** Cái cân 3D (cột kính, đòn kim loại, đĩa kính) + hai nhãn dưới hai đĩa */
 function Scale() {
-  const ref = useRef<SVGSVGElement>(null);
-  const reduce = useReducedMotion();
-  useGSAP(
-    () => {
-      const tl = reduce ? gsap.timeline() : gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'center 70%', once: true } });
-      if (!reduce) {
-        tl.from('.sa-win', { y: -90, opacity: 0, stagger: 0.06, ease: 'bounce.out', duration: 0.5 });
-        tl.from('.sa-loss', { y: -120, opacity: 0, stagger: 0.18, ease: 'bounce.out', duration: 0.6 }, '>-0.1');
-      }
-      tl.to('.sa-beam', { rotation: 9, svgOrigin: '210 118', ease: 'power2.inOut', duration: 1 });
-      tl.to('.sa-pan-l', { rotation: -9, svgOrigin: '75 118', ease: 'power2.inOut', duration: 1 }, '<');
-      tl.to('.sa-pan-r', { rotation: -9, svgOrigin: '345 118', ease: 'power2.inOut', duration: 1 }, '<');
-      if (reduce) tl.progress(1);
-    },
-    { scope: ref, dependencies: [reduce] },
-  );
-  const small = Array.from({ length: 9 }, (_, i) => ({ x: (i % 3) * 22, y: -Math.floor(i / 3) * 18 }));
   return (
-    <svg ref={ref} viewBox="0 0 420 260" className="w-full max-w-xl overflow-visible" role="img" aria-label={`${S.winRate.wins} và ${S.winRate.losses}, cân nghiêng về phía thua`}>
-      {/* Chân cân */}
-      <path d="M190 236 L230 236 L214 120 L206 120 Z" fill="#1b2a3a" stroke="#3df2ff" strokeOpacity="0.4" />
-      <rect x="160" y="236" width="100" height="10" rx="4" fill="#1b2a3a" stroke="#3df2ff" strokeOpacity="0.4" />
-      <g className="sa-beam">
-        <rect x="38" y="112" width="344" height="12" rx="6" fill="#3df2ff" fillOpacity="0.25" />
-        <rect x="40" y="114" width="340" height="8" rx="4" fill="#3df2ff" />
-        <circle cx="210" cy="118" r="13" fill="#2BFFEA" fillOpacity="0.25" />
-        <circle cx="210" cy="118" r="9" fill="#2BFFEA" />
-        {/* Đĩa trái: lệnh thắng nhỏ */}
-        <g className="sa-pan-l">
-          <line x1="75" y1="118" x2="40" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
-          <line x1="75" y1="118" x2="110" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
-          <rect x="30" y="176" width="90" height="6" rx="3" fill="#2b3647" />
-          {small.map((b, i) => (
-            <rect key={i} className="sa-win" x={45 + b.x} y={158 + b.y} width="16" height="16" rx="3" fill="#2BFFEA" fillOpacity="0.85" stroke="#b8fff6" strokeOpacity="0.6" />
-          ))}
-        </g>
-        {/* Đĩa phải: lệnh thua to */}
-        <g className="sa-pan-r">
-          <line x1="345" y1="118" x2="310" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
-          <line x1="345" y1="118" x2="380" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
-          <rect x="300" y="176" width="90" height="6" rx="3" fill="#2b3647" />
-          <rect className="sa-loss" x="306" y="136" width="38" height="40" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
-          <rect className="sa-loss" x="346" y="146" width="38" height="30" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
-          <rect className="sa-loss" x="322" y="100" width="44" height="36" rx="5" fill="#3a4656" stroke="#7a8a9a" strokeOpacity="0.5" />
-        </g>
-      </g>
-      <text x="75" y="256" textAnchor="middle" fontSize="13" fill="#2BFFEA">{S.winRate.wins}</text>
-      <text x="345" y="256" textAnchor="middle" fontSize="13" fill="#9fb0bf">{S.winRate.losses}</text>
-    </svg>
+    <div className="w-full max-w-2xl">
+      <ScaleScene className="h-[46vh] min-h-[280px] w-full" />
+      <div className="-mt-3 grid grid-cols-2 px-[6%] text-center text-xs font-semibold sm:text-sm">
+        <span className="text-[#2BFFEA]">{S.winRate.wins}</span>
+        <span className="text-gray-400">{S.winRate.losses}</span>
+      </div>
+    </div>
   );
 }
 
-/** Bốn thẻ trường phái, con dấu KHÔNG QUA đóng lần lượt khi cuộn tới, mỗi lần đóng thẻ khẽ rung và viền chuyển đỏ */
+/** Vệt mực loang quanh con dấu: một mảng loang + vài giọt bắn ra, mỗi thẻ một kiểu (cố định theo số thứ tự) */
+function inkSplat(seed: number) {
+  let n = seed * 9301 + 49297;
+  const rnd = () => ((n = (n * 9301 + 49297) % 233280) / 233280);
+  const blob = Array.from({ length: 7 }, () => ({ x: 70 + (rnd() - 0.5) * 50, y: 55 + (rnd() - 0.5) * 22, r: 12 + rnd() * 12, o: 0.1 + rnd() * 0.1 }));
+  const drops = Array.from({ length: 9 }, () => {
+    const a = rnd() * Math.PI * 2;
+    const d = 38 + rnd() * 26;
+    return { x: 70 + Math.cos(a) * d, y: 55 + Math.sin(a) * d * 0.6, r: 1.5 + rnd() * 3.5, o: 0.45 + rnd() * 0.3 };
+  });
+  return [...blob, ...drops];
+}
+
+/** Bốn thẻ kính lật vào lần lượt, rồi con dấu KHÔNG QUA dập xuống từng thẻ: mực loang, thẻ rung, viền chuyển đỏ */
 function StampedCards() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   useGSAP(
     () => {
-      if (reduce) return;
+      if (reduce) {
+        gsap.set('.sa-glass', { borderColor: 'rgba(255,90,106,0.55)' });
+        return;
+      }
       const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'center 70%', once: true } });
+      tl.from('.sa-card', { rotationY: -95, opacity: 0, transformPerspective: 900, transformOrigin: '0% 50%', stagger: 0.14, duration: 0.7, ease: 'back.out(1.3)' });
       gsap.utils.toArray<HTMLElement>('.sa-card').forEach((card, i) => {
-        const at = i * 0.6;
-        tl.from(card.querySelector('.sa-stamp'), { opacity: 0, scale: 2.4, rotation: -30, ease: 'back.out(2.5)', duration: 0.45 }, at);
-        tl.to(card, { x: 4, yoyo: true, repeat: 3, duration: 0.04, ease: 'none' }, at + 0.4);
-        tl.to(card, { borderColor: 'rgba(255,90,106,0.55)', duration: 0.2 }, at + 0.4);
+        const at = 0.9 + i * 0.5;
+        tl.from(card.querySelector('.sa-stamp'), { opacity: 0, scale: 2.6, rotation: -32, ease: 'power4.in', duration: 0.28 }, at);
+        tl.from(card.querySelectorAll('.sa-drop'), { scale: 0, opacity: 0, transformOrigin: '50% 50%', stagger: 0.012, duration: 0.3, ease: 'power2.out' }, at + 0.26);
+        tl.to(card, { x: 5, yoyo: true, repeat: 3, duration: 0.04, ease: 'none' }, at + 0.26);
+        tl.to(card.querySelector('.sa-glass'), { borderColor: 'rgba(255,90,106,0.6)', boxShadow: '0 0 30px rgba(255,90,106,0.22), inset 0 1px 0 rgba(255,255,255,0.2)', duration: 0.3 }, at + 0.26);
       });
     },
     { scope: ref, dependencies: [reduce] },
   );
   return (
     <div ref={ref} className="grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-      {S.popular.cards.map((c) => (
-        <div key={c.name} className="sa-card relative flex min-h-[11rem] flex-col justify-between gap-1 overflow-hidden rounded-2xl border border-[#3df2ff]/30 bg-[#0b1a28] p-4 sm:aspect-[3/4]">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#3df2ff]/0 via-[#3df2ff]/60 to-[#3df2ff]/0" />
-          <p className="text-base font-bold text-white sm:text-lg">{c.name}</p>
-          <div className="pointer-events-none flex w-full justify-center py-2">
-            <div className="sa-stamp -rotate-[14deg] whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#0b1a28]/70 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] sm:text-base">
-              {S.popular.stamp}
+      {S.popular.cards.map((c, idx) => (
+        <div key={c.name} className="sa-card h-full">
+          <GlassCard className="sa-glass flex h-full min-h-[11rem] flex-col p-4 sm:aspect-[3/4]">
+            <p className="text-base font-bold text-white sm:text-lg">{c.name}</p>
+            <div className="pointer-events-none relative my-auto flex w-full justify-center py-4">
+              <svg viewBox="0 0 140 110" className="absolute left-1/2 top-1/2 h-28 w-36 -translate-x-1/2 -translate-y-1/2 overflow-visible" aria-hidden>
+                {inkSplat(idx + 1).map((d, k) => (
+                  <circle key={k} className="sa-drop" cx={d.x} cy={d.y} r={d.r} fill="#ff5a6a" fillOpacity={d.o} />
+                ))}
+              </svg>
+              <div className="sa-stamp relative -rotate-[14deg] whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#1a0d14]/60 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] shadow-[0_0_18px_rgba(255,90,106,0.35)] sm:text-base">
+                {S.popular.stamp}
+              </div>
             </div>
-          </div>
-          <p className="font-mono text-xs leading-snug text-gray-400">
-            <span className="block text-2xl font-bold text-gray-200">{c.count}</span>
-            {S.popular.unit}
-          </p>
+            <p className="font-mono text-xs leading-snug text-gray-400">
+              <span className="block bg-gradient-to-b from-white to-[#9fc4d6] bg-clip-text text-2xl font-bold text-transparent">{c.count}</span>
+              {S.popular.unit}
+            </p>
+          </GlassCard>
         </div>
       ))}
     </div>
@@ -386,7 +369,7 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
 
       {/* 4 · Tờ lịch */}
       <Screen id="calendar">
-        <CalendarScene className="h-[44vh] min-h-[260px] w-full max-w-3xl" />
+        <CalendarScene className="h-[48vh] min-h-[300px] w-full max-w-3xl" />
         <div className="mb-6 flex items-center gap-5 text-xs text-gray-300">
           <span className="flex items-center gap-1.5">
             <i className="inline-block h-3 w-3 rounded-sm bg-[#2BFFEA]" /> {S.calendar.buy}

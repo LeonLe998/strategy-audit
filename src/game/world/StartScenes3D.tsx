@@ -1,8 +1,9 @@
 /**
- * Hai cảnh 3D của trang Bắt đầu ở đây:
+ * Ba cảnh 3D của trang Bắt đầu ở đây:
  *  - FilterScene: phễu kính 3 tầng. Ý tưởng gốc + khung nến rơi vào, ghép thành chiến lược có tên thật, đem đi đo rồi rơi thành
  *    viên bi vào bình kính Đạt / Không đạt; bình Không đạt đầy rất nhanh, bình Đạt lèo tèo vài viên.
- *  - CalendarScene: tờ lịch có 2 ngày giao dịch cuối tháng sáng "Mua", tờ tháng sau sáng ngày giao dịch thứ 3 "Bán".
+ *  - ScaleScene: cái cân kính – kim loại, khối thắng nhỏ vs khối thua to, cân dập về phía thua.
+ *  - CalendarScene: lịch để bàn kính, tờ tháng này sáng 2 ngày giao dịch cuối tháng "Mua", lật sang tờ tháng sau sáng ngày giao dịch thứ 3 "Bán".
  * Không biểu đồ giá, không mũi tên, không đồng xu.
  */
 import { useEffect, useRef } from 'react';
@@ -472,16 +473,22 @@ function buildFilter(scene: THREE.Scene, renderer: THREE.WebGLRenderer, list: St
   };
 }
 
-/** Vẽ một tờ lịch lên canvas: hàng thứ, lưới ngày, ô được tô sáng */
+/** Vẽ một tờ lịch lên canvas: đầu trang có tiêu đề, hàng thứ, lưới ngày bo góc, ô được tô sáng */
 function pageTexture(title: string, startDow: number, days: number, lit: number[], litColor: string) {
   const c = document.createElement('canvas');
   c.width = 512;
   c.height = 460;
   const g = c.getContext('2d');
   if (!g) return new THREE.CanvasTexture(c);
-  g.fillStyle = '#0b1a28';
+  const bg = g.createLinearGradient(0, 0, 0, 460);
+  bg.addColorStop(0, '#10283a');
+  bg.addColorStop(1, '#081520');
+  g.fillStyle = bg;
   g.fillRect(0, 0, 512, 460);
-  g.fillStyle = '#123247';
+  const head = g.createLinearGradient(0, 0, 512, 0);
+  head.addColorStop(0, '#15445e');
+  head.addColorStop(1, '#0f2f44');
+  g.fillStyle = head;
   g.fillRect(0, 0, 512, 70);
   g.fillStyle = '#e6f6ff';
   g.font = 'bold 30px sans-serif';
@@ -500,8 +507,13 @@ function pageTexture(title: string, startDow: number, days: number, lit: number[
     const x = 4 + col * 73;
     const y = 115 + row * 57;
     const on = lit.includes(d);
-    g.fillStyle = on ? litColor : col >= 5 ? '#0f1b26' : '#132636';
-    g.fillRect(x, y, 67, 51);
+    g.fillStyle = on ? litColor : col >= 5 ? 'rgba(255,255,255,0.025)' : 'rgba(160,220,255,0.07)';
+    g.beginPath();
+    g.roundRect(x + 2, y + 2, 63, 47, 8);
+    g.fill();
+    g.strokeStyle = on ? 'rgba(255,255,255,0.7)' : 'rgba(160,220,255,0.12)';
+    g.lineWidth = 1.5;
+    g.stroke();
     g.fillStyle = on ? '#04131c' : col >= 5 ? '#3b4a58' : '#cfe3ee';
     g.font = on ? 'bold 24px sans-serif' : '20px sans-serif';
     g.fillText(String(d), x + 33, y + 33);
@@ -512,77 +524,296 @@ function pageTexture(title: string, startDow: number, days: number, lit: number[
   return tex;
 }
 
+/**
+ * Gắn một cảnh 3D vào khung, kèm cờ `reached`: chỉ bật khi khung đã lên tới khoảng giữa màn hình,
+ * để chuỗi hiệu ứng không chạy trước lúc người xem cuộn tới. Máy bật giảm chuyển động thì coi như đã tới.
+ */
+function mountScene(
+  mount: HTMLElement,
+  build: (scene: THREE.Scene, renderer: THREE.WebGLRenderer, narrow: boolean, reached: () => boolean) => Frame,
+  opts: (narrow: boolean) => { fov?: number; pos?: [number, number, number]; look?: [number, number, number]; fitWidth?: number },
+) {
+  const narrow = mount.clientWidth < 640;
+  let hit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const io = new IntersectionObserver(
+    ([e]) => {
+      if (e.isIntersecting) {
+        hit = true;
+        io.disconnect();
+      }
+    },
+    { rootMargin: '0px 0px -30% 0px', threshold: 0.4 },
+  );
+  io.observe(mount);
+  const stop = startMiniScene(mount, (scene, _camera, renderer) => build(scene, renderer, narrow, () => hit), opts(narrow));
+  return () => {
+    io.disconnect();
+    stop();
+  };
+}
+
+const chrome = () => new THREE.MeshStandardMaterial({ color: 0xdfe9f0, metalness: 1, roughness: 0.16 });
+
+/**
+ * Cái cân kính – kim loại: 9 khối thắng nhỏ phát sáng rơi vào đĩa trái (cân hơi nghiêng trái),
+ * rồi 3 khối thua to sẫm màu rơi vào đĩa phải, cân dập hẳn sang phía thua. Đòn cân chạy theo lò xo nên có nảy.
+ */
+export function ScaleScene({ className = '' }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const mount = ref.current;
+    if (!mount) return;
+    return mountScene(mount, buildScale, (narrow) => ({ pos: [0, 1.6, 11], look: [0, -0.2, 0], fov: 36, fitWidth: narrow ? 9.8 : 10 }));
+  }, []);
+  return <div ref={ref} className={className} aria-hidden />;
+}
+
+function buildScale(scene: THREE.Scene, renderer: THREE.WebGLRenderer, _narrow: boolean, reached: () => boolean): Frame {
+  scene.environment = studioEnv(renderer);
+  // Chân cân: cột kính trên đế kim loại
+  const column = glassLathe(
+    [
+      [1.0, -2.6],
+      [0.45, -2.45],
+      [0.24, -2.1],
+      [0.18, 0.9],
+      [0.3, 1.05],
+    ].map(([r, y]) => new THREE.Vector2(r, y)),
+    CYAN,
+    1.1,
+    0.14,
+  );
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.35, 0.16, 48), chrome());
+  base.position.y = -2.68;
+  const core = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 3.4, 12), new THREE.MeshBasicMaterial({ color: CYAN, toneMapped: false }));
+  core.position.y = -0.8;
+  scene.add(column, base, core);
+
+  // Đòn cân quay quanh trục ở đỉnh cột
+  const PIV = 1.3;
+  const ARM = 3.0;
+  const beam = new THREE.Group();
+  beam.position.y = PIV;
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(ARM * 2 + 0.3, 0.14, 0.2), chrome());
+  const glowLine = new THREE.Mesh(new THREE.BoxGeometry(ARM * 2, 0.04, 0.21), new THREE.MeshBasicMaterial({ color: CYAN, toneMapped: false }));
+  const hub = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 16), new THREE.MeshStandardMaterial({ color: ACCENT, emissive: ACCENT, emissiveIntensity: 1.3, toneMapped: false }));
+  beam.add(bar, glowLine, hub, glow(CYAN, 1.6, 0.35));
+  scene.add(beam);
+
+  // Hai đĩa kính treo ở hai đầu đòn, luôn giữ thăng bằng
+  const HANG = 2.0;
+  const makePan = (x: number) => {
+    const pan = new THREE.Group();
+    pan.position.x = x;
+    const dish = glassLathe(
+      [
+        [0, -HANG],
+        [1.05, -HANG + 0.04],
+        [1.2, -HANG + 0.26],
+      ].map(([r, y]) => new THREE.Vector2(r, y)),
+      CYAN,
+      1.3,
+      0.16,
+    );
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.03, 8, 64), chrome());
+    lip.rotation.x = Math.PI / 2;
+    lip.position.y = -HANG + 0.26;
+    pan.add(dish, lip);
+    // Ba dây treo từ móc xuống mép đĩa
+    [0, (Math.PI * 2) / 3, (Math.PI * 4) / 3].forEach((a) => {
+      const end = new THREE.Vector3(Math.cos(a) * 1.15, -HANG + 0.26, Math.sin(a) * 1.15);
+      const len = end.length();
+      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, len, 6), new THREE.MeshBasicMaterial({ color: 0x9fe9ff, transparent: true, opacity: 0.55 }));
+      rod.position.copy(end).multiplyScalar(0.5);
+      rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), end.clone().normalize());
+      pan.add(rod);
+    });
+    const thump = glow(CYAN, 2.6, 0);
+    thump.position.y = -HANG + 0.3;
+    pan.add(thump);
+    beam.add(pan);
+    return { pan, thump };
+  };
+  const left = makePan(-ARM);
+  const right = makePan(ARM);
+
+  // Khối: thắng = nhỏ, sáng; thua = to, sẫm, nặng
+  const FLOOR = -HANG + 0.05;
+  type Block = { mesh: THREE.Mesh; pan: typeof left; at: THREE.Vector3; land: number; weight: number; landed: boolean };
+  const blocks: Block[] = [];
+  const winMat = new THREE.MeshStandardMaterial({ color: 0x0c5a58, emissive: ACCENT, emissiveIntensity: 0.75, roughness: 0.2, metalness: 0.1, toneMapped: false });
+  for (let i = 0; i < 9; i++) {
+    const s = 0.3;
+    const layer = Math.floor(i / 5);
+    const k = i % 5;
+    const at = layer === 0 ? new THREE.Vector3([-0.4, 0, 0.4, -0.2, 0.2][k], FLOOR + s / 2, [-0.25, -0.3, -0.25, 0.25, 0.25][k]) : new THREE.Vector3([-0.2, 0.2, 0, 0][k], FLOOR + s * 1.5, [0, 0, -0.1, 0.15][k]);
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(s, s, s), winMat);
+    blocks.push({ mesh, pan: left, at, land: 0.35 + i * 0.16, weight: 1, landed: false });
+  }
+  const lossMat = new THREE.MeshStandardMaterial({ color: 0x4a5868, metalness: 0.6, roughness: 0.3 });
+  [
+    { s: 0.78, at: new THREE.Vector3(-0.38, FLOOR + 0.39, 0.05) },
+    { s: 0.66, at: new THREE.Vector3(0.42, FLOOR + 0.33, -0.05) },
+    { s: 0.7, at: new THREE.Vector3(0, FLOOR + 0.78 + 0.35, 0) },
+  ].forEach((b, i) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(b.s, b.s, b.s), lossMat);
+    blocks.push({ mesh, pan: right, at: b.at, land: 2.4 + i * 0.55, weight: 7, landed: false });
+  });
+  blocks.forEach((b) => {
+    b.mesh.visible = false;
+    b.pan.pan.add(b.mesh);
+  });
+
+  let t0 = -1;
+  let ang = 0;
+  let vel = 0;
+  const FALL = 0.5;
+  return (t, dt) => {
+    if (t0 < 0 && reached()) t0 = t;
+    const u = t0 < 0 ? -1 : t - t0;
+    let winW = 0;
+    let lossW = 0;
+    blocks.forEach((b) => {
+      const k = (u - (b.land - FALL)) / FALL;
+      if (k < 0) {
+        b.mesh.visible = false;
+        return;
+      }
+      b.mesh.visible = true;
+      const bounce = k < 1 ? 0 : Math.sin(Math.PI * Math.min((k - 1) * 2.5, 1)) * 0.12 * (b.weight > 1 ? 0.5 : 1);
+      b.mesh.position.set(b.at.x, k < 1 ? lerp(b.at.y + 5, b.at.y, k * k) : b.at.y + bounce, b.at.z);
+      b.mesh.rotation.y = k < 1 ? (1 - k) * 1.2 : 0;
+      if (k >= 1 && !b.landed) {
+        b.landed = true;
+        b.pan.thump.material.opacity = b.weight > 1 ? 0.9 : 0.35;
+        if (b.weight > 1) b.pan.thump.material.color.setHex(0x9fb0bf);
+        vel += (b.weight > 1 ? -0.35 : 0.06) * (b.pan === left ? -1 : 1);
+      }
+      if (b.landed) (b.pan === left ? (winW += b.weight) : (lossW += b.weight));
+    });
+    // Đòn cân: lò xo tắt dần về góc do chênh lệch khối lượng (thua nặng hơn → nghiêng phải)
+    const target = -THREE.MathUtils.degToRad(THREE.MathUtils.clamp((lossW - winW) * 0.75, -9, 9));
+    if (dt === 0) ang = target;
+    else {
+      vel += ((target - ang) * 26 - vel * 4.5) * dt;
+      ang = THREE.MathUtils.clamp(ang + vel * dt, -0.24, 0.24);
+    }
+    beam.rotation.z = ang + (u < 0 ? Math.sin(t * 0.8) * 0.01 : 0);
+    left.pan.rotation.z = -beam.rotation.z;
+    right.pan.rotation.z = -beam.rotation.z;
+    [left, right].forEach((p) => (p.thump.material.opacity = Math.max(0, p.thump.material.opacity - dt * 1.5)));
+    scene.rotation.y = Math.sin(t * 0.3) * 0.12;
+  };
+}
+
+/**
+ * Lịch để bàn bằng kính: tờ "Tháng này" sáng 2 ngày giao dịch cuối tháng (Mua), lật qua gáy
+ * sang tờ "Tháng sau" sáng ngày giao dịch thứ 3 (Bán), rồi lật lại. Chỉ bắt đầu lật khi đã cuộn tới.
+ */
 export function CalendarScene({ className = '' }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const mount = ref.current;
     if (!mount) return;
-    return startMiniScene(
-      mount,
-      (scene) => {
-        // Tháng này: 31 ngày, ngày 1 là thứ Tư → 30 (T5), 31 (T6) là 2 ngày giao dịch cuối.
-        // Tháng sau: ngày 1 là thứ Bảy → ngày giao dịch thứ 3 là ngày 5 (T4).
-        const makePage = (tex: THREE.Texture, w: number) => {
-          const g = new THREE.Group();
-          const board = new THREE.Mesh(new THREE.BoxGeometry(w, w * 0.9, 0.12), new THREE.MeshStandardMaterial({ color: 0x1b2a3a, roughness: 0.8 }));
-          const face = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.96, w * 0.86), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
-          face.position.z = 0.065;
-          g.add(board, face);
-          // Khoen gáy lịch
-          [-0.3, 0, 0.3].forEach((k) => {
-            const ring = new THREE.Mesh(new THREE.TorusGeometry(w * 0.05, w * 0.012, 6, 16), new THREE.MeshStandardMaterial({ color: CYAN, emissive: CYAN, emissiveIntensity: 0.8 }));
-            ring.position.set(k * w, w * 0.45, 0);
-            g.add(ring);
-          });
-          return g;
-        };
-        const thisMonth = makePage(pageTexture('Tháng này', 2, 31, [30, 31], '#2BFFEA'), 4.4);
-        thisMonth.position.set(-1.1, 0.2, 0);
-        thisMonth.rotation.y = 0.22;
-        const nextMonth = makePage(pageTexture('Tháng sau', 5, 30, [5], '#FFDD00'), 3.2);
-        nextMonth.position.set(2.6, -0.3, -1.2);
-        nextMonth.rotation.y = -0.28;
-        scene.add(thisMonth, nextMonth);
-
-        // Khối sáng nổi lên trên các ô Mua / Bán. Vị trí tính theo lưới của canvas.
-        const cellPos = (page: THREE.Group, w: number, startDow: number, d: number) => {
-          const idx = startDow + d - 1;
-          const col = idx % 7;
-          const row = Math.floor(idx / 7);
-          const fw = w * 0.96;
-          const fh = w * 0.86;
-          const u = (4 + col * 73 + 33) / 512;
-          const v = (115 + row * 57 + 25) / 460;
-          const local = new THREE.Vector3((u - 0.5) * fw, (0.5 - v) * fh, 0.2);
-          return { page, local };
-        };
-        const glows = [
-          { ...cellPos(thisMonth, 4.4, 2, 30), color: ACCENT, size: 0.52 },
-          { ...cellPos(thisMonth, 4.4, 2, 31), color: ACCENT, size: 0.52 },
-          { ...cellPos(nextMonth, 3.2, 5, 5), color: 0xffdd00, size: 0.38 },
-        ].map(({ page, local, color, size }, i) => {
-          const m = new THREE.Mesh(
-            new THREE.BoxGeometry(size, size * 0.75, 0.12),
-            new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.2, transparent: true, opacity: 0.85 }),
-          );
-          m.position.copy(local);
-          page.add(m);
-          return { m, base: local.z, phase: i * 0.6 };
-        });
-
-        return (t) => {
-          thisMonth.rotation.y = 0.22 + Math.sin(t * 0.5) * 0.06;
-          nextMonth.rotation.y = -0.28 + Math.sin(t * 0.5 + 1) * 0.05;
-          thisMonth.position.y = 0.2 + Math.sin(t * 0.9) * 0.06;
-          nextMonth.position.y = -0.3 + Math.sin(t * 0.9 + 1.2) * 0.06;
-          glows.forEach((g) => {
-            g.m.position.z = g.base + 0.12 + Math.sin(t * 2 + g.phase) * 0.08;
-            (g.m.material as THREE.MeshStandardMaterial).emissiveIntensity = 1 + Math.sin(t * 2 + g.phase) * 0.4;
-          });
-        };
-      },
-      { pos: [0.6, 0.6, 9], look: [0.5, -0.1, 0], fov: 40, fitWidth: 9 },
-    );
+    return mountScene(mount, buildCalendar, (narrow) => ({ pos: [0, 1.9, 10.5], look: [0, 0.75, 0], fov: 38, fitWidth: narrow ? 6.6 : 8.5 }));
   }, []);
   return <div ref={ref} className={className} aria-hidden />;
+}
+
+function buildCalendar(scene: THREE.Scene, renderer: THREE.WebGLRenderer, _narrow: boolean, reached: () => boolean): Frame {
+  scene.environment = studioEnv(renderer);
+  const PW = 4.2;
+  const PH = PW * 0.9;
+  const LEAN = -0.22;
+  const TOP = PH / 2 + 0.25;
+  // Giá đỡ chữ A bằng kính phía sau + thanh gáy kim loại
+  const stand = new THREE.Group();
+  stand.position.y = TOP;
+  [LEAN, -LEAN].forEach((a, i) => {
+    const slab = new THREE.Group();
+    const geo = new THREE.BoxGeometry(PW + 0.4, PH + 0.5, 0.06);
+    slab.add(new THREE.Mesh(geo, glassMaterial(undefined, i ? 0.06 : 0.1)), new THREE.Mesh(geo, rimMaterial(CYAN, 0.9)));
+    slab.position.set(0, -(PH + 0.5) / 2, i ? -0.05 : -0.12);
+    const hinge = new THREE.Group();
+    hinge.rotation.x = i ? 0.42 : a;
+    hinge.add(slab);
+    stand.add(hinge);
+  });
+  const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, PW + 0.5, 16), chrome());
+  spine.rotation.z = Math.PI / 2;
+  stand.add(spine);
+  scene.add(stand);
+
+  // Tờ lịch treo ở gáy: nhóm quay quanh mép trên
+  const makePage = (tex: THREE.Texture) => {
+    const hinge = new THREE.Group();
+    const page = new THREE.Group();
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), new THREE.MeshStandardMaterial({ color: 0x0b1a28, metalness: 0.2, roughness: 0.4 }));
+    back.rotation.y = Math.PI;
+    back.position.z = -0.005;
+    page.add(face, back);
+    page.position.y = -PH / 2 - 0.08;
+    hinge.add(page);
+    hinge.position.set(0, TOP, 0.02);
+    hinge.rotation.x = LEAN;
+    // Khoen gáy
+    [-0.36, -0.12, 0.12, 0.36].forEach((k) => {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 8, 20), chrome());
+      ring.rotation.y = Math.PI / 2;
+      ring.position.set(k * PW, -0.02, 0);
+      hinge.add(ring);
+    });
+    scene.add(hinge);
+    return { hinge, page };
+  };
+  const next = makePage(pageTexture('Tháng sau', 5, 30, [5], '#FFDD00'));
+  next.hinge.position.z = -0.02;
+  const cur = makePage(pageTexture('Tháng này', 2, 31, [30, 31], '#2BFFEA'));
+
+  // Khối kính sáng nổi lên trên các ô Mua / Bán. Vị trí tính theo lưới của canvas.
+  const cell = (startDow: number, d: number) => {
+    const idx = startDow + d - 1;
+    const u = (4 + (idx % 7) * 73 + 33) / 512;
+    const v = (115 + Math.floor(idx / 7) * 57 + 25) / 460;
+    return new THREE.Vector3((u - 0.5) * PW, (0.5 - v) * PH, 0);
+  };
+  const glows = [
+    { page: cur.page, at: cell(2, 30), color: ACCENT, phase: 0 },
+    { page: cur.page, at: cell(2, 31), color: ACCENT, phase: 0.6 },
+    { page: next.page, at: cell(5, 5), color: 0xffdd00, phase: 0 },
+  ].map(({ page, at, color, phase }) => {
+    const s = PW / 8.6;
+    const m = new THREE.Mesh(
+      new THREE.BoxGeometry(s, s * 0.72, 0.16),
+      new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1, transparent: true, opacity: 0.85, roughness: 0.15 }),
+    );
+    m.position.copy(at);
+    const halo = glow(color, s * 3, 0.5);
+    halo.position.copy(at).setZ(0.05);
+    page.add(m, halo);
+    return { m, halo, at, phase };
+  });
+
+  let t0 = -1;
+  const CYCLE = 9;
+  // Lật qua đỉnh rồi rơi xuống nằm sau tấm kính sau (nghiêng 0,48 rad về sau)
+  const FLIP = LEAN - (0.48 - Math.PI * 2);
+  return (t) => {
+    if (t0 < 0 && reached()) t0 = t;
+    // Một vòng: giữ tờ này 3,2s → lật qua gáy ra nằm sau giá 1,3s → giữ tờ sau 3,4s → lật về 1,3s
+    const c = t0 < 0 ? 0 : (t - t0) % CYCLE;
+    const flip = c < 3.2 ? 0 : c < 4.5 ? ease((c - 3.2) / 1.3) : c < 7.7 ? 1 : 1 - ease((c - 7.7) / 1.3);
+    cur.hinge.rotation.x = LEAN - flip * FLIP;
+    glows.forEach((g, i) => {
+      // Khối sáng của tờ sau nhô qua tờ trước nếu để hiện, nên chỉ hiện khi tờ của nó đang ở mặt trước
+      const onPage = i < 2 ? 1 - flip : flip;
+      g.m.visible = g.halo.visible = i < 2 ? flip < 0.35 : flip > 0.65;
+      const pop = 0.08 + onPage * (0.18 + Math.sin(t * 2.4 + g.phase) * 0.06);
+      g.m.position.z = pop;
+      (g.m.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.6 + onPage * (0.8 + Math.sin(t * 2.4 + g.phase) * 0.3);
+      g.halo.material.opacity = 0.15 + onPage * 0.45;
+    });
+    scene.rotation.y = Math.sin(t * 0.35) * 0.1;
+  };
 }
