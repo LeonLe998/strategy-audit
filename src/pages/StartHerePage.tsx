@@ -145,7 +145,7 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
       <Screen id="hero">
         <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#3df2ff]">{S.hero.kicker}</p>
         <h1 className="mt-3 max-w-3xl text-center text-3xl font-bold leading-tight text-white sm:text-5xl">{S.hero.title}</h1>
-        <FilterScene className="mt-2 h-[46vh] min-h-[280px] w-full max-w-2xl" />
+        <FilterScene className="mt-2 h-[58vh] min-h-[340px] w-full max-w-4xl" />
         <div className="grid w-full max-w-xl grid-cols-3 gap-2 text-center">
           {S.hero.stats.map((s, i) => (
             <div key={s.label} className={`rounded-xl border px-2 py-3 ${i === 2 ? 'border-[#2BFFEA]/60 bg-[#2BFFEA]/10' : 'border-white/10 bg-white/[0.03]'}`}>
