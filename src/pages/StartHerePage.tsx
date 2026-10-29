@@ -1,7 +1,8 @@
 /**
  * Đảo 1 · Bắt đầu ở đây (/hanh-trinh): trang thu hút cho người mới, thay trò chơi Màn 1–2.
  * Năm màn hình, mỗi màn một hình lớn + một câu: phễu lọc 3D · cái cân · bốn thẻ bị đóng dấu · tờ lịch 3D · câu hỏi chốt.
- * Cuộn mượt bằng Lenis; phễu, cái cân và con dấu chạy theo vị trí cuộn bằng GSAP ScrollTrigger (cuộn ngược thì chạy lùi).
+ * Mỗi cảnh chạy một lần khi cuộn tới (GSAP). Giữ cuộn gốc của trình duyệt, không ghim, không gắn hiệu ứng vào vị trí cuộn:
+ * đã thử Lenis + ghim, Leon thấy giật hơn. Không dùng bộ lọc mờ SVG/CSS trên thứ đang chuyển động vì mỗi khung hình phải vẽ lại.
  * Chữ ở START_HERE trong content/journey.ts.
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -13,7 +14,6 @@ import { useGSAP } from '@gsap/react';
 import { START_HERE } from '../content/journey';
 import { FilterScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
-import { useSmoothScroll } from '../lib/smoothScroll';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
@@ -91,11 +91,9 @@ function DotGrid({ card, step }: { card: number; step: number }) {
             width={6}
             height={6}
             rx={1.5}
-            className={st === 'hot' ? 'animate-pulse' : undefined}
             style={{
               ...DOT_STYLE[st],
               transition: `fill .5s ${delay}ms, opacity .5s ${delay}ms`,
-              filter: st === 'hot' ? 'drop-shadow(0 0 3px #2BFFEA)' : undefined,
             }}
           />
         );
@@ -165,7 +163,7 @@ function FunnelStats({ step }: { step: number }) {
     );
   };
   return (
-    <div className="flex w-full max-w-3xl items-stretch">
+    <div className="sa-stats flex w-full max-w-3xl items-stretch">
       <div className="flex-1">{card(0)}</div>
       <Pass on={step >= 2} drop={N0 - N1} />
       <div className="flex-1">{card(1)}</div>
@@ -175,8 +173,7 @@ function FunnelStats({ step }: { step: number }) {
   );
 }
 
-/** Màn đầu: tiêu đề hiện từng chữ; khi phễu và ba ô lên đủ màn hình thì ghim lại,
- *  cuộn tiếp sẽ cho ba ô lọc dần 300 → 242 → 15 thay vì trôi qua mất */
+/** Màn đầu: tiêu đề hiện từng chữ; ba ô lọc dần 300 → 242 → 15 khi đã lên gần hết màn hình */
 function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
@@ -188,21 +185,13 @@ function Hero() {
         return;
       }
       const split = SplitText.create('.sa-title', { type: 'words' });
-      gsap.from(split.words, { y: 34, opacity: 0, filter: 'blur(6px)', stagger: 0.07, duration: 0.8, ease: 'power3.out', delay: 0.15 });
-      const at = (p: number) => (p < 0.12 ? 1 : p < 0.26 ? 2 : p < 0.42 ? 3 : p < 0.56 ? 4 : 5);
-      const st = ScrollTrigger.create({
-        trigger: ref.current,
-        start: 'clamp(bottom bottom)',
-        end: '+=110%',
-        pin: true,
-        onUpdate: (self) => setStep(at(self.progress)),
-        onEnter: () => setStep(1),
-        onLeaveBack: () => setStep(0),
+      gsap.from(split.words, { y: 34, opacity: 0, stagger: 0.07, duration: 0.8, ease: 'power3.out', delay: 0.15 });
+      ScrollTrigger.create({
+        trigger: '.sa-stats',
+        start: 'bottom 95%',
+        once: true,
+        onEnter: () => [0, 1.3, 1.9, 3, 3.7].forEach((t, i) => gsap.delayedCall(t, () => setStep(i + 1))),
       });
-      // Màn đã vừa khung ngay từ đầu (máy tính) thì cho ô 1 sáng luôn
-      if (st.isActive) setStep(1);
-      // Phông chữ tải xong làm tiêu đề đổi chiều cao: đo lại điểm ghim
-      document.fonts?.ready.then(() => ScrollTrigger.refresh());
     },
     { scope: ref, dependencies: [reduce] },
   );
@@ -241,13 +230,13 @@ function Line({ title, body }: { title: string; body: string }) {
 }
 
 /** Cái cân: khối thắng nhỏ rơi vào đĩa trái, vài khối thua to rơi vào đĩa phải, rồi cân nghiêng về phía thua.
- *  Cả chuỗi chạy theo vị trí cuộn: cuộn tới đâu dựng tới đó, cuộn ngược thì tháo ra. */
+ *  Chạy một lần khi cái cân lên tới giữa màn hình. */
 function Scale() {
   const ref = useRef<SVGSVGElement>(null);
   const reduce = useReducedMotion();
   useGSAP(
     () => {
-      const tl = reduce ? gsap.timeline() : gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'top 80%', end: 'center 40%', scrub: 0.6 } });
+      const tl = reduce ? gsap.timeline() : gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'center 70%', once: true } });
       if (!reduce) {
         tl.from('.sa-win', { y: -90, opacity: 0, stagger: 0.06, ease: 'bounce.out', duration: 0.5 });
         tl.from('.sa-loss', { y: -120, opacity: 0, stagger: 0.18, ease: 'bounce.out', duration: 0.6 }, '>-0.1');
@@ -262,28 +251,21 @@ function Scale() {
   const small = Array.from({ length: 9 }, (_, i) => ({ x: (i % 3) * 22, y: -Math.floor(i / 3) * 18 }));
   return (
     <svg ref={ref} viewBox="0 0 420 260" className="w-full max-w-xl overflow-visible" role="img" aria-label={`${S.winRate.wins} và ${S.winRate.losses}, cân nghiêng về phía thua`}>
-      <defs>
-        <filter id="sa-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
       {/* Chân cân */}
       <path d="M190 236 L230 236 L214 120 L206 120 Z" fill="#1b2a3a" stroke="#3df2ff" strokeOpacity="0.4" />
       <rect x="160" y="236" width="100" height="10" rx="4" fill="#1b2a3a" stroke="#3df2ff" strokeOpacity="0.4" />
       <g className="sa-beam">
-        <rect x="40" y="114" width="340" height="8" rx="4" fill="#3df2ff" filter="url(#sa-glow)" />
-        <circle cx="210" cy="118" r="9" fill="#2BFFEA" filter="url(#sa-glow)" />
+        <rect x="38" y="112" width="344" height="12" rx="6" fill="#3df2ff" fillOpacity="0.25" />
+        <rect x="40" y="114" width="340" height="8" rx="4" fill="#3df2ff" />
+        <circle cx="210" cy="118" r="13" fill="#2BFFEA" fillOpacity="0.25" />
+        <circle cx="210" cy="118" r="9" fill="#2BFFEA" />
         {/* Đĩa trái: lệnh thắng nhỏ */}
         <g className="sa-pan-l">
           <line x1="75" y1="118" x2="40" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
           <line x1="75" y1="118" x2="110" y2="176" stroke="#3df2ff" strokeOpacity="0.8" strokeWidth="1.5" />
           <rect x="30" y="176" width="90" height="6" rx="3" fill="#2b3647" />
           {small.map((b, i) => (
-            <rect key={i} className="sa-win" x={45 + b.x} y={158 + b.y} width="16" height="16" rx="3" fill="#2BFFEA" fillOpacity="0.85" filter="url(#sa-glow)" />
+            <rect key={i} className="sa-win" x={45 + b.x} y={158 + b.y} width="16" height="16" rx="3" fill="#2BFFEA" fillOpacity="0.85" stroke="#b8fff6" strokeOpacity="0.6" />
           ))}
         </g>
         {/* Đĩa phải: lệnh thua to */}
@@ -302,14 +284,14 @@ function Scale() {
   );
 }
 
-/** Bốn thẻ trường phái, con dấu KHÔNG QUA đóng lần lượt theo nhịp cuộn, mỗi lần đóng thẻ khẽ rung và viền chuyển đỏ */
+/** Bốn thẻ trường phái, con dấu KHÔNG QUA đóng lần lượt khi cuộn tới, mỗi lần đóng thẻ khẽ rung và viền chuyển đỏ */
 function StampedCards() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   useGSAP(
     () => {
       if (reduce) return;
-      const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'top 75%', end: 'bottom 45%', scrub: 0.5 } });
+      const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'center 70%', once: true } });
       gsap.utils.toArray<HTMLElement>('.sa-card').forEach((card, i) => {
         const at = i * 0.6;
         tl.from(card.querySelector('.sa-stamp'), { opacity: 0, scale: 2.4, rotation: -30, ease: 'back.out(2.5)', duration: 0.45 }, at);
@@ -341,7 +323,6 @@ function StampedCards() {
 }
 
 export default function StartHerePage({ onGo }: { onGo: (tab: string) => void }) {
-  useSmoothScroll();
   const go = (tab: string) => {
     funnel.nextStep('journey', tab);
     onGo(tab);
