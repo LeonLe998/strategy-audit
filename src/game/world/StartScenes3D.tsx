@@ -3,6 +3,7 @@
  *  - FilterScene: phễu kính 3 tầng. Ý tưởng gốc + khung nến rơi vào, ghép thành chiến lược có tên thật, đem đi đo rồi rơi thành
  *    viên bi vào bình kính Đạt / Không đạt; bình Không đạt đầy rất nhanh, bình Đạt lèo tèo vài viên.
  *  - ScaleScene: cái cân kính – kim loại, khối thắng nhỏ vs khối thua to, cân dập về phía thua.
+ *  - GlassOrbScene (dùng ở trang Vì sao cần đo): quả cầu kính, mỗi viên bi bay quanh là một chiến lược đã đo, bi xanh là đạt.
  *  - CalendarScene: lịch để bàn kính, tờ tháng này sáng 2 ngày giao dịch cuối tháng "Mua", lật sang tờ tháng sau sáng ngày giao dịch thứ 3 "Bán".
  * Không biểu đồ giá, không mũi tên, không đồng xu.
  */
@@ -815,5 +816,74 @@ function buildCalendar(scene: THREE.Scene, renderer: THREE.WebGLRenderer, _narro
       g.halo.material.opacity = 0.15 + onPage * 0.45;
     });
     scene.rotation.y = Math.sin(t * 0.35) * 0.1;
+  };
+}
+
+/**
+ * Quả cầu kính của trang Vì sao cần đo: mỗi viên bi bay quanh là một chiến lược đã đo đủ.
+ * Bi xám là không đạt, bi xanh phát sáng là đạt; số bi lấy từ thư viện thật.
+ */
+export function GlassOrbScene({ pass, fail, className = '' }: { pass: number; fail: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const mount = ref.current;
+    if (!mount) return;
+    return startMiniScene(mount, (scene, _camera, renderer) => buildOrb(scene, renderer, pass, fail), { pos: [0, 1.2, 9.5], look: [0, 0, 0], fov: 38, fitWidth: 7.4 });
+  }, [pass, fail]);
+  return <div ref={ref} className={className} aria-hidden />;
+}
+
+function buildOrb(scene: THREE.Scene, renderer: THREE.WebGLRenderer, pass: number, fail: number): Frame {
+  scene.environment = studioEnv(renderer);
+  // Lõi: khối kính nhiều mặt + khung sáng bên trong quay ngược chiều
+  const shellGeo = new THREE.IcosahedronGeometry(1.45, 1);
+  const shell = new THREE.Group();
+  shell.add(new THREE.Mesh(shellGeo, glassMaterial(0xcff8ff, 0.14)), new THREE.Mesh(shellGeo, rimMaterial(CYAN, 1.3, 2)));
+  const core = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(0.85, 0)),
+    new THREE.LineBasicMaterial({ color: 0x9ff6ff, transparent: true, opacity: 0.8 }),
+  );
+  scene.add(shell, core, glow(CYAN, 3.4, 0.35));
+
+  // Ba dải bi nghiêng khác nhau (nhóm nghiêng → nhóm quay → bi), bi Đạt rải đều trong cả ba dải
+  const total = pass + fail;
+  const passAt = new Set(Array.from({ length: pass }, (_, k) => Math.floor(((k + 0.5) * total) / pass)));
+  const greyGeo = new THREE.SphereGeometry(0.055, 10, 8);
+  const greyMat = new THREE.MeshStandardMaterial({ color: 0x6b7684, metalness: 0.5, roughness: 0.35 });
+  const litGeo = new THREE.SphereGeometry(0.09, 14, 10);
+  const litMat = new THREE.MeshStandardMaterial({ color: ACCENT, emissive: ACCENT, emissiveIntensity: 1.4, toneMapped: false });
+  const spins = [0, 1, 2].map((b) => {
+    const greyAt: THREE.Vector3[] = [];
+    const litAt: THREE.Vector3[] = [];
+    for (let i = b; i < total; i += 3) {
+      const a = (i / total) * Math.PI * 2 * 3 + b * 0.7;
+      const r = 2.2 + b * 0.38 + Math.sin(i * 12.9898) * 0.12;
+      const p = new THREE.Vector3(Math.cos(a) * r, Math.sin(i * 4.1) * 0.08, Math.sin(a) * r);
+      (passAt.has(i) ? litAt : greyAt).push(p);
+    }
+    const spin = new THREE.Group();
+    const m4 = new THREE.Matrix4();
+    const greyMesh = new THREE.InstancedMesh(greyGeo, greyMat, greyAt.length);
+    greyAt.forEach((p, k) => greyMesh.setMatrixAt(k, m4.makeTranslation(p.x, p.y, p.z)));
+    const litMesh = new THREE.InstancedMesh(litGeo, litMat, litAt.length);
+    litAt.forEach((p, k) => {
+      litMesh.setMatrixAt(k, m4.makeTranslation(p.x, p.y, p.z));
+      const halo = glow(ACCENT, 0.55, 0.55);
+      halo.position.copy(p);
+      spin.add(halo);
+    });
+    spin.add(greyMesh, litMesh);
+    const tilt = new THREE.Group();
+    tilt.rotation.set(0.35 + b * 0.5, b * 1.1, b * 0.3);
+    tilt.add(spin);
+    scene.add(tilt);
+    return spin;
+  });
+
+  return (t) => {
+    shell.rotation.set(t * 0.12, t * 0.18, 0);
+    core.rotation.set(-t * 0.2, -t * 0.25, 0);
+    spins.forEach((s, b) => (s.rotation.y = t * (0.12 + b * 0.05) * (b % 2 ? -1 : 1)));
+    scene.rotation.x = Math.sin(t * 0.4) * 0.05;
   };
 }

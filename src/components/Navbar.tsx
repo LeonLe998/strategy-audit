@@ -48,7 +48,7 @@ export default function Navbar({
   ];
 
   return (
-    <header id="app-header" className="fixed top-0 left-0 w-full z-50 bg-[#07131E]/95 backdrop-blur-md border-b border-[#20394B]">
+    <header id="app-header" className="fixed top-0 left-0 w-full z-50 bg-[linear-gradient(180deg,rgba(12,34,52,0.78),rgba(7,19,30,0.72))] backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-20px_rgba(43,255,234,0.35)]">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo and Brand */}
         <button
@@ -74,8 +74,8 @@ export default function Navbar({
                 onClick={() => setActiveTab(item.id)}
                 className={`flex shrink-0 whitespace-nowrap items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
                   isActive
-                    ? 'text-neon-green bg-[#131722] border border-[#1F2937]'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                    ? 'text-neon-green border border-[#9ff6ff]/30 bg-[linear-gradient(160deg,rgba(43,255,234,0.14),rgba(255,255,255,0.03))] shadow-[0_0_16px_rgba(43,255,234,0.18),inset_0_1px_0_rgba(255,255,255,0.18)]'
+                    : 'text-gray-400 hover:text-white hover:bg-white/[0.06] border border-transparent'
                 }`}
               >
                 <Icon className="w-4 h-4 mr-1.5" />
@@ -146,6 +146,7 @@ export default function Navbar({
           )}
         </div>
       </div>
+      <div aria-hidden className="sa-glow-line absolute inset-x-0 bottom-0 h-px opacity-70" />
     </header>
   );
 }

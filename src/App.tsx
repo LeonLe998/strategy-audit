@@ -275,7 +275,8 @@ export default function App() {
       <BottomNavigation activeTab={activeTab} />
 
       {/* Premium Footer */}
-      <footer id="app-footer" className="relative z-20 border-t border-[#20394B] bg-[#061624] py-12 mt-12 text-xs text-gray-500">
+      <footer id="app-footer" className="relative z-20 bg-[linear-gradient(180deg,#071a29,#040e18)] py-12 mt-12 text-xs text-gray-500">
+        <div aria-hidden className="sa-glow-line absolute inset-x-0 top-0 h-px opacity-60" />
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
@@ -300,7 +301,7 @@ export default function App() {
 
         {/* Global Risk Disclaimer Box */}
         <div className="max-w-7xl mx-auto px-4 mt-8 pt-8 border-t border-[#1F2937]/30">
-          <div className="bg-[#131722]/30 border border-[#1F2937]/30 p-4 rounded-xl text-[10px] leading-relaxed text-gray-600 font-sans">
+          <div className="sa-glass p-4 rounded-xl text-[10px] leading-relaxed text-gray-500 font-sans">
             <strong className="text-gray-400 font-bold">Lưu ý:</strong> Giao dịch tài chính có rủi ro thua lỗ. Kết quả kiểm tra dựa trên dữ liệu quá khứ và không bảo đảm kết quả trong tương lai. Strategy Audit cung cấp nội dung giáo dục, phân tích dữ liệu định lượng, không phải tín hiệu giao dịch hay khuyến nghị đầu tư cá nhân.
           </div>
         </div>

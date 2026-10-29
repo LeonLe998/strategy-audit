@@ -15,6 +15,7 @@ import { useGSAP } from '@gsap/react';
 import { START_HERE } from '../content/journey';
 import { FilterScene, ScaleScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
+import { GlassCard } from '../components/Glass';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
@@ -125,42 +126,6 @@ function Pass({ on, drop }: { on: boolean; drop: number }) {
       >
         −{drop}
       </motion.span>
-    </div>
-  );
-}
-
-/** Tấm kính: nền mờ trong, mép trên bắt sáng, nghiêng nhẹ theo chuột và có đốm sáng chạy theo con trỏ.
- *  Chỉ đổi transform + biến CSS trên chính tấm này nên không làm cả trang vẽ lại. */
-function GlassCard({ children, className = '', tint = 'clear' }: { children: ReactNode; className?: string; tint?: 'clear' | 'cyan' }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const move = (e: React.PointerEvent) => {
-    const el = ref.current;
-    if (!el || e.pointerType !== 'mouse') return;
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top) / r.height;
-    el.style.transform = `perspective(700px) rotateX(${(0.5 - y) * 10}deg) rotateY(${(x - 0.5) * 12}deg) translateZ(0)`;
-    el.style.setProperty('--gx', `${x * 100}%`);
-    el.style.setProperty('--gy', `${y * 100}%`);
-  };
-  const leave = () => {
-    if (ref.current) ref.current.style.transform = '';
-  };
-  return (
-    <div
-      ref={ref}
-      onPointerMove={move}
-      onPointerLeave={leave}
-      className={`group relative overflow-hidden rounded-2xl border backdrop-blur-md transition-[transform,box-shadow,border-color,background-color] duration-300 ease-out will-change-transform ${
-        tint === 'cyan'
-          ? 'border-[#9ff6ff]/60 bg-[linear-gradient(150deg,rgba(43,255,234,0.22),rgba(43,255,234,0.05)_55%,rgba(255,255,255,0.03))] shadow-[0_0_40px_rgba(43,255,234,0.35),inset_0_1px_0_rgba(255,255,255,0.45)]'
-          : 'border-white/15 bg-[linear-gradient(150deg,rgba(255,255,255,0.10),rgba(255,255,255,0.025)_55%,rgba(255,255,255,0.01))] shadow-[0_24px_48px_-24px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.22)]'
-      } ${className}`}
-    >
-      {/* Vệt phản chiếu chéo cố định + đốm sáng theo chuột */}
-      <div className="pointer-events-none absolute -left-1/4 top-0 h-full w-1/3 -skew-x-[20deg] bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
-      <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(circle_at_var(--gx,50%)_var(--gy,0%),rgba(255,255,255,0.16),transparent_55%)]" />
-      <div className="relative">{children}</div>
     </div>
   );
 }
@@ -299,7 +264,7 @@ function StampedCards() {
   useGSAP(
     () => {
       if (reduce) {
-        gsap.set('.sa-glass', { borderColor: 'rgba(255,90,106,0.55)' });
+        gsap.set('.sa-stampcard', { borderColor: 'rgba(255,90,106,0.55)' });
         return;
       }
       const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'center 70%', once: true } });
@@ -309,7 +274,7 @@ function StampedCards() {
         tl.from(card.querySelector('.sa-stamp'), { opacity: 0, scale: 2.6, rotation: -32, ease: 'power4.in', duration: 0.28 }, at);
         tl.from(card.querySelectorAll('.sa-drop'), { scale: 0, opacity: 0, transformOrigin: '50% 50%', stagger: 0.012, duration: 0.3, ease: 'power2.out' }, at + 0.26);
         tl.to(card, { x: 5, yoyo: true, repeat: 3, duration: 0.04, ease: 'none' }, at + 0.26);
-        tl.to(card.querySelector('.sa-glass'), { borderColor: 'rgba(255,90,106,0.6)', boxShadow: '0 0 30px rgba(255,90,106,0.22), inset 0 1px 0 rgba(255,255,255,0.2)', duration: 0.3 }, at + 0.26);
+        tl.to(card.querySelector('.sa-stampcard'), { borderColor: 'rgba(255,90,106,0.6)', boxShadow: '0 0 30px rgba(255,90,106,0.22), inset 0 1px 0 rgba(255,255,255,0.2)', duration: 0.3 }, at + 0.26);
       });
     },
     { scope: ref, dependencies: [reduce] },
@@ -318,7 +283,7 @@ function StampedCards() {
     <div ref={ref} className="grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
       {S.popular.cards.map((c, idx) => (
         <div key={c.name} className="sa-card h-full">
-          <GlassCard className="sa-glass flex h-full min-h-[11rem] flex-col p-4 sm:aspect-[3/4]">
+          <GlassCard className="sa-stampcard flex h-full min-h-[11rem] flex-col p-4 sm:aspect-[3/4]">
             <p className="text-base font-bold text-white sm:text-lg">{c.name}</p>
             <div className="pointer-events-none relative my-auto flex w-full justify-center py-4">
               <svg viewBox="0 0 140 110" className="absolute left-1/2 top-1/2 h-28 w-36 -translate-x-1/2 -translate-y-1/2 overflow-visible" aria-hidden>
@@ -385,10 +350,10 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
       <Screen id="cta">
         <Line title={S.cta.title} body={S.cta.body} />
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <button type="button" onClick={() => go(S.cta.primary.tab)} className="rounded-xl bg-[#2BFFEA] px-7 py-4 text-base font-bold text-black shadow-[0_0_28px_rgba(43,255,234,0.35)]">
+          <button type="button" onClick={() => go(S.cta.primary.tab)} className="sa-glass-btn rounded-xl px-7 py-4 text-base font-bold">
             {S.cta.primary.label}
           </button>
-          <button type="button" onClick={() => go(S.cta.secondary.tab)} className="rounded-xl border border-white/25 px-7 py-4 text-base font-semibold text-white hover:bg-white/5">
+          <button type="button" onClick={() => go(S.cta.secondary.tab)} className="sa-glass-ghost rounded-xl px-7 py-4 text-base font-semibold text-white">
             {S.cta.secondary.label}
           </button>
         </div>

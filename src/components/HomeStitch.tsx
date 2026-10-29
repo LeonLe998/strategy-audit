@@ -1,19 +1,21 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { GlassCard } from './Glass';
 import { motion } from 'motion/react';
 import {
   ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown,
   ClipboardCheck, Database, FileSearch, ShieldCheck, Users, CircleAlert,
-  Gamepad2, Box
+  Gamepad2
 } from 'lucide-react';
 import './HomeStitch.css';
 
-// three.js chỉ tải khi người xem bật chế độ 3D
-const World3D = lazy(() => import('./Game3D/World3D').then((m) => ({ default: m.World3D })));
+// three.js chỉ tải khi trang này mở (quả cầu kính ở đầu trang)
+const GlassOrbScene = lazy(() => import('../game/world/StartScenes3D').then((m) => ({ default: m.GlassOrbScene })));
 
 interface HomeProps {
   setActiveTab: (tab: string) => void;
   onToggleGameMode?: () => void;
   onOpenCustomInstructions?: () => void;
+  /** Không còn dùng từ khi bỏ khối 3D cũ ở đầu trang; giữ để App không phải đổi */
   activeSectionIndex?: number;
 }
 
@@ -60,10 +62,8 @@ const faqs = [
 export default function HomeStitch({
   setActiveTab,
   onToggleGameMode,
-  activeSectionIndex = 0
 }: HomeProps) {
   const [summary, setSummary] = useState<LibrarySummary | null>(null);
-  const [heroViewMode, setHeroViewMode] = useState<'3d' | 'report'>('report');
 
   useEffect(() => {
     let active = true;
@@ -83,6 +83,8 @@ export default function HomeStitch({
   const total = summary?.tong ?? 300;
   const updateDate = summary?.cap_nhat ?? '2026-08-16';
   const dateLabel = updateDate.split('-').reverse().join('/');
+  const pass = summary?.verdict_da_chay?.['CHẤT'] ?? 15;
+  const fail = (summary?.verdict_da_chay?.['CHÁT'] ?? 0) + (summary?.verdict_da_chay?.['TÌNH HUỐNG'] ?? 0) || 227;
   const example =
     summary?.danh_sach?.find((strategy) => strategy.id === 'BRK001') ??
     summary?.danh_sach?.find((strategy) => strategy.trang_thai === 'da_kiem_dinh');
@@ -138,51 +140,19 @@ export default function HomeStitch({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.15 }}
         >
-          {/* View Mode Switcher Header */}
-          <div className="flex items-center justify-between pb-3">
-            <div className="flex rounded-xl bg-[#0d1e2e] p-1 border border-[#1f2937]">
-              <button
-                onClick={() => setHeroViewMode('3d')}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all ${
-                  heroViewMode === '3d'
-                    ? 'bg-neon-green text-black font-bold shadow-md'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Box size={14} /> Không gian 3D WebGL
-              </button>
-              <button
-                onClick={() => setHeroViewMode('report')}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all ${
-                  heroViewMode === 'report'
-                    ? 'bg-neon-green text-black font-bold shadow-md'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Database size={14} /> Báo cáo kiểm định
-              </button>
+          {/* Quả cầu kính: mỗi viên bi là một chiến lược đã đo đủ, bi xanh là đạt (số thật từ thư viện) */}
+          <div className="relative -mb-10 h-[300px] w-full sm:h-[340px]">
+            <Suspense fallback={null}>
+              <GlassOrbScene key={`${pass}-${fail}`} pass={pass} fail={fail} className="absolute inset-0" />
+            </Suspense>
+            <div className="pointer-events-none absolute right-2 top-2 flex flex-col gap-1.5 text-[11px] text-gray-300">
+              <span className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-[#2BFFEA] shadow-[0_0_10px_#2BFFEA]" /> {pass} đạt</span>
+              <span className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full bg-[#6b7684]" /> {fail} không đạt</span>
             </div>
-
-            {heroViewMode === '3d' && onToggleGameMode && (
-              <button
-                onClick={onToggleGameMode}
-                className="text-xs text-neon-green hover:underline flex items-center gap-1 font-semibold"
-              >
-                <Gamepad2 size={14} /> Phóng to toàn màn hình
-              </button>
-            )}
           </div>
-
-          {/* Display Mode 1: Interactive Three.js 3D Canvas */}
-          {heroViewMode === '3d' ? (
-            <div className="relative w-full h-[420px] rounded-3xl overflow-hidden border border-[#20394b] shadow-2xl bg-[#061624]">
-              <Suspense fallback={<div className="flex h-full items-center justify-center text-xs text-gray-500">Đang tải không gian 3D…</div>}>
-                <World3D isGameMode={false} activeSectionIndex={activeSectionIndex} />
-              </Suspense>
-            </div>
-          ) : (
-            /* Display Mode 2: Real Audit Report Preview */
+          {
             example && (
+              <GlassCard className="relative z-10">
               <article className="sa-report" aria-label="Trích đoạn hồ sơ kiểm định thật">
                 <div className="sa-report-top">
                   <div>
@@ -232,8 +202,9 @@ export default function HomeStitch({
                   </button>
                 </div>
               </article>
+              </GlassCard>
             )
-          )}
+          }
         </motion.div>
       </section>
 
