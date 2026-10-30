@@ -1,5 +1,5 @@
 /**
- * Hai nút liên hệ Zalo · Telegram, dùng ở bản đồ, ô cuối trang và chân trang.
+ * Nút liên hệ (Zalo), dùng ở bản đồ, ô cuối trang, chân trang và trang Thành viên. Danh sách kênh ở CONTACT trong content/journey.ts.
  * `from` ghi vào GA4 để biết người ta bấm liên hệ từ đâu.
  */
 import { MessageCircle, Send } from 'lucide-react';

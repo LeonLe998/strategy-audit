@@ -198,7 +198,7 @@ export default function MembershipPage({ setActiveTab }: MembershipPageProps) {
               <p className="mt-3 text-sm leading-6 text-gray-300">Đăng ký và cấp quyền được xác nhận thủ công:</p>
               <ol className="mt-5 space-y-4 text-sm text-gray-300">
                 {[
-                  'Nhắn Strategy Audit qua Zalo hoặc Telegram, cho biết bạn muốn tham gia thành viên.',
+                  'Nhắn Strategy Audit qua Zalo, cho biết bạn muốn tham gia thành viên.',
                   'Trao đổi để chọn gói phù hợp và nhận hướng dẫn đăng ký.',
                   'Hoàn tất đăng ký theo hướng dẫn và gửi xác nhận.',
                   'Sau khi xác nhận, Leon cấp quyền truy cập cộng đồng thành viên.',
@@ -211,13 +211,13 @@ export default function MembershipPage({ setActiveTab }: MembershipPageProps) {
 
               {!sent ? (
                 <form id="dang-ky" onSubmit={submitInterest} className="mt-6 scroll-mt-28 border-t border-white/10 pt-5">
-                  <h3 className="font-semibold text-white">Muốn được liên hệ qua email hoặc Telegram?</h3>
-                  <p className="mt-1 text-xs leading-5 text-gray-400">Để lại tên và cách liên hệ, Strategy Audit sẽ nhắn lại để tư vấn gói phù hợp. Muốn nhanh hơn thì nhắn thẳng qua Zalo hoặc Telegram.</p>
+                  <h3 className="font-semibold text-white">Muốn Strategy Audit chủ động liên hệ?</h3>
+                  <p className="mt-1 text-xs leading-5 text-gray-400">Để lại tên và cách liên hệ, Strategy Audit sẽ nhắn lại để tư vấn gói phù hợp. Muốn nhanh hơn thì nhắn thẳng qua Zalo.</p>
                   <label className="mt-4 block text-sm text-gray-300">Tên
                     <input required value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" className={INPUT} placeholder="Tên bạn muốn được gọi" />
                   </label>
-                  <label className="mt-3 block text-sm text-gray-300">Email hoặc username Telegram
-                    <input required value={contact} onChange={(event) => setContact(event.target.value)} autoComplete="off" className={INPUT} placeholder="ban@email.com hoặc @tenban" />
+                  <label className="mt-3 block text-sm text-gray-300">Số Zalo hoặc email
+                    <input required value={contact} onChange={(event) => setContact(event.target.value)} autoComplete="off" className={INPUT} placeholder="0912 345 678 hoặc ban@email.com" />
                   </label>
                   <label className="mt-4 flex items-start gap-2 text-xs leading-5 text-gray-400">
                     <input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} className="mt-1 accent-[#2BFFEA]" />
@@ -231,7 +231,7 @@ export default function MembershipPage({ setActiveTab }: MembershipPageProps) {
               ) : (
                 <div role="status" className="sa-glass sa-glass-cyan mt-6 rounded-xl p-4">
                   <p className="font-semibold text-white">Biểu mẫu đã được gửi từ trình duyệt.</p>
-                  <p className="mt-1 text-sm leading-6 text-gray-300">Strategy Audit sẽ liên hệ lại qua thông tin bạn để lại. Muốn nhanh hơn, bạn có thể nhắn thẳng qua Zalo hoặc Telegram.</p>
+                  <p className="mt-1 text-sm leading-6 text-gray-300">Strategy Audit sẽ liên hệ lại qua thông tin bạn để lại. Muốn nhanh hơn, bạn có thể nhắn thẳng qua Zalo.</p>
                 </div>
               )}
               <p className="mt-4 text-xs leading-5 text-gray-500">Thành viên không nhận tín hiệu giao dịch, lời hứa lợi nhuận hay khuyến nghị đầu tư cá nhân.</p>
