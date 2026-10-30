@@ -4,7 +4,8 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Activity, BookOpen, Users, ClipboardCheck, FileCode, Gamepad2, Settings, Map as MapIcon } from 'lucide-react';
+import { HUB } from '../content/journey';
+import { Activity, BookOpen, Users, ClipboardCheck, FileCode, Gamepad2, Settings, Map as MapIcon, FolderOpen, Menu, X } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 interface NavbarProps {
@@ -20,6 +21,7 @@ export default function Navbar({
   onOpenCustomInstructions,
   onToggleGameMode
 }: NavbarProps) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [showAdminIcon, setShowAdminIcon] = useState<boolean>(() => {
     return localStorage.getItem('quant_show_admin') === 'true';
   });
@@ -43,7 +45,8 @@ export default function Navbar({
     { id: 'home', label: 'Bản đồ', icon: MapIcon },
     { id: 'about', label: 'Vì sao cần đo?', icon: Activity },
     { id: 'sauo', label: 'Tự kiểm tra 6 ô', icon: ClipboardCheck },
-    { id: 'viplibrary', label: '300 chiến lược', icon: BookOpen },
+    { id: 'viplibrary', label: 'Thư viện 300', icon: BookOpen },
+    { id: 'vault', label: 'Hồ sơ nghiên cứu', icon: FolderOpen },
     { id: 'membership', label: 'Thành viên', icon: Users },
   ];
 
@@ -72,13 +75,13 @@ export default function Navbar({
                 key={item.id}
                 id={`nav-item-${item.id}`}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex shrink-0 whitespace-nowrap items-center px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
+                className={`flex shrink-0 whitespace-nowrap items-center px-2 xl:px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
                   isActive
                     ? 'text-neon-green border border-[#9ff6ff]/30 bg-[linear-gradient(160deg,rgba(43,255,234,0.14),rgba(255,255,255,0.03))] shadow-[0_0_16px_rgba(43,255,234,0.18),inset_0_1px_0_rgba(255,255,255,0.18)]'
                     : 'text-gray-400 hover:text-white hover:bg-white/[0.06] border border-transparent'
                 }`}
               >
-                <Icon className="w-4 h-4 mr-1.5" />
+                <Icon className="hidden xl:block w-4 h-4 mr-1.5" />
                 {item.label}
               </button>
             );
@@ -130,7 +133,18 @@ export default function Navbar({
               <span className="relative inline-flex h-2 w-2 rounded-full bg-neon-green"></span>
             </span>
             <ClipboardCheck className="w-3.5 h-3.5 shrink-0" />
-            <span className="sm:hidden">Sáu Ô</span><span className="hidden sm:inline">Tự kiểm tra Sáu Ô</span>
+            <span className="xl:hidden">6 ô</span><span className="hidden xl:inline">Tự kiểm tra 6 ô</span>
+          </button>
+
+          {/* Dưới lg: menu đầy đủ mọi trang (menu dưới của điện thoại chỉ có 4 mục) */}
+          <button
+            type="button"
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Đóng menu' : 'Mở menu tất cả các trang'}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="sa-glass-ghost lg:hidden rounded-lg p-2 text-gray-200"
+          >
+            {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
 
           {showAdminIcon && (
@@ -147,6 +161,23 @@ export default function Navbar({
         </div>
       </div>
       <div aria-hidden className="sa-glow-line absolute inset-x-0 bottom-0 h-px opacity-70" />
+      {menuOpen && (
+        <nav aria-label="Tất cả các trang" className="sa-glass-dark lg:hidden absolute right-3 top-[calc(100%+6px)] w-60 rounded-2xl p-1.5">
+          {[{ tab: 'home', label: 'Bản đồ' }, ...HUB.islands.map((s) => ({ tab: s.tab, label: s.title }))].map((m) => (
+            <button
+              key={m.tab}
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                setActiveTab(m.tab);
+              }}
+              className={`block w-full rounded-xl px-3 py-2.5 text-left text-sm ${activeTab === m.tab ? 'bg-[#2BFFEA]/12 text-[#2BFFEA]' : 'text-gray-200 hover:bg-white/5'}`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }

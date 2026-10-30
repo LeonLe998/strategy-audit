@@ -159,7 +159,7 @@ export const HUB = {
       key: 'sau-o',
       landmark: 'sau-o',
       tab: 'sauo',
-      title: 'Tự kiểm 6 ô',
+      title: 'Tự kiểm tra 6 ô',
       sub: 'Miễn phí',
       note: 'Sáu câu hỏi về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu. Miễn phí.',
       caption: 'Trả lời sáu câu về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu.',
@@ -177,10 +177,10 @@ export const HUB = {
       key: 'tai-lieu',
       landmark: 'kiem-diem',
       tab: 'vault',
-      title: 'Lộ trình 18 tháng',
-      sub: 'Giáo trình & Lộ trình Quant',
-      note: 'Giáo trình và lộ trình 18 tháng từ người mới đến Quant Developer & Systematic Trader có kiểm định.',
-      caption: 'Lộ trình 18 tháng từ người mới đến Quant Developer & Systematic Trader có kiểm định.',
+      title: 'Hồ sơ nghiên cứu',
+      sub: 'Kho tài liệu & báo cáo chuyên đề',
+      note: 'Kho tài liệu nền tảng và các báo cáo chuyên đề rút ra từ quá trình kiểm định 242 chiến lược trên 22 năm dữ liệu vàng.',
+      caption: 'Kho tài liệu và báo cáo chuyên đề rút ra từ quá trình kiểm định 242 chiến lược trên 22 năm dữ liệu vàng.',
     },
     {
       key: 'thanh-vien',
@@ -194,12 +194,14 @@ export const HUB = {
   ] as const,
   outro: 'Chạm vào một hòn đảo để vào trang đó.',
   /** Menu cố định trên bản đồ: tab trong App + nhãn */
+  // Menu trên bản đồ: đúng thứ tự 6 đảo, cùng tên với nhãn đảo
   menu: [
+    { tab: 'journey', label: 'Bắt đầu ở đây' },
+    { tab: 'about', label: 'Vì sao cần đo' },
+    { tab: 'sauo', label: 'Tự kiểm tra 6 ô' },
     { tab: 'viplibrary', label: 'Thư viện 300' },
-    { tab: 'sauo', label: 'Tự kiểm 6 ô' },
-    { tab: 'vault', label: 'Lộ trình 18 tháng' },
+    { tab: 'vault', label: 'Hồ sơ nghiên cứu' },
     { tab: 'membership', label: 'Thành viên' },
-    { tab: 'about', label: 'Bản đọc' },
   ],
   skip: 'Bỏ qua',
   replay: 'Xem lại vòng giới thiệu',
@@ -295,7 +297,7 @@ export const START_HERE = {
   cta: {
     title: 'Cách bạn đang đánh nằm ở nhóm nào?',
     body: 'Đem nó đi đo trước khi tin.',
-    primary: { tab: 'sauo', label: 'Tự kiểm 6 ô · miễn phí' },
+    primary: { tab: 'sauo', label: 'Tự kiểm tra 6 ô · miễn phí' },
     secondary: { tab: 'viplibrary', label: 'Xem thư viện 300' },
   },
 };

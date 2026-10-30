@@ -266,8 +266,9 @@ export default function App() {
                 <IntakeWizard selectedPackage={null} />
               </div>
             )}
+              {/* Nằm trong Suspense: chỉ hiện khi trang đã tải xong, không trơ trọi dưới chữ "Đang tải…" */}
+              {activeTab !== 'admin' && <NextStep tab={activeTab} onGo={setActiveTab} />}
             </Suspense>
-            {activeTab !== 'admin' && <NextStep tab={activeTab} onGo={setActiveTab} />}
           </motion.div>
         </AnimatePresence>
       </main>

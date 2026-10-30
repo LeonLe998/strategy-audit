@@ -172,18 +172,18 @@ function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.Material[], 
         [0.24, 1.42],
         [0.15, 1.05],
       ].map(([r, y]) => new THREE.Vector2(r, y));
-      const funnel = shape(new THREE.LatheGeometry(prof, 48), 0.3, 1.4);
+      const funnel = shape(new THREE.LatheGeometry(prof, 48), 0.18, 0.8);
       const stem = shape(new THREE.CylinderGeometry(0.07, 0.12, 0.88, 12), 0.2, 0.8);
       stem.position.y = 0.62;
       group.add(funnel, stem);
       [[1.05, 2.7], [0.6, 1.85]].forEach(([r, y]) => {
-        const ring = light(new THREE.TorusGeometry(r, 0.03, 6, 48), 1.4);
+        const ring = light(new THREE.TorusGeometry(r, 0.03, 6, 48), 0.8);
         ring.rotation.x = Math.PI / 2;
         ring.position.y = y;
         group.add(ring);
       });
       const radiusAt = (y: number) => THREE.MathUtils.clamp(0.15 + ((y - 1.05) / 1.65) * 0.9, 0.15, 1.05);
-      const beads = Array.from({ length: 7 }, () => bead(0.07));
+      const beads = Array.from({ length: 7 }, () => bead(0.07, 1));
       beads.forEach((b) => group.add(b));
       return (t) =>
         beads.forEach((b, k) => {
@@ -267,34 +267,42 @@ function buildLandmark(id: StageId, group: THREE.Group, mats: THREE.Material[], 
       return (t) => (m.emissiveIntensity = 0.8 + Math.sin(t * 1.5) * 0.2);
     }
     case 'kiem-diem': {
-      // Cột kính có bậc thang xoắn, cứ ba bậc một mốc sáng; một đốm sáng leo dần lên đỉnh
-      const pillar = shape(new THREE.CylinderGeometry(0.15, 0.2, 2.3, 16), 0.2, 1);
-      pillar.position.y = 1.3;
-      const top = bead(0.2, 1.8);
-      top.position.y = 2.6;
-      group.add(pillar, top);
-      const steps: THREE.Vector3[] = [];
-      for (let k = 0; k < 12; k++) {
-        const a = k * 0.62;
-        const y = 0.32 + k * 0.17;
-        const step = shape(new THREE.BoxGeometry(0.46, 0.05, 0.22), 0.25, 1);
-        step.position.set(Math.cos(a) * 0.52, y, Math.sin(a) * 0.52);
-        step.rotation.y = -a;
-        group.add(step);
-        steps.push(new THREE.Vector3(Math.cos(a) * 0.6, y + 0.1, Math.sin(a) * 0.6));
-        if (k % 3 === 2) {
-          const mark = bead(0.055, 1.6);
-          mark.position.set(Math.cos(a) * 0.78, y + 0.06, Math.sin(a) * 0.78);
-          group.add(mark);
-        }
-      }
-      const climber = bead(0.09, 2.2);
-      group.add(climber);
+      // Hồ sơ nghiên cứu: chồng tấm hồ sơ kính trên giá, tấm trên cùng nâng lên và lật chậm, có dòng chữ sáng
+      const sheet = () => {
+        const g = shape(new THREE.BoxGeometry(1.15, 0.05, 1.5), 0.3, 1.2);
+        // Các dòng chữ trên mặt hồ sơ
+        [-0.45, -0.22, 0.01, 0.24, 0.47].forEach((z, k) => {
+          const line = light(new THREE.BoxGeometry(k === 0 ? 0.55 : 0.85, 0.012, 0.06), k === 0 ? 1.6 : 0.8);
+          line.position.set(k === 0 ? -0.15 : 0, 0.035, z);
+          g.add(line);
+        });
+        return g;
+      };
+      const stack = [0, 1, 2, 3].map((k) => {
+        const g = sheet();
+        g.position.set((k % 2 ? 0.05 : -0.04), 0.3 + k * 0.14, k * 0.03);
+        g.rotation.y = (k - 1.5) * 0.09;
+        group.add(g);
+        return g;
+      });
+      const top = sheet();
+      group.add(top);
+      // Kính lúp nhỏ: vòng sáng + cán
+      const lens = light(new THREE.TorusGeometry(0.28, 0.035, 8, 32), 1.5);
+      const handle = light(new THREE.CylinderGeometry(0.035, 0.035, 0.42, 8), 1);
+      handle.position.set(0.3, -0.3, 0);
+      handle.rotation.z = Math.PI / 4;
+      const loupe = new THREE.Group();
+      loupe.add(lens, handle);
+      loupe.position.set(0.75, 1.15, 0.45);
+      group.add(loupe);
       return (t) => {
-        const p = ((t * 0.12) % 1) * (steps.length - 1);
-        const k = Math.floor(p);
-        climber.position.lerpVectors(steps[k], steps[Math.min(k + 1, steps.length - 1)], p - k);
-        (top.material as THREE.MeshStandardMaterial).emissiveIntensity = 1.4 + Math.sin(t * 2) * 0.5;
+        const u = (Math.sin(t * 0.7) + 1) / 2;
+        top.position.set(0, 0.95 + u * 0.55, 0);
+        top.rotation.set(-0.35 * u, t * 0.25, 0.1 * u);
+        stack.forEach((g, k) => (g.position.y = 0.3 + k * 0.14 + Math.sin(t * 1.2 + k) * 0.01));
+        loupe.rotation.set(0, Math.sin(t * 0.8) * 0.4, 0);
+        loupe.position.y = 1.15 + Math.sin(t * 1.1) * 0.08;
       };
     }
     case 'chuyen-doi': {
@@ -1088,7 +1096,7 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
       {/* Thanh trên: logo · menu tới các trang · điểm */}
       <header className="absolute inset-x-0 top-0 flex h-16 items-center justify-between gap-3 bg-gradient-to-b from-[#040914]/95 via-[#040914]/60 to-transparent px-3 sm:px-5">
         <img src="/assets/strategy-audit-logo.png" alt="Strategy Audit" className="h-8 w-auto max-w-[150px] object-contain object-left" />
-        <nav data-hub-menu className="hidden items-center gap-1 md:flex">
+        <nav data-hub-menu className="hidden items-center gap-1 lg:flex">
           {HUB.menu.map((m) => (
             <button key={m.tab} type="button" onClick={() => menuGo(m.tab)} className="rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-gray-300 transition-[background,border-color,box-shadow] hover:border-[#9ff6ff]/30 hover:bg-[linear-gradient(160deg,rgba(43,255,234,0.12),rgba(255,255,255,0.03))] hover:text-white hover:shadow-[0_0_14px_rgba(43,255,234,0.15)]">
               {m.label}
@@ -1119,13 +1127,13 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
             onClick={() => {
               setMenuOpen((v) => !v);
               setContactOpen(false);
-            }} className="sa-glass-dark rounded-lg px-3 py-1.5 text-xs font-semibold md:hidden">
+            }} className="sa-glass-dark rounded-lg px-3 py-1.5 text-xs font-semibold lg:hidden">
             {menuOpen ? 'Đóng' : 'Menu'}
           </button>
         </div>
       </header>
       {menuOpen && (
-        <nav className="sa-glass-dark absolute right-3 top-14 z-10 flex w-48 flex-col rounded-xl p-1.5 md:hidden">
+        <nav className="sa-glass-dark absolute right-3 top-14 z-10 flex w-52 flex-col rounded-xl p-1.5 lg:hidden">
           {HUB.menu.map((m) => (
             <button key={m.tab} type="button" onClick={() => menuGo(m.tab)} className="rounded-lg px-3 py-2.5 text-left text-sm text-gray-200 hover:bg-white/5">
               {m.label}

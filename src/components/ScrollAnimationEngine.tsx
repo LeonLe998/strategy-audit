@@ -3,12 +3,12 @@
  * Controls:
  * - Bioluminescent scroll progress bar
  * - Active chapter scrollytelling sync with Three.js 3D camera
- * - Floating Chapter Navigation Pill & Circular Scroll Meter
+ * - Nút cuộn lên đầu (thanh CHƯƠNG cũ đã bỏ 30/10: không còn mục nào để nhảy tới)
  * - Toggle to enter Fullscreen 3D Game Mode
  */
 
 import React, { useEffect, useState } from 'react';
-import { Gamepad2, ArrowUp, Compass, FileCode } from 'lucide-react';
+import { Gamepad2, ArrowUp, FileCode } from 'lucide-react';
 
 export interface ScrollAnimationEngineProps {
   /** Có thì hiện nút Chơi Game 3D. Trang chủ đã là bản đồ nên App không truyền nữa. */
@@ -34,7 +34,6 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
   onOpenCustomInstructions
 }) => {
   const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [activeChapterIndex, setActiveChapterIndex] = useState<number>(0);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
 
   useEffect(() => {
@@ -59,7 +58,6 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
         }
       });
 
-      setActiveChapterIndex(currentIndex);
       if (onSectionChange) {
         onSectionChange(currentIndex);
       }
@@ -69,13 +67,6 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [onSectionChange]);
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -91,27 +82,6 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
           className="h-full bg-gradient-to-r from-neon-green via-cyan-400 to-violet-500 transition-all duration-150 shadow-[0_0_8px_#00ffa3]"
           style={{ width: `${scrollProgress * 100}%` }}
         />
-      </div>
-
-      {/* Floating Bottom Left Chapter Bar & Quick Controls */}
-      <div className="fixed bottom-6 left-6 z-40 hidden lg:flex items-center space-x-2 bg-[#07131e]/90 backdrop-blur-md border border-[#20394b] px-3 py-1.5 rounded-full shadow-2xl">
-        <Compass className="w-3.5 h-3.5 text-cyan-400 animate-spin-slow" />
-        <span className="text-[10px] font-mono text-gray-400">CHƯƠNG:</span>
-        <div className="flex items-center space-x-1">
-          {CHAPTERS.map((chap, idx) => (
-            <button
-              key={chap.id}
-              onClick={() => scrollToSection(chap.id)}
-              className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${
-                activeChapterIndex === idx
-                  ? 'bg-neon-green text-black font-bold shadow-[0_0_8px_rgba(0,255,163,0.4)]'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {chap.title}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Floating Bottom Right Action Bar: Game Mode Toggle, Custom Instructions & Scroll To Top */}
