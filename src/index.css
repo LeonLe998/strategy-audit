@@ -768,3 +768,13 @@ html.light .sa-glass.sa-glass-solid { background: #fff; }
 .sa-glass-dark.sa-glass-dark-lit { border-color: rgb(43 255 234 / 55%); box-shadow: 0 0 28px rgb(43 255 234 / 20%), inset 0 1px 0 rgb(255 255 255 / 22%); }
 /* Logo có chữ "Strategy" màu trắng: chế độ sáng đặt logo trên một viên kính tối để không mất chữ */
 html.light #logo-container { padding: 4px 10px; border-radius: 10px; background: linear-gradient(150deg, #10283a, #071420); box-shadow: 0 6px 16px -8px rgb(15 40 60 / 45%); }
+
+/* Chế độ sáng: chữ màu nhạt (xanh ngọc, bạc hà, vàng) dùng trên nền tối không đọc được trên nền trắng → đổi sang tông đậm */
+html.light .text-cyan-200, html.light .text-cyan-300, html.light .text-cyan-400,
+html.light .text-\[\#2BFFEA\], html.light .text-\[\#3df2ff\], html.light .text-\[\#9ff6ff\] { color: #0e7490 !important; }
+html.light .text-emerald-100, html.light .text-emerald-200, html.light .text-emerald-300, html.light .text-emerald-400 { color: #047857 !important; }
+html.light .text-amber-300, html.light .text-amber-400, html.light .text-\[\#FFD700\], html.light .text-\[\#FFDD00\] { color: #b45309 !important; }
+html.light .text-gray-100 { color: #1e293b !important; }
+html.light .bg-cyan-500\/10, html.light .bg-cyan-500\/15, html.light .bg-\[\#2BFFEA\]\/10 { background-color: rgb(14 116 144 / 8%) !important; }
+html.light [class*="bg-emerald-950"], html.light [class*="bg-[linear-gradient(150deg,rgba(78,222,163"] { background: #ecfdf5 !important; border-color: #a7f3d0 !important; }
+html.light .bg-black\/40, html.light .bg-black\/60 { background-color: #f1f5f9 !important; }

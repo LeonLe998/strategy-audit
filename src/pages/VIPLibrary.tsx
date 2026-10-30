@@ -37,7 +37,7 @@ function LibraryStats({ data }: { data: any }) {
     { n: v['CHẤT'], label: 'Đạt tiêu chí', color: VERDICT_COLORS['CHẤT'], lit: true },
     { n: v['TÌNH HUỐNG'], label: 'Phụ thuộc tình huống', color: VERDICT_COLORS['TÌNH HUỐNG'] },
     { n: v['CHÁT'], label: 'Chưa đạt', color: VERDICT_COLORS['CHÁT'] },
-    { n: data.gop, label: 'Bản đánh chiều ngược lại', color: '#cbd5e1' },
+    { n: data.gop, label: 'Bản đánh chiều ngược lại', color: '#7d8ea3' },
     { n: data.chua, label: 'Chưa kiểm định', color: '#6b7280' },
   ];
   return (

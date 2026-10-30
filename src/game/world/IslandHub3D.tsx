@@ -5,7 +5,7 @@
  * Hình khối dựng bằng code theo bộ hình LM-01…06 (docs/THANH_PHAN_HINH_ANH.md), có bloom + đổ bóng.
  * Không nến, không mũi tên tăng, không vàng thỏi, không đồng xu.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -558,6 +558,18 @@ const saveVisit = (v: Visit) => {
 };
 
 export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) => void }) {
+  // Bản đồ là cảnh đêm, luôn giữ giao diện tối: chế độ sáng đổi chữ trắng thành chữ tối nên nhãn, menu gần như mất chữ.
+  // Lựa chọn sáng/tối của khách vẫn giữ nguyên, rời bản đồ là trả lại.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    if (!root.classList.contains('light')) return;
+    root.classList.remove('light');
+    root.classList.add('dark');
+    return () => {
+      root.classList.remove('dark');
+      root.classList.add('light');
+    };
+  }, []);
   const journey = useJourney();
   const summary = useLibrarySummary();
   const mountRef = useRef<HTMLDivElement>(null);

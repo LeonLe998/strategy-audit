@@ -179,7 +179,7 @@ export default function HomeStitch({
                 <div className="sa-report-metrics">
                   <div>
                     <span>Chấm kỳ 2</span>
-                    <b>{example.oos2_status ?? '—'}</b>
+                    <b>{({ 'lãi lại': 'có lời lại', 'vẫn rớt': 'vẫn không đạt' } as Record<string, string>)[example.oos2_status ?? ''] ?? example.oos2_status ?? '—'}</b>
                   </div>
                   <div>
                     <span>Số lệnh trên dữ liệu mới</span>

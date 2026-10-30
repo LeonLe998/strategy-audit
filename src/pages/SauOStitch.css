@@ -244,3 +244,45 @@
 @media (prefers-reduced-motion: reduce) {
   .sa-six-app *, .sa-six-app *::before, .sa-six-app *::after { animation: none !important; }
 }
+
+/* ===== Chế độ sáng (30/10) ===== */
+html.light .sa-six-app {
+  --six-bg: #f4f8fb; --six-panel: #ffffff; --six-panel-low: #f8fafc; --six-line: #dbe4ec;
+  --six-text: #0f172a; --six-muted: #475569; --six-soft: #64748b; --six-green: #047857; --six-cyan: #0e7490;
+  background: radial-gradient(1200px 700px at 85% -10%, #d9f3f6 0%, transparent 60%), radial-gradient(900px 600px at -10% 110%, #e3ecfb 0%, transparent 55%), var(--six-bg);
+}
+html.light .sa-six-rail { background: linear-gradient(180deg, rgb(255 255 255 / 92%), rgb(244 248 251 / 92%)); border-right-color: #dbe4ec; }
+html.light .sa-six-rail nav a { color: #334155; }
+html.light .sa-six-rail nav a:hover { border-color: #cbd5e1; background: #f1f5f9; color: #0f172a; }
+html.light .sa-six-brand { padding: 4px 10px; border-radius: 10px; background: linear-gradient(150deg, #10283a, #071420); }
+html.light .sa-six-topbar { background: rgb(255 255 255 / 88%); border-bottom-color: #dbe4ec; }
+html.light .sa-six-topbar > span, html.light .sa-six-topbar > a { color: #334155; }
+html.light .sa-six-topbar > a { color: #0e7490; }
+html.light .sa-six-card, html.light .sa-rail-note, html.light .sa-duration, html.light .sa-check-note {
+  border-color: rgb(15 40 60 / 12%); background: linear-gradient(150deg, #ffffff, #f8fafc); box-shadow: 0 18px 36px -24px rgb(15 40 60 / 30%), inset 0 1px 0 #fff;
+}
+html.light .sa-list-title, html.light .sa-what-row, html.light .sa-check-row, html.light .sa-six-footer { border-color: #e2e8f0; }
+html.light .sa-progress-track { border-color: #cbd5e1; background: #e2e8f0; }
+html.light .sa-option { color: #1e293b; border-color: #dbe4ec; background: #ffffff; box-shadow: none; }
+html.light .sa-option:hover { border-color: #0e7490; background: #ecfeff; }
+html.light .sa-option.selected { border-color: #0e7490; background: #cffafe; color: #0f172a; }
+html.light .sa-example { background: #ecfeff; border-left-color: #0e7490; }
+html.light .sa-example span { color: #0e7490; }
+html.light .sa-example p { color: #334155; }
+html.light .sa-question-card textarea, html.light .sa-contact-card input { border-color: #cbd5e1; background: #ffffff; color: #0f172a; box-shadow: none; }
+html.light .sa-action-quiet { border-color: #cbd5e1; background: #ffffff; color: #0f172a; box-shadow: none; }
+html.light .sa-action-skip { color: #475569; border-color: #cbd5e1; }
+html.light .sa-six-tile { border-color: #dbe4ec; background: #ffffff; box-shadow: none; }
+html.light .sa-six-tile span { color: #94a3b8; }
+html.light .sa-six-tile b { color: #334155; }
+html.light .sa-six-tile.is-done { border-color: #0e7490; background: linear-gradient(150deg, #a5f3fc, #ecfeff); box-shadow: 0 0 16px rgb(14 116 144 / 20%); }
+html.light .sa-six-tile.is-done span { color: #0e7490; }
+html.light .sa-six-tile.is-done b { color: #0f172a; }
+html.light .sa-check-icon { border-color: #cbd5e1; color: #64748b; }
+html.light .sa-check-icon.is-done { border-color: #0e7490; background: #0e7490; color: #fff; }
+html.light .sa-check-row.current .sa-check-icon, html.light .sa-check-row.current b { color: #0e7490; border-color: #0e7490; }
+html.light .sa-what-row > span:first-child { color: #0e7490; border-color: #a5f3fc; background: #ecfeff; }
+html.light .sa-result-score b { background: linear-gradient(180deg, #0f172a, #0e7490); -webkit-background-clip: text; background-clip: text; filter: none; }
+html.light .sa-result-score span, html.light .sa-start-points { color: #334155; }
+html.light .sa-check-note { color: #334155; }
+html.light .sa-progress-meta, html.light .sa-rail-label { color: #475569; }
