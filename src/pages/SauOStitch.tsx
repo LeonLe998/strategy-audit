@@ -109,7 +109,7 @@ export default function SauOStitch() {
   return (
     <main className="sa-six-app">
       <aside className="sa-six-rail">
-        <a className="sa-six-brand" href="/" aria-label="Strategy Audit — về trang chủ"><img src="/assets/strategy-audit-logo.png" alt="Strategy Audit" /></a>
+        <a className="sa-six-brand" href="/" aria-label="Strategy Audit — về trang chủ"><img className="sa-logo-on-dark" src="/assets/strategy-audit-logo.png" alt="Strategy Audit" /><img className="sa-logo-on-light" src="/assets/strategy-audit-logo-light.png" alt="" aria-hidden /></a>
         <div className="sa-rail-label">KHÁM PHÁ</div>
         <nav>{links.map(({ href, label, icon: Icon }) => <a href={href} key={href}><Icon size={17} />{label}</a>)}</nav>
         <div className="sa-rail-note"><ShieldCheck size={17} /><p>Không phát tín hiệu giao dịch.<br />Chỉ giúp bạn làm rõ và kiểm tra phương pháp.</p></div>

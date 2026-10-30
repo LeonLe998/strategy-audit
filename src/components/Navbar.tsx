@@ -62,7 +62,8 @@ export default function Navbar({
             setActiveTab('home');
           }}
         >
-          <img src="/assets/strategy-audit-logo.png" alt="Strategy Audit" className="h-9 w-auto max-w-[190px] object-contain object-left" />
+          <img src="/assets/strategy-audit-logo.png" alt="Strategy Audit" className="sa-logo-on-dark h-9 w-auto max-w-[190px] object-contain object-left" />
+          <img src="/assets/strategy-audit-logo-light.png" alt="" aria-hidden className="sa-logo-on-light h-9 w-auto max-w-[190px] object-contain object-left" />
         </button>
 
         {/* Desktop Nav Links */}

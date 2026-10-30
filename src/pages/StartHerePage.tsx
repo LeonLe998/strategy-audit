@@ -71,7 +71,7 @@ function dotState(card: number, step: number, r: number): Dot {
 }
 const DOT_STYLE: Record<Dot, { fill: string; opacity: number }> = {
   off: { fill: '#9fb0bf', opacity: 0.08 },
-  on: { fill: '#cfe3ee', opacity: 0.8 },
+  on: { fill: '#9bb8c9', opacity: 0.9 },
   dim: { fill: '#3a4656', opacity: 0.45 },
   hot: { fill: '#2BFFEA', opacity: 1 },
 };

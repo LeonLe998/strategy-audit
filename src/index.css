@@ -767,7 +767,10 @@ html.light .sa-glass.sa-glass-solid { background: #fff; }
 }
 .sa-glass-dark.sa-glass-dark-lit { border-color: rgb(43 255 234 / 55%); box-shadow: 0 0 28px rgb(43 255 234 / 20%), inset 0 1px 0 rgb(255 255 255 / 22%); }
 /* Logo có chữ "Strategy" màu trắng: chế độ sáng đặt logo trên một viên kính tối để không mất chữ */
-html.light #logo-container { padding: 4px 10px; border-radius: 10px; background: linear-gradient(150deg, #10283a, #071420); box-shadow: 0 6px 16px -8px rgb(15 40 60 / 45%); }
+/* Logo: nền tối dùng bản chữ trắng, nền sáng dùng bản chữ xanh đen (strategy-audit-logo-light.png) */
+.sa-logo-on-light { display: none !important; }
+html.light .sa-logo-on-dark { display: none !important; }
+html.light .sa-logo-on-light { display: block !important; }
 
 /* Chế độ sáng: chữ màu nhạt (xanh ngọc, bạc hà, vàng) dùng trên nền tối không đọc được trên nền trắng → đổi sang tông đậm */
 html.light .text-cyan-200, html.light .text-cyan-300, html.light .text-cyan-400,

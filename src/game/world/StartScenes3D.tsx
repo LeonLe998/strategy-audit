@@ -7,7 +7,7 @@
  *  - CalendarScene: lịch để bàn kính, tờ tháng này sáng 2 ngày giao dịch cuối tháng "Mua", lật sang tờ tháng sau sáng ngày giao dịch thứ 3 "Bán".
  * Không biểu đồ giá, không mũi tên, không đồng xu.
  */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { startMiniScene, type Frame } from './miniScene';
 import { glassLathe, glassMaterial, glow, rimMaterial, studioEnv } from './glassKit';
@@ -81,8 +81,21 @@ const seg = (u: number, a: number, b: number) => THREE.MathUtils.clamp((u - a) /
  * · (3) đem đi đo, rồi tách sang Đạt (trái) hoặc Không đạt (phải). Tên và kết quả lấy từ thư viện thật,
  * nên tỉ lệ lá sang Đạt đúng bằng 15/242.
  */
+/** Đổi khi khách bật/tắt chế độ sáng (lớp light trên <html>), để cảnh có chữ vẽ sẵn dựng lại đúng màu */
+function useThemeKey() {
+  const read = () => (document.documentElement.classList.contains('light') ? 'light' : 'dark');
+  const [theme, setTheme] = useState(read);
+  useEffect(() => {
+    const mo = new MutationObserver(() => setTheme(read()));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => mo.disconnect();
+  }, []);
+  return theme;
+}
+
 export function FilterScene({ className = '' }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const theme = useThemeKey();
   useEffect(() => {
     const mount = ref.current;
     if (!mount) return;
@@ -110,11 +123,12 @@ export function FilterScene({ className = '' }: { className?: string }) {
       cancelled = true;
       stop?.();
     };
-  }, []);
+  }, [theme]);
   return <div ref={ref} className={className} aria-hidden />;
 }
 
 function buildFilter(scene: THREE.Scene, renderer: THREE.WebGLRenderer, list: Strat[], passCount: number, failCount: number, narrow: boolean): Frame {
+  const light = document.documentElement.classList.contains('light');
   const W = narrow ? 0.66 : 1;
   const K = narrow ? 0.0135 : 0.0105;
   // Ánh sáng môi trường để kính có vệt phản chiếu thật
@@ -202,8 +216,8 @@ function buildFilter(scene: THREE.Scene, renderer: THREE.WebGLRenderer, list: St
     return out;
   };
   const jars = [
-    { pass: true, x: -3.6 * (narrow ? 0.62 : 1), cap: 15, color: ACCENT, text: `ĐẠT · ${passCount}`, bg: 'rgba(43,255,234,0.16)', border: '#9ff6ff', fg: '#2BFFEA' },
-    { pass: false, x: 3.6 * (narrow ? 0.62 : 1), cap: 110, color: 0x8794a3, text: `KHÔNG ĐẠT · ${failCount}`, bg: 'rgba(120,135,150,0.2)', border: '#a9b6c2', fg: '#d5dee6' },
+    { pass: true, x: -3.6 * (narrow ? 0.62 : 1), cap: 15, color: ACCENT, text: `ĐẠT · ${passCount}`, ...(light ? { bg: '#0e7490', border: '#0e7490', fg: '#ffffff' } : { bg: 'rgba(43,255,234,0.16)', border: '#9ff6ff', fg: '#2BFFEA' }) },
+    { pass: false, x: 3.6 * (narrow ? 0.62 : 1), cap: 110, color: 0x8794a3, text: `KHÔNG ĐẠT · ${failCount}`, ...(light ? { bg: '#475569', border: '#475569', fg: '#ffffff' } : { bg: 'rgba(120,135,150,0.2)', border: '#a9b6c2', fg: '#d5dee6' }) },
   ].map((j) => {
     const g = glassLathe(jarProfile, j.pass ? ACCENT : 0x9fb0bf, j.pass ? 1.6 : 0.9, 0.08);
     g.position.set(j.x, BIN_Y, 0);
@@ -251,10 +265,11 @@ function buildFilter(scene: THREE.Scene, renderer: THREE.WebGLRenderer, list: St
     if (!list.length) return;
     const s = list[order[next % order.length]];
     next += 1;
-    const a = chip(IDEA[s.ho] ?? s.ho, { bg: 'rgba(200,240,255,0.14)', border: 'rgba(160,240,255,0.7)', size: 26, k: K });
-    const b = chip(TF[s.tf] ?? s.tf, { bg: 'rgba(255,240,180,0.12)', border: 'rgba(255,221,0,0.65)', color: '#fff6cc', size: 26, k: K });
+    // Nền sáng: viên chữ đặc, chữ tối; nền tối: viên kính trong, chữ sáng
+    const a = chip(IDEA[s.ho] ?? s.ho, light ? { bg: 'rgba(255,255,255,0.95)', border: '#0e7490', color: '#0f172a', size: 26, k: K } : { bg: 'rgba(200,240,255,0.14)', border: 'rgba(160,240,255,0.7)', size: 26, k: K });
+    const b = chip(TF[s.tf] ?? s.tf, light ? { bg: 'rgba(255,251,235,0.97)', border: '#b45309', color: '#78350f', size: 26, k: K } : { bg: 'rgba(255,240,180,0.12)', border: 'rgba(255,221,0,0.65)', color: '#fff6cc', size: 26, k: K });
     const name = s.ten.length > (narrow ? 22 : 34) ? `${s.ten.slice(0, narrow ? 21 : 33).trimEnd()}…` : s.ten;
-    const c = chip(name, { bg: 'rgba(61,242,255,0.2)', border: 'rgba(200,250,255,0.9)', color: '#ffffff', size: 28, k: K });
+    const c = chip(name, light ? { bg: 'rgba(14,116,144,0.95)', border: '#0e7490', color: '#ffffff', size: 28, k: K } : { bg: 'rgba(61,242,255,0.2)', border: 'rgba(200,250,255,0.9)', color: '#ffffff', size: 28, k: K });
     c.material.opacity = 0;
     const ang = Math.random() * Math.PI * 2;
     const x = Math.cos(ang) * (1 + Math.random() * 2.2) * W;
