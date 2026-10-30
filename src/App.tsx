@@ -17,14 +17,10 @@ import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
 const IslandHub3D = lazy(() => import('./game/world/IslandHub3D'));
 // Các trang chỉ tải khi khách mở tới: gói chính nhẹ đi, bản đồ trang chủ hiện nhanh hơn
 const Home = lazy(() => import('./components/HomeStitch'));
-const Services = lazy(() => import('./components/ServicesRedesign'));
-const Pricing = lazy(() => import('./components/Pricing'));
 const MembershipPage = lazy(() => import('./pages/MembershipPage'));
 const SauO = lazy(() => import('./pages/SauOStitch'));
 const CustomInstructionsPanel = lazy(() => import('./components/CustomInstructionsPanel').then((m) => ({ default: m.CustomInstructionsPanel })));
-const DataScienceHub = lazy(() => import('./components/DataScienceHub').then((m) => ({ default: m.DataScienceHub })));
 const Vault = lazy(() => import('./components/Vault'));
-const IntakeWizard = lazy(() => import('./pages/IntakeWizard'));
 const VIPLibrary = lazy(() => import('./pages/VIPLibrary'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const StartHerePage = lazy(() => import('./pages/StartHerePage'));
@@ -44,6 +40,14 @@ const CAN_3D = (() => {
     return false;
   }
 })();
+
+/** Trang cũ đã ẩn khỏi web (Leon duyệt 30/10). Link cũ khách còn giữ sẽ chuyển về trang hiện tại gần nhất. */
+const LEGACY: Record<string, string> = {
+  pricing: 'membership',
+  services: 'membership',
+  audit: 'sauo',
+  datascience: 'vault',
+};
 
 interface RouteInfo {
   tab: string;
@@ -85,19 +89,19 @@ function parseCurrentRoute(): RouteInfo {
     return { tab: 'about', subId: null, isSauO: false };
   }
   if (pLower === '/datascience' || pLower === '/math' || pLower === '/toan-hoc' || pLower === '/khoa-hoc-du-lieu') {
-    return { tab: 'datascience', subId: null, isSauO: false };
+    return { tab: LEGACY.datascience, subId: null, isSauO: false };
   }
   if (pLower === '/membership' || pLower === '/thanh-vien') {
     return { tab: 'membership', subId: null, isSauO: false };
   }
   if (pLower === '/services' || pLower === '/dich-vu') {
-    return { tab: 'services', subId: null, isSauO: false };
+    return { tab: LEGACY.services, subId: null, isSauO: false };
   }
   if (pLower === '/pricing' || pLower === '/bang-gia') {
-    return { tab: 'pricing', subId: null, isSauO: false };
+    return { tab: LEGACY.pricing, subId: null, isSauO: false };
   }
   if (pLower === '/audit' || pLower === '/bat-dau' || pLower === '/kiem-dinh' || pLower === '/wizard') {
-    return { tab: 'audit', subId: null, isSauO: false };
+    return { tab: LEGACY.audit, subId: null, isSauO: true };
   }
   if (pLower === '/hanh-trinh' || pLower === '/journey') {
     return { tab: 'journey', subId: null, isSauO: false };
@@ -113,7 +117,8 @@ function parseCurrentRoute(): RouteInfo {
     return { tab: 'vault', subId: queryDoc, isSauO: false };
   }
   if (queryTab) {
-    return { tab: queryTab, subId: null, isSauO: queryTab === 'sauo' };
+    const tab = LEGACY[queryTab] ?? queryTab;
+    return { tab, subId: null, isSauO: tab === 'sauo' };
   }
 
   // Đường dẫn lạ: báo không tìm thấy thay vì âm thầm đưa về bản đồ
@@ -129,16 +134,8 @@ function getPathForRoute(tab: string, subId?: string | null): string {
       return '/';
     case 'about':
       return '/gioi-thieu';
-    case 'datascience':
-      return '/datascience';
-    case 'services':
-      return '/services';
-    case 'pricing':
-      return '/pricing';
     case 'membership':
       return '/membership';
-    case 'audit':
-      return '/audit';
     case 'admin':
       return '/admin';
     case 'journey':
@@ -177,6 +174,13 @@ export default function App() {
       isSauO: tab === 'sauo'
     });
   };
+
+  useEffect(() => {
+    const path = getPathForRoute(routeInfo.tab, routeInfo.subId);
+    if (routeInfo.tab !== 'notfound' && routeInfo.tab !== 'home' && window.location.pathname.replace(/\/$/, '') !== path) {
+      window.history.replaceState(null, '', path + window.location.search);
+    }
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -252,8 +256,6 @@ export default function App() {
                         activeSectionIndex={activeSectionIndex}
               />
             )}
-            {activeTab === 'datascience' && <DataScienceHub />}
-            {activeTab === 'services' && <Services setActiveTab={setActiveTab} />}
             {activeTab === 'vault' && (
               <Vault 
                 setActiveTab={setActiveTab} 
@@ -271,13 +273,7 @@ export default function App() {
             {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
             {activeTab === 'journey' && <StartHerePage onGo={setActiveTab} />}
             {activeTab === 'notfound' && <NotFound onGo={setActiveTab} />}
-            {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
             {activeTab === 'membership' && <MembershipPage setActiveTab={setActiveTab} />}
-            {activeTab === 'audit' && (
-              <div className="max-w-4xl mx-auto px-4 mt-8">
-                <IntakeWizard selectedPackage={null} />
-              </div>
-            )}
               {/* Nằm trong Suspense: chỉ hiện khi trang đã tải xong, không trơ trọi dưới chữ "Đang tải…" */}
               {activeTab !== 'admin' && activeTab !== 'notfound' && <NextStep tab={activeTab} onGo={setActiveTab} />}
             </Suspense>
