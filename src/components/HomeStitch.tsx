@@ -428,17 +428,11 @@ export default function HomeStitch({
         <aside className="sa-price-card">
           <span className="sa-kicker">THÀNH VIÊN STRATEGY AUDIT</span>
           <div className="sa-price-line">
-            <b>100 đô</b>
-            <span>một tháng</span>
+            <b>Liên hệ để đăng ký</b>
           </div>
-          <div className="sa-price-line sa-price-next">
-            <b>Tháng đầu 50</b>
-            <span>hệ thống của chính bạn được đem đi đo</span>
-          </div>
-          <p>Muốn xem trước? Gói trải nghiệm <b>299k / 14 ngày</b> mở toàn bộ thư viện và kho tài liệu.</p>
-          <p>Chuyển khoản và xác nhận thủ công qua Telegram.</p>
+          <p>Gói tham gia được trao đổi trực tiếp, tuỳ bạn muốn học cùng cộng đồng hay muốn chính hệ thống của mình được đem đi đo.</p>
           <button className="sa-button sa-button-primary" onClick={() => setActiveTab('membership')}>
-            Xem quyền lợi & cách tham gia <ArrowRight size={16} />
+            Xem quyền lợi & cách đăng ký <ArrowRight size={16} />
           </button>
         </aside>
       </motion.section>

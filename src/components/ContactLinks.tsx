@@ -12,7 +12,7 @@ const STYLE = {
   telegram: 'sa-glass-ghost text-[#3df2ff]',
 };
 
-export default function ContactLinks({ from, className = '' }: { from: string; className?: string }) {
+export default function ContactLinks({ from, className = '', block = false }: { from: string; className?: string; block?: boolean }) {
   return (
     <div data-contact className={`flex flex-wrap gap-2 ${className}`}>
       {CONTACT.channels.map((c) => {
@@ -24,7 +24,7 @@ export default function ContactLinks({ from, className = '' }: { from: string; c
             target="_blank"
             rel="noreferrer"
             onClick={() => funnel.contactClick(c.id, from)}
-            className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-semibold transition-[box-shadow,background,border-color] ${STYLE[c.id]}`}
+            className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-[box-shadow,background,border-color] ${block ? 'flex-1 px-4 py-3.5 md:text-base' : 'px-4 py-2.5'} ${STYLE[c.id]}`}
           >
             <Icon className="h-4 w-4" />
             {c.label}

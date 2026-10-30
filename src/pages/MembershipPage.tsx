@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { GlassCard } from '../components/Glass';
+import ContactLinks from '../components/ContactLinks';
 import { ArrowRight, Users, BookOpenCheck, MessageCircle, ClipboardCheck, CircleCheck, CircleX } from 'lucide-react';
 import { getGasApiUrl } from '../config';
 import { track } from '../analytics';
@@ -122,22 +123,18 @@ export default function MembershipPage({ setActiveTab }: MembershipPageProps) {
           <motion.aside initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.7, delay: 0.15 }} className="order-2 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1">
             <GlassCard tint="cyan" className="p-5 md:p-8">
               <div aria-hidden className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-[#2BFFEA]/25 blur-3xl" />
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-300">Phí thành viên</p>
-              <div className="mt-3 flex items-end gap-2 md:mt-4">
-                <span className="bg-gradient-to-b from-white to-[#9ff6ff] bg-clip-text font-display text-5xl font-bold text-transparent drop-shadow-[0_0_20px_rgba(43,255,234,0.45)] md:text-6xl">100 đô</span>
-                <span className="pb-1.5 text-sm text-gray-300">một tháng</span>
-              </div>
-              <div className="mt-3 flex flex-wrap items-center gap-2 border-b border-white/15 pb-4 md:pb-5">
-                <span className="relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-[#9ff6ff]/50 bg-[#2BFFEA]/15 px-3 py-1.5 font-display text-lg font-semibold text-white shadow-[0_0_18px_rgba(43,255,234,0.3)]">
-                  <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2BFFEA] opacity-70" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#2BFFEA]" /></span>
-                  Tháng đầu 50
-                </span>
-                <span className="text-sm text-gray-300">hệ thống của bạn được đem đi đo</span>
-              </div>
-              <p className="sa-glass mt-4 rounded-xl p-3 text-xs leading-5 text-gray-300">Muốn xem trước? <b className="text-white">Gói trải nghiệm 299k / 14 ngày</b>: mở toàn bộ thư viện và kho tài liệu.</p>
-              <p className="mt-3 text-sm leading-6 text-gray-300 md:mt-5">Bạn tự chuyển khoản và gửi xác nhận cho Strategy Audit trên Telegram. Thành viên được cấp quyền sau khi giao dịch được xác nhận.</p>
-              <a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer" className="sa-glass-btn mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold md:mt-5 md:py-4">Nhắn trên Telegram để bắt đầu <ArrowRight className="h-4 w-4" /></a>
-              <p className="mt-3 text-center text-xs text-gray-400">Không tự động trừ tiền · thanh toán bằng chuyển khoản</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-300">Đăng ký thành viên</p>
+              <h2 className="mt-3 font-display text-3xl font-bold leading-tight text-white md:text-4xl">Nhắn cho Strategy Audit để đăng ký</h2>
+              <p className="mt-3 text-sm leading-6 text-gray-300 md:text-base md:leading-7">
+                Gói tham gia được trao đổi trực tiếp, tuỳ bạn muốn học cùng cộng đồng hay muốn chính hệ thống của mình được đem đi đo.
+              </p>
+              <ul className="mt-4 space-y-2 border-b border-white/15 pb-5 text-sm text-gray-200">
+                <li className="flex items-center gap-2"><CircleCheck className="h-4 w-4 shrink-0 text-neon-green" /> Tư vấn gói phù hợp với cách bạn đang giao dịch</li>
+                <li className="flex items-center gap-2"><CircleCheck className="h-4 w-4 shrink-0 text-neon-green" /> Hỏi rõ quyền lợi trước khi quyết định</li>
+              </ul>
+              <ContactLinks from="membership" block className="mt-5 flex-nowrap" />
+              <a href="#dang-ky" className="mt-3 block text-center text-sm font-semibold text-neon-green underline-offset-4 hover:underline">Hoặc để lại thông tin, Strategy Audit sẽ liên hệ bạn</a>
+              <p className="mt-3 text-center text-xs text-gray-400">Không tự động trừ tiền · xác nhận thủ công</p>
             </GlassCard>
           </motion.aside>
         </div>
@@ -198,26 +195,24 @@ export default function MembershipPage({ setActiveTab }: MembershipPageProps) {
           <Rise className="h-fit">
             <GlassCard tilt={false} className="p-6 md:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400">Cách tham gia</p>
-              <p className="mt-3 text-sm leading-6 text-gray-300">Thanh toán và cấp quyền được xác nhận thủ công qua Telegram:</p>
+              <p className="mt-3 text-sm leading-6 text-gray-300">Đăng ký và cấp quyền được xác nhận thủ công:</p>
               <ol className="mt-5 space-y-4 text-sm text-gray-300">
                 {[
-                  'Nhắn @strategyaudit và cho biết bạn muốn tham gia thành viên.',
-                  'Nhận thông tin chuyển khoản. Membership 100 đô một tháng, tháng đầu 50.',
-                  'Chuyển khoản rồi gửi xác nhận giao dịch và username Telegram của bạn.',
+                  'Nhắn Strategy Audit qua Zalo hoặc Telegram, cho biết bạn muốn tham gia thành viên.',
+                  'Trao đổi để chọn gói phù hợp và nhận hướng dẫn đăng ký.',
+                  'Hoàn tất đăng ký theo hướng dẫn và gửi xác nhận.',
                   'Sau khi xác nhận, Leon cấp quyền truy cập cộng đồng thành viên.',
                 ].map((t, k) => (
                   <li key={k} className="flex gap-3"><span className={`${ORB} h-6 w-6 rounded-full text-xs`}>{k + 1}</span><span>{t}</span></li>
                 ))}
               </ol>
 
-              <a href="https://t.me/strategyaudit" target="_blank" rel="noreferrer" className="sa-glass-ghost mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white">
-                Mở Telegram để đăng ký <ArrowRight className="h-4 w-4" />
-              </a>
+              <ContactLinks from="membership_steps" block className="mt-5 flex-nowrap" />
 
               {!sent ? (
-                <form onSubmit={submitInterest} className="mt-6 border-t border-white/10 pt-5">
+                <form id="dang-ky" onSubmit={submitInterest} className="mt-6 scroll-mt-28 border-t border-white/10 pt-5">
                   <h3 className="font-semibold text-white">Muốn được liên hệ qua email hoặc Telegram?</h3>
-                  <p className="mt-1 text-xs leading-5 text-gray-400">Biểu mẫu này là lựa chọn phụ. Bạn cũng có thể nhắn thẳng qua Telegram để hỏi cách tham gia và nhận thông tin chuyển khoản.</p>
+                  <p className="mt-1 text-xs leading-5 text-gray-400">Để lại tên và cách liên hệ, Strategy Audit sẽ nhắn lại để tư vấn gói phù hợp. Muốn nhanh hơn thì nhắn thẳng qua Zalo hoặc Telegram.</p>
                   <label className="mt-4 block text-sm text-gray-300">Tên
                     <input required value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" className={INPUT} placeholder="Tên bạn muốn được gọi" />
                   </label>
@@ -236,7 +231,7 @@ export default function MembershipPage({ setActiveTab }: MembershipPageProps) {
               ) : (
                 <div role="status" className="sa-glass sa-glass-cyan mt-6 rounded-xl p-4">
                   <p className="font-semibold text-white">Biểu mẫu đã được gửi từ trình duyệt.</p>
-                  <p className="mt-1 text-sm leading-6 text-gray-300">Bước tiếp theo: nhắn @strategyaudit trên Telegram để xác nhận yêu cầu và nhận thông tin chuyển khoản. Quyền thành viên được cấp sau khi giao dịch được xác nhận thủ công.</p>
+                  <p className="mt-1 text-sm leading-6 text-gray-300">Strategy Audit sẽ liên hệ lại qua thông tin bạn để lại. Muốn nhanh hơn, bạn có thể nhắn thẳng qua Zalo hoặc Telegram.</p>
                 </div>
               )}
               <p className="mt-4 text-xs leading-5 text-gray-500">Thành viên không nhận tín hiệu giao dịch, lời hứa lợi nhuận hay khuyến nghị đầu tư cá nhân.</p>
