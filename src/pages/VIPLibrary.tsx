@@ -37,7 +37,7 @@ function LibraryStats({ data }: { data: any }) {
     { n: v['CHẤT'], label: 'Đạt tiêu chí', color: VERDICT_COLORS['CHẤT'], lit: true },
     { n: v['TÌNH HUỐNG'], label: 'Phụ thuộc tình huống', color: VERDICT_COLORS['TÌNH HUỐNG'] },
     { n: v['CHÁT'], label: 'Chưa đạt', color: VERDICT_COLORS['CHÁT'] },
-    { n: data.gop, label: 'Biến thể đối ứng', color: '#cbd5e1' },
+    { n: data.gop, label: 'Bản đánh chiều ngược lại', color: '#cbd5e1' },
     { n: data.chua, label: 'Chưa kiểm định', color: '#6b7280' },
   ];
   return (
@@ -74,6 +74,9 @@ function LibraryStats({ data }: { data: any }) {
     </div>
   );
 }
+
+/** Chữ hiện ra cho trạng thái chấm kỳ 2, viết cho người mới (dữ liệu vẫn giữ giá trị gốc) */
+const KY2_LABEL: Record<string, string> = { 'giữ vững': 'giữ vững', 'suy yếu': 'suy yếu', 'lãi lại': 'có lời lại', 'vẫn rớt': 'vẫn không đạt' };
 
 // Mỗi năm một ô: dương / âm. Không hiện con số R (luật kênh).
 const YearChips = ({ title, years }: { title: string; years?: Record<string, boolean> }) => (
@@ -344,6 +347,9 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
           </div>
         </div>
 
+        <p className="sa-glass rounded-xl px-4 py-3 text-xs leading-5 text-gray-300 sm:text-sm">
+          Mỗi chiến lược được chấm trên hai đoạn dữ liệu mà lúc đặt quy tắc chưa từng nhìn thấy: <b className="text-white">kỳ 1 (2019–2023)</b> và <b className="text-white">kỳ 2 (2024–2026)</b>.
+        </p>
         <div className="mb-3 flex flex-col gap-2 px-1 text-sm text-gray-400 sm:flex-row sm:items-center sm:justify-between">
           <span>Hiển thị {firstItem}–{lastItem} trong {filteredList.length} kết quả</span>
           <span className="text-xs">Chọn một mục để xem dữ liệu, điều kiện và giới hạn</span>
@@ -356,9 +362,9 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                     <span className="shrink-0 rounded-full border px-2 py-1 text-[10px] font-bold" style={{ color: VERDICT_COLORS[strat.verdict], borderColor: `${VERDICT_COLORS[strat.verdict]}55`, backgroundColor: `${VERDICT_COLORS[strat.verdict]}15` }}>{VERDICT_LABELS[strat.verdict] || strat.verdict}</span>
               </span>
               <span className="mt-4 grid grid-cols-3 gap-2 border-t border-white/5 pt-3 text-xs">
-                <span className="text-gray-500">Thi lần 2 <b className={`mt-1 block text-sm ${strat.oos2_status === 'giữ vững' ? 'text-[#1D9E75]' : strat.oos2_status === 'lãi lại' ? 'text-gray-300' : 'text-[#E24B4A]'}`}>{strat.oos2_status || '—'}</b></span>
-                <span className="text-gray-500">Năm dương <b className="mt-1 block text-sm text-gray-200">{strat.oos_years || '—'}</b></span>
-                <span className="text-gray-500">Số lệnh <b className="mt-1 block text-sm text-gray-200">{strat.oos_n || '—'}</b></span>
+                <span className="text-gray-500">Chấm kỳ 2 <b className={`mt-1 block text-sm ${strat.oos2_status === 'giữ vững' ? 'text-[#1D9E75]' : strat.oos2_status === 'lãi lại' ? 'text-gray-300' : 'text-[#E24B4A]'}`}>{KY2_LABEL[strat.oos2_status] ?? strat.oos2_status ?? '—'}</b></span>
+                <span className="text-gray-500">Số năm có lời (kỳ 1) <b className="mt-1 block text-sm text-gray-200">{strat.oos_years || '—'}</b></span>
+                <span className="text-gray-500">Số lệnh đã đo <b className="mt-1 block text-sm text-gray-200">{strat.oos_n || '—'}</b></span>
               </span>
               {strat.trang_thai !== 'chua_kiem_dinh' && <span className="mt-3 block text-xs font-semibold text-neon-green">Xem dữ liệu và giới hạn →</span>}
             </button>
@@ -373,9 +379,9 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                   <th className="py-4 px-6 font-medium">Chiến Lược</th>
                   <th className="py-4 px-6 font-medium">Nhóm / TF</th>
                   <th className="py-4 px-6 font-medium">Kết luận</th>
-                  <th className="py-4 px-6 font-medium">Thi lần 2 (2024–26)</th>
-                  <th className="py-4 px-6 font-medium">Năm dương 2019–23</th>
-                  <th className="py-4 px-6 font-medium">Số lệnh</th>
+                  <th className="py-4 px-6 font-medium">Chấm kỳ 2 (2024–26)</th>
+                  <th className="py-4 px-6 font-medium">Số năm có lời (kỳ 1)</th>
+                  <th className="py-4 px-6 font-medium">Số lệnh đã đo</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.06]">
@@ -389,12 +395,12 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                     <td className="py-4 px-6">
                       <div className="flex items-center space-x-2">
                         <span className="font-bold text-gray-200 group-hover:text-white transition-colors">{strat.ten}</span>
-                        {strat.tin_cay === 'thấp (n mỏng)' && <span title="Cảnh báo n mỏng"><AlertTriangle className="w-4 h-4 text-coral-red flex-shrink-0" /></span>}
+                        {strat.tin_cay === 'thấp (n mỏng)' && <span title="Ít lệnh, kết quả chưa chắc"><AlertTriangle className="w-4 h-4 text-coral-red flex-shrink-0" /></span>}
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <span className="text-xs text-gray-400 font-mono bg-white/[0.04] px-1.5 py-0.5 rounded border border-white/10">{strat.id}</span>
                         {strat.trang_thai === 'gop' && (
-                          <span className="text-xs text-gray-400 italic">Biến thể đối ứng của {strat.goc}</span>
+                          <span className="text-xs text-gray-400 italic">Bản đánh chiều ngược lại của {strat.goc}</span>
                         )}
                         {strat.trang_thai === 'chua_kiem_dinh' && (
                           <span className="text-xs text-coral-red">{strat.ly_do}</span>
@@ -426,13 +432,13 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                         <span 
                           title={
                             strat.oos2_status === 'giữ vững' ? 'vẫn giữ vững trên dữ liệu mới 2024–2026' : 
-                            strat.oos2_status === 'suy yếu' ? 'đã suy yếu trên dữ liệu mới — verdict gốc giữ nguyên, cần theo dõi' : 
-                            strat.oos2_status === 'lãi lại' ? 'CHÁT nhưng có lãi 2024–2026: vàng tăng mạnh hiếm thấy giai đoạn này — không đổi kết luận' : 
-                            'vẫn rớt'
+                            strat.oos2_status === 'suy yếu' ? 'đã suy yếu trên dữ liệu mới — kết luận gốc giữ nguyên, cần theo dõi' : 
+                            strat.oos2_status === 'lãi lại' ? 'Chưa đạt nhưng có lời 2024–2026: vàng tăng mạnh hiếm thấy giai đoạn này — kết luận giữ nguyên' : 
+                            'vẫn không đạt trên dữ liệu mới'
                           } 
                           className={`font-bold flex items-center space-x-1 ${strat.oos2_status === 'giữ vững' ? 'text-[#1D9E75]' : strat.oos2_status === 'lãi lại' ? 'text-[#888780]' : 'text-[#E24B4A]'}`}
                         >
-                          <span>{strat.oos2_status}</span>
+                          <span>{KY2_LABEL[strat.oos2_status] ?? strat.oos2_status}</span>
                           {strat.oos2_status === 'giữ vững' && <CheckCircle className="w-3 h-3 ml-1" />}
                           {strat.oos2_status === 'suy yếu' && <AlertTriangle className="w-3 h-3 ml-1" />}
                           {strat.oos2_status === 'lãi lại' && <Info className="w-3 h-3 ml-1" />}
@@ -489,10 +495,10 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                          'text-[#E24B4A] border-[#E24B4A] bg-[#E24B4A]/10'
                        }`}
                      >
-                       {selectedReport.OOS2.status === 'giữ vững' ? '✓ Giữ vững (Thi lần 2)' : 
-                        selectedReport.OOS2.status === 'suy yếu' ? '⚠ Suy yếu (Thi lần 2)' : 
-                        selectedReport.OOS2.status === 'lãi lại' ? 'ⓘ Lãi lại (Thi lần 2)' : 
-                        '✗ Vẫn rớt (Thi lần 2)'}
+                       {selectedReport.OOS2.status === 'giữ vững' ? '✓ Giữ vững ở kỳ 2' : 
+                        selectedReport.OOS2.status === 'suy yếu' ? '⚠ Suy yếu ở kỳ 2' : 
+                        selectedReport.OOS2.status === 'lãi lại' ? 'ⓘ Có lời lại ở kỳ 2, kết luận giữ nguyên' : 
+                        '✗ Vẫn không đạt ở kỳ 2'}
                      </span>
                     )}
                   </div>
@@ -514,7 +520,7 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                   {[
                     { key: 'edge_vs_null', label: '① Hơn vào lệnh ngẫu nhiên?' },
                     { key: 'ben_tham_so', label: '② Đổi tham số ±30% còn lãi?' },
-                    { key: 'song_sot_oos', label: '③ Qua kỳ thi thật 2019-2023?' },
+                    { key: 'song_sot_oos', label: '③ Qua kỳ chấm 1 (2019–2023)?' },
                     { key: 'chiu_phi', label: '④ Đã trừ phí?' },
                     { key: 'kha_thi', label: '⑤ Đủ ≥100 lệnh?' }
                   ].map(tc => {
@@ -547,14 +553,14 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                         <td className="py-3 px-4 font-mono">{selectedReport.IS.years_pos}</td>
                       </tr>
                       <tr className="bg-[#1F2937]/20">
-                        <td className="py-3 px-4 font-bold text-[#FFD700]">Kỳ thi thật (2019–2023)</td>
+                        <td className="py-3 px-4 font-bold text-[#FFD700]">Kỳ 1 (2019–2023)</td>
                         <td className="py-3 px-4 font-mono">{selectedReport.OOS.n}</td>
                         <td className="py-3 px-4 font-mono">{selectedReport.OOS.wr}%</td>
                         <td className="py-3 px-4 font-mono">{selectedReport.OOS.years_pos}</td>
                       </tr>
                       {selectedReport.OOS2 && (
                         <tr className="bg-[#1F2937]/40 border-t border-[#1F2937]">
-                          <td className="py-3 px-4 font-bold text-white">Kỳ thi lần 2 (2024–2026)</td>
+                          <td className="py-3 px-4 font-bold text-white">Kỳ 2 (2024–2026)</td>
                           <td className="py-3 px-4 font-mono">{selectedReport.OOS2.n}</td>
                           <td className="py-3 px-4 font-mono">{selectedReport.OOS2.wr}%</td>
                           <td className="py-3 px-4 font-mono">{selectedReport.OOS2.years_pos}</td>
@@ -566,9 +572,9 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
 
                 {/* Năm dương / âm theo từng kỳ thi — không hiện con số R */}
                 <div className={`grid grid-cols-1 ${selectedReport.OOS2 ? 'md:grid-cols-2' : ''} gap-6`}>
-                  <YearChips title="Kỳ thi thật (2019–2023): năm dương / năm âm" years={selectedReport.OOS?.nam_duong} />
+                  <YearChips title="Kỳ 1 (2019–2023): năm có lời / năm lỗ" years={selectedReport.OOS?.nam_duong} />
                   {selectedReport.OOS2 && (
-                    <YearChips title="Kỳ thi lần 2 (2024–2026): năm dương / năm âm" years={selectedReport.OOS2.nam_duong} />
+                    <YearChips title="Kỳ 2 (2024–2026): năm có lời / năm lỗ" years={selectedReport.OOS2.nam_duong} />
                   )}
                 </div>
 

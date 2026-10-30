@@ -14,6 +14,7 @@ import SauO from './pages/SauOStitch';
 import AmbientBackground from './components/SoftBackdrop';
 import BottomNavigation from './components/BottomNavigation';
 import NextStep from './components/NextStep';
+import NotFound from './components/NotFound';
 import ContactLinks from './components/ContactLinks';
 import { CustomInstructionsPanel } from './components/CustomInstructionsPanel';
 import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
@@ -114,6 +115,10 @@ function parseCurrentRoute(): RouteInfo {
     return { tab: queryTab, subId: null, isSauO: queryTab === 'sauo' };
   }
 
+  // Đường dẫn lạ: báo không tìm thấy thay vì âm thầm đưa về bản đồ
+  if (pathname !== '/' && pLower !== '/index.html') {
+    return { tab: 'notfound', subId: null, isSauO: false };
+  }
   return { tab: 'home', subId: null, isSauO: false };
 }
 
@@ -259,6 +264,7 @@ export default function App() {
             )}
             {activeTab === 'admin' && <AdminDashboard setActiveTab={setActiveTab} />}
             {activeTab === 'journey' && <StartHerePage onGo={setActiveTab} />}
+            {activeTab === 'notfound' && <NotFound onGo={setActiveTab} />}
             {activeTab === 'pricing' && <Pricing setActiveTab={setActiveTab} />}
             {activeTab === 'membership' && <MembershipPage setActiveTab={setActiveTab} />}
             {activeTab === 'audit' && (
@@ -267,7 +273,7 @@ export default function App() {
               </div>
             )}
               {/* Nằm trong Suspense: chỉ hiện khi trang đã tải xong, không trơ trọi dưới chữ "Đang tải…" */}
-              {activeTab !== 'admin' && <NextStep tab={activeTab} onGo={setActiveTab} />}
+              {activeTab !== 'admin' && activeTab !== 'notfound' && <NextStep tab={activeTab} onGo={setActiveTab} />}
             </Suspense>
           </motion.div>
         </AnimatePresence>

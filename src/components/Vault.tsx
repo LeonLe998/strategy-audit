@@ -170,7 +170,7 @@ print(f"ADF Statistic: {adf_stat:.3f} | p-value: {p_val:.4f}")`
     title: 'Kỹ Nghệ Dữ Liệu Lịch Sử & Chặn Lỗi Nhìn Trước Tương Lai',
     subtitle: 'Look-ahead Bias, Survivorship Bias, Đồng bộ múi giờ UTC, Gap Detection & Parquet',
     keyEquation: 'S_t = f(\\mathcal{F}_{t-1}) \\quad ; \\quad \\mathcal{F}_{t-1} \\cap \\{P_t, P_{t+1}, \\dots\\} = \\emptyset',
-    equationNote: 'Nếu tín hiệu tính trên giá đóng cửa của thanh hiện tại mà lại khớp lệnh ngay tại giá mở cửa của chính thanh đó, bài đo đã phạm lỗi nhìn trước tương lai (Look-ahead Bias).',
+    equationNote: 'Điều kiện đo lường nhân quả (Filtration ℱₜ₋₁): Tín hiệu Sₜ tại thời điểm t chỉ được phép là hàm của tập thông tin đã đóng ở bước t − 1, giao với tập giá tương lai phải bằng rỗng (∅).',
     coreConcepts: [
       'Cấu trúc dữ liệu lịch sử: Thanh giá theo giờ/ngày, dữ liệu khớp lệnh và sổ lệnh',
       'Các lỗi dữ liệu chí mạng: Look-ahead bias, Survivorship bias, lệch múi giờ UTC & DST, khoảng trống giá',
@@ -196,8 +196,8 @@ bars = bars.with_columns(pl.col("signal_raw").shift(1).alias("executable_signal"
     track: 'systems',
     title: 'Khung Kiểm Định Walk-Forward & Tiêu Chuẩn Sáu Ô',
     subtitle: 'Tách dữ liệu chỉnh luật / chấm thi, Purge & Embargo, Kiểm tra độ bền ngoài mẫu',
-    keyEquation: '\\text{Tập Chỉnh Luật (In-Sample)} \\;\\perp\\; \\text{Tập Chấm Thi 1 (2019–2023)} \\;\\perp\\; \\text{Kỳ Thi 2 (2024–2026)}',
-    equationNote: 'Một phương pháp chỉ có giá trị khi giữ vững kết quả trên phần dữ liệu chưa từng được nhìn thấy lúc thiết kế quy tắc.',
+    keyEquation: 'T_{\\text{train}} \\cap [t_0 - h, \\; t_1 + e] = \\emptyset \\quad ; \\quad \\Delta P_{\\text{impact}} \\approx c \\cdot \\sigma_d \\sqrt{\\frac{Q}{V_d}}',
+    equationNote: 'Điều kiện không rò rỉ dữ liệu (Purge & Embargo): Tập huấn luyện T_train phải cắt bỏ hoàn toàn vùng chồng lấn nhãn h và khoảng đệm e quanh tập chấm thi [t₀, t₁], đồng thời tính trượt giá theo luật căn bậc hai khối lượng Q/V_d.',
     coreConcepts: [
       'Khung Sáu Ô: Làm rõ 6 mảnh ghép của hệ thống trước khi đem đi đo bằng máy',
       'Quy trình Walk-Forward: Tách bạch giai đoạn xây dựng quy tắc và giai đoạn chấm thi độc lập',
@@ -223,7 +223,7 @@ for train_idx, test_idx in tscv.split(historical_data):
     track: 'systems',
     title: 'Định Cỡ Vị Thế, Chuỗi Thua Dài Nhất & Cầu Dao Tự Động',
     subtitle: 'Nguyên lý Kelly thận trọng, Điều chỉnh theo biến động EWMA & Ngắt mạch Kill Switch',
-    keyEquation: 'f_{\\text{safe}} = \\frac{1}{2} f^* \\quad ; \\quad \\text{Chuỗi thua kỳ vọng } L_{\\max} \\approx \\frac{\\ln N}{-\\ln(1 - p)}',
+    keyEquation: 'f^* = p - \\frac{1 - p}{b} \\quad ; \\quad E[L_{\\max}] \\approx \\frac{\\ln N}{-\\ln(1 - p)}',
     equationNote: 'Trong chuỗi N = 1.000 lệnh, ngay cả một hệ thống có tỉ lệ thắng p = 50% cũng gần như chắc chắn xuất hiện chuỗi thua khoảng 10 lệnh liên tiếp.',
     coreConcepts: [
       'Ước tính độ dài chuỗi thua liên tiếp dài nhất theo quy mô mẫu N và tỉ lệ thắng p',
@@ -276,6 +276,18 @@ for train_idx, test_idx in tscv.split(historical_data):
   }
 ];
 
+/** Một câu nói đơn giản ở đầu mỗi hồ sơ, cho người mới chưa quen thuật ngữ (Leon duyệt 30/10) */
+const PLAIN: Record<string, string> = {
+  probability: 'Một lệnh thắng hay thua là may rủi. Phải nhìn cả chuỗi vài trăm lệnh mới biết cách đánh có lợi thế không.',
+  'statistics-inference': 'Thử đủ nhiều cách thì kiểu gì cũng có một cách trông rất đẹp nhờ ăn may. Hồ sơ này chỉ cách loại những cái đẹp nhờ may.',
+  'linear-algebra': 'Nhiều chiến lược trông khác nhau nhưng thật ra cùng lên cùng xuống. Gộp lại không giảm rủi ro như mình tưởng.',
+  'time-series-stat-arb': 'Giá có lúc chạy một chiều, có lúc quay về. Hồ sơ này chỉ cách đo xem một nhịp lặp lại là thật hay chỉ trùng hợp.',
+  'data-pipeline': 'Chạy thử trên quá khứ rất dễ vô tình dùng thông tin mà lúc đó chưa có, làm kết quả đẹp giả.',
+  'backtesting-audit': 'Đặt quy tắc trên một đoạn dữ liệu rồi chấm trên đoạn khác chưa từng nhìn, giống như học một đề rồi thi một đề khác.',
+  'risk-sizing-killswitch': 'Mỗi lệnh đánh bao nhiêu để chuỗi thua dài nhất, thứ chắc chắn sẽ đến, không làm cháy tài khoản.',
+  'microstructure-execution': 'Giá bạn thấy chưa phải giá bạn khớp. Chênh lệch giá và trượt giá ăn mòn những lợi thế nhỏ.',
+};
+
 export default function Vault({ initialDocId, onDocChange }: VaultProps) {
   const [activeTrack, setActiveTrack] = useState<'all' | 'briefings' | 'math' | 'systems'>('all');
   const [selectedTopic, setSelectedTopic] = useState<ArchiveTopic | null>(null);
@@ -303,7 +315,7 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
     {
       id: 'risk-of-ruin',
       code: 'BC-01',
-      title: 'Sự Thật Về Risk Of Ruin (Xác Suất Chạm Ngưỡng Cháy)',
+      title: 'Xác Suất Cháy Tài Khoản (Risk of Ruin)',
       desc: 'Chứng minh toán học vì sao tỉ lệ thắng cao vẫn có thể mất sạch vốn nếu không tính trước chuỗi thua dài nhất.',
       category: 'Quản trị rủi ro',
       readTime: '6 phút đọc',
@@ -318,7 +330,7 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
     {
       id: 'alpha-vs-beta',
       code: 'BC-02',
-      title: 'Phân Tách Alpha vs Beta Trong Kiểm Định Hệ Thống',
+      title: 'Lời Do Quy Tắc Hay Do Giá Tự Lên? (Alpha và Beta)',
       desc: 'Bóc tách bản chất: Kết quả đến từ lợi thế thật của bộ quy tắc (Alpha) hay chỉ đang ăn may theo một đoạn xu hướng (Beta)?',
       category: 'Phương pháp đo',
       readTime: '5 phút đọc',
@@ -333,7 +345,7 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
     {
       id: 'curve-fitting',
       code: 'BC-03',
-      title: 'Bóc Trần Bẫy Khớp Đường Cong (Curve-Fitting / Overfitting)',
+      title: 'Bẫy Chỉnh Số Cho Đẹp Trên Quá Khứ (Curve-fitting)',
       desc: 'Tại sao 4 trường phái phổ biến nhất mạng xã hội qua 22.938 lệnh đều không vượt qua bài kiểm tra độc lập?',
       category: 'Chống ép số',
       readTime: '7 phút đọc',
@@ -715,6 +727,13 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
                   </button>
                 </div>
 
+                {PLAIN[topic.id] && (
+                  <p className="rounded-xl border-l-2 border-[#2BFFEA] bg-[#2BFFEA]/[0.06] px-3 py-2 text-xs sm:text-sm leading-relaxed text-gray-100">
+                    <b className="text-[#2BFFEA]">Nói đơn giản: </b>
+                    {PLAIN[topic.id]}
+                  </p>
+                )}
+
                 {/* Subtitle & Key Equation */}
                 <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
                   {topic.subtitle}
@@ -812,6 +831,13 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
 
                 {/* Modal Content */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar text-sm leading-relaxed">
+                  {PLAIN[selectedTopic.id] && (
+                    <p className="rounded-xl border-l-2 border-[#2BFFEA] bg-[#2BFFEA]/[0.06] px-3 py-2 text-sm leading-relaxed text-gray-100">
+                      <b className="text-[#2BFFEA]">Nói đơn giản: </b>
+                      {PLAIN[selectedTopic.id]}
+                    </p>
+                  )}
+
                   {/* Equation Block */}
                   <div className="sa-glass p-4 rounded-2xl space-y-2">
                     <div className="text-[11px] font-bold text-cyan-300 uppercase tracking-wider">

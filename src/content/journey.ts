@@ -28,7 +28,7 @@ export const STAGE1 = {
     {
       key: 'thuc-hanh',
       title: 'Thực hành',
-      body: 'Có số rồi mới quyết dùng hay bỏ. Vì mình trade một chuỗi 500 đến 1000 lệnh, chứ không phải một lệnh.',
+      body: 'Có số rồi mới quyết dùng hay bỏ. Vì mình giao dịch cả một chuỗi 500 đến 1000 lệnh, chứ không phải một lệnh.',
     },
   ],
   /**
@@ -161,8 +161,8 @@ export const HUB = {
       tab: 'sauo',
       title: 'Tự kiểm tra 6 ô',
       sub: 'Miễn phí',
-      note: 'Sáu câu hỏi về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu. Miễn phí.',
-      caption: 'Trả lời sáu câu về cách bạn đang trade, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu.',
+      note: 'Sáu câu hỏi về cách bạn đang giao dịch, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu. Miễn phí.',
+      caption: 'Trả lời sáu câu về cách bạn đang giao dịch, để thấy quy tắc nào đã rõ và quy tắc nào còn thiếu.',
     },
     {
       key: 'thu-vien',

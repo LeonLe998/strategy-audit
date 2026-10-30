@@ -40,7 +40,7 @@ const steps = [
   { n: '01', title: 'Chọn phương pháp', copy: 'Chọn cách giao dịch bạn đang dùng hoặc muốn tìm hiểu.', icon: FileSearch },
   { n: '02', title: 'Viết thành quy tắc', copy: 'Làm rõ điều kiện vào lệnh, thoát lệnh và giới hạn rủi ro.', icon: ClipboardCheck },
   { n: '03', title: 'Chọn dữ liệu kiểm tra', copy: 'Ghi rõ thị trường, khung thời gian và giai đoạn dùng để kiểm tra.', icon: Database },
-  { n: '04', title: 'Đọc kết quả và giới hạn', copy: 'Xem cỡ mẫu, giai đoạn ngoài mẫu và những điều phép thử chưa trả lời.', icon: ShieldCheck },
+  { n: '04', title: 'Đọc kết quả và giới hạn', copy: 'Xem đã đo trên bao nhiêu lệnh, có thử trên dữ liệu mà lúc đặt quy tắc chưa nhìn thấy không, và bài đo còn chưa trả lời được điều gì.', icon: ShieldCheck },
   { n: '05', title: 'Quyết định bước tiếp', copy: 'Biết phần nào cần kiểm tra thêm trước khi đem phương pháp ra thực hành.', icon: ArrowUpRight },
 ];
 
@@ -56,7 +56,7 @@ const questions = [
 const faqs = [
   ['Strategy Audit có phát tín hiệu giao dịch không?', 'Không. Strategy Audit tập trung vào cách mô tả và kiểm tra phương pháp; không phát lệnh hay khuyến nghị mua bán cá nhân.'],
   ['Tôi chưa biết thuật ngữ có làm được Sáu Ô không?', 'Được. Sáu Ô dùng câu hỏi đời thường, cho phép bạn trả lời “chưa có” và không chấm hiệu quả giao dịch.'],
-  ['Kết quả quá khứ có đảm bảo tương lai không?', 'Không. Backtest và dữ liệu quá khứ có giới hạn; kết quả chỉ giúp hiểu cách phương pháp đã hoạt động trong phạm vi được kiểm tra.'],
+  ['Kết quả quá khứ có đảm bảo tương lai không?', 'Không. Chạy thử trên dữ liệu quá khứ (backtest) có giới hạn; kết quả chỉ giúp hiểu cách phương pháp đã hoạt động trong phạm vi được kiểm tra.'],
 ];
 
 export default function HomeStitch({
@@ -178,15 +178,15 @@ export default function HomeStitch({
                 </div>
                 <div className="sa-report-metrics">
                   <div>
-                    <span>Kỳ thi lần 2</span>
+                    <span>Chấm kỳ 2</span>
                     <b>{example.oos2_status ?? '—'}</b>
                   </div>
                   <div>
-                    <span>Số lệnh ngoài mẫu</span>
+                    <span>Số lệnh trên dữ liệu mới</span>
                     <b>{example.oos_n?.toLocaleString('vi-VN') ?? '—'}</b>
                   </div>
                   <div>
-                    <span>Năm dương</span>
+                    <span>Số năm có lời</span>
                     <b>{example.oos_years ?? '—'}</b>
                   </div>
                 </div>
@@ -391,7 +391,7 @@ export default function HomeStitch({
               </div>
               <div>
                 <span>Dữ liệu</span>
-                <b>Đã tách ngoài mẫu chưa?</b>
+                <b>Đã thử trên dữ liệu mới chưa?</b>
               </div>
               <div>
                 <span>Giới hạn</span>
@@ -416,7 +416,7 @@ export default function HomeStitch({
         transition={{ duration: 0.6 }}
       >
         <div>
-          <span className="sa-kicker">KHI ANH MUỐN ĐI SÂU HƠN</span>
+          <span className="sa-kicker">KHI BẠN MUỐN ĐI SÂU HƠN</span>
           <h2>Học cách đọc kết quả cùng cộng đồng</h2>
           <p>Thành viên cùng xem các ca kiểm định, trao đổi về dữ liệu và cách mô tả quy tắc. Đây không phải phòng phát lệnh.</p>
           <div className="sa-member-benefits">
