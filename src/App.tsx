@@ -6,21 +6,22 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './components/Navbar';
-import Home from './components/HomeStitch';
-import Services from './components/ServicesRedesign';
-import Pricing from './components/Pricing';
-import MembershipPage from './pages/MembershipPage';
-import SauO from './pages/SauOStitch';
 import AmbientBackground from './components/SoftBackdrop';
 import BottomNavigation from './components/BottomNavigation';
 import NextStep from './components/NextStep';
 import NotFound from './components/NotFound';
 import ContactLinks from './components/ContactLinks';
-import { CustomInstructionsPanel } from './components/CustomInstructionsPanel';
 import { ScrollAnimationEngine } from './components/ScrollAnimationEngine';
 
 // Trang nặng (three.js, recharts, html2pdf, markdown) chỉ tải khi mở tới
 const IslandHub3D = lazy(() => import('./game/world/IslandHub3D'));
+// Các trang chỉ tải khi khách mở tới: gói chính nhẹ đi, bản đồ trang chủ hiện nhanh hơn
+const Home = lazy(() => import('./components/HomeStitch'));
+const Services = lazy(() => import('./components/ServicesRedesign'));
+const Pricing = lazy(() => import('./components/Pricing'));
+const MembershipPage = lazy(() => import('./pages/MembershipPage'));
+const SauO = lazy(() => import('./pages/SauOStitch'));
+const CustomInstructionsPanel = lazy(() => import('./components/CustomInstructionsPanel').then((m) => ({ default: m.CustomInstructionsPanel })));
 const DataScienceHub = lazy(() => import('./components/DataScienceHub').then((m) => ({ default: m.DataScienceHub })));
 const Vault = lazy(() => import('./components/Vault'));
 const IntakeWizard = lazy(() => import('./pages/IntakeWizard'));
@@ -201,7 +202,11 @@ export default function App() {
 
   // Nếu đang ở đường dẫn /sauo, hiển thị trang Sáu Ô độc lập (chuẩn phễu mobile)
   if (routeInfo.isSauO || activeTab === 'sauo') {
-    return <SauO />;
+    return (
+      <Suspense fallback={<PageLoading />}>
+        <SauO />
+      </Suspense>
+    );
   }
 
   return (
@@ -223,10 +228,11 @@ export default function App() {
       />
 
       {/* Custom Instructions Panel Modal */}
-      <CustomInstructionsPanel
-        isOpen={isCustomInstructionsOpen}
-        onClose={() => setIsCustomInstructionsOpen(false)}
-      />
+      {isCustomInstructionsOpen && (
+        <Suspense fallback={null}>
+          <CustomInstructionsPanel isOpen onClose={() => setIsCustomInstructionsOpen(false)} />
+        </Suspense>
+      )}
 
       {/* Primary body view holder with smooth route animations */}
       <main id="app-main-content" className={`relative z-10 ${activeTab === 'home' || activeTab === 'about' ? 'pt-16' : 'pt-24'} min-h-[calc(100vh-16rem)]`}>

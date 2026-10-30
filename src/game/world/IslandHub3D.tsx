@@ -660,7 +660,10 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap; // PCFSoft đã bị three bỏ (tự đổi sang PCF, kèm cảnh báo)
+    // Cảnh gần như đứng yên: không vẽ lại bóng đổ mỗi khung, chỉ vài khung một lần (xem tick)
+    renderer.shadowMap.autoUpdate = false;
+    renderer.shadowMap.needsUpdate = true;
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.domElement.style.touchAction = 'manipulation';
     mount.appendChild(renderer.domElement);
@@ -940,11 +943,31 @@ export default function IslandHub3D({ onNavigate }: { onNavigate: (tab: string) 
     const clock = new THREE.Clock();
     const proj = new THREE.Vector3();
     let frame = 0;
+    // Tự giảm chất lượng khi máy không theo kịp ~45 khung/giây: hạ độ phân giải từng bậc, bậc cuối tắt hậu kỳ phát sáng.
+    // Bỏ qua 90 khung đầu (lúc dựng shader thường giật), chỉ hạ khi chậm kéo dài chứ không vì một cú khựng.
+    const dprSteps = [renderer.getPixelRatio(), Math.min(renderer.getPixelRatio(), 1), 0.8];
+    let quality = 0;
+    let frames = 0;
+    let slow = 0;
     const tick = () => {
       frame = requestAnimationFrame(tick);
       if (document.hidden) return;
-      const dt = Math.min(clock.getDelta(), 0.05);
+      const raw = clock.getDelta();
+      const dt = Math.min(raw, 0.05);
       const t = clock.elapsedTime;
+      frames += 1;
+      if (frames % 8 === 0) renderer.shadowMap.needsUpdate = true;
+      if (frames > 90 && quality < dprSteps.length - 1) {
+        slow = raw > 1 / 45 ? slow + 1 : Math.max(0, slow - 1);
+        if (slow > 60) {
+          quality += 1;
+          slow = 0;
+          renderer.setPixelRatio(dprSteps[quality]);
+          composer.setPixelRatio(dprSteps[quality]);
+          if (quality === dprSteps.length - 1) bloom.enabled = false;
+          onResize();
+        }
+      }
 
       // Máy quay trôi êm tới khung đang nhắm
       const k = reduceMotion ? 1 : 1 - Math.exp(-dt * 2.4);

@@ -2,22 +2,16 @@
  * Đảo 1 · Bắt đầu ở đây (/hanh-trinh): trang thu hút cho người mới, thay trò chơi Màn 1–2.
  * Năm màn hình, mỗi màn một hình lớn + một câu, cùng phong cách kính phát sáng: phễu kính 3D · cái cân 3D · bốn thẻ kính bị đóng dấu
  * · lịch để bàn kính 3D · câu hỏi chốt.
- * Mỗi cảnh chạy một lần khi cuộn tới (GSAP). Giữ cuộn gốc của trình duyệt, không ghim, không gắn hiệu ứng vào vị trí cuộn:
+ * Mỗi cảnh chạy một lần khi cuộn tới (motion; đã bỏ GSAP 30/10 để trang nhẹ hơn). Giữ cuộn gốc của trình duyệt, không ghim, không gắn hiệu ứng vào vị trí cuộn:
  * đã thử Lenis + ghim, Leon thấy giật hơn. Không dùng bộ lọc mờ SVG/CSS trên thứ đang chuyển động vì mỗi khung hình phải vẽ lại.
  * Chữ ở START_HERE trong content/journey.ts.
  */
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
-import { useGSAP } from '@gsap/react';
+import { Fragment, useEffect, useRef, useState, type ReactNode } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { START_HERE } from '../content/journey';
 import { FilterScene, ScaleScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
 import { GlassCard } from '../components/Glass';
-
-gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
 const S = START_HERE;
 /** Hiệu ứng chỉ chạy khi phần đó đã lên tới khoảng giữa màn hình, không chạy sớm lúc vừa ló ở mép dưới */
@@ -175,34 +169,44 @@ function FunnelStats({ step }: { step: number }) {
   );
 }
 
-/** Màn đầu: tiêu đề hiện từng chữ; ba ô lọc dần 300 → 242 → 15 khi đã lên gần hết màn hình */
+/** Màn đầu: tiêu đề hiện từng chữ; ba ô lọc dần 300 → 242 → 15 khi đã lên gần hết màn hình.
+ *  Dùng motion (đã có sẵn trong web) thay GSAP để trang nhẹ hơn ~50 KB. */
 function Hero() {
-  const ref = useRef<HTMLElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const reached = useInView(statsRef, { once: true, amount: 0.9, margin: '0px 0px -5% 0px' });
   const [step, setStep] = useState(0);
-  useGSAP(
-    () => {
-      if (reduce) {
-        setStep(5);
-        return;
-      }
-      const split = SplitText.create('.sa-title', { type: 'words' });
-      gsap.from(split.words, { y: 34, opacity: 0, stagger: 0.07, duration: 0.8, ease: 'power3.out', delay: 0.15 });
-      ScrollTrigger.create({
-        trigger: '.sa-stats',
-        start: 'bottom 95%',
-        once: true,
-        onEnter: () => [0, 1.3, 1.9, 3, 3.7].forEach((t, i) => gsap.delayedCall(t, () => setStep(i + 1))),
-      });
-    },
-    { scope: ref, dependencies: [reduce] },
-  );
+  useEffect(() => {
+    if (reduce) {
+      setStep(5);
+      return;
+    }
+    if (!reached) return;
+    const ts = [0, 1.3, 1.9, 3, 3.7].map((t, i) => window.setTimeout(() => setStep(i + 1), t * 1000));
+    return () => ts.forEach(clearTimeout);
+  }, [reached, reduce]);
+  const words = S.hero.title.split(' ');
   return (
-    <section ref={ref} data-start="hero" className="flex min-h-[86vh] flex-col items-center justify-center py-14">
+    <section data-start="hero" className="flex min-h-[86vh] flex-col items-center justify-center py-14">
       <p className="font-mono text-xs font-semibold uppercase tracking-widest text-[#3df2ff]">{S.hero.kicker}</p>
-      <h1 className="sa-title mt-3 max-w-3xl text-center text-3xl font-bold leading-tight text-white sm:text-5xl">{S.hero.title}</h1>
+      <h1 className="mt-3 max-w-3xl text-center text-3xl font-bold leading-tight text-white sm:text-5xl">
+        {words.map((w, i) => (
+          <Fragment key={i}>
+            <motion.span
+              className="inline-block"
+              initial={reduce ? false : { opacity: 0, y: 34 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 + i * 0.07, duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
+            >
+              {w}
+            </motion.span>{' '}
+          </Fragment>
+        ))}
+      </h1>
       <FilterScene className="mt-2 h-[58vh] min-h-[340px] w-full max-w-4xl" />
-      <FunnelStats step={step} />
+      <div ref={statsRef} className="flex w-full justify-center">
+        <FunnelStats step={step} />
+      </div>
       <p className="mt-8 animate-pulse text-xs text-gray-500">{S.hero.scroll}</p>
     </section>
   );
@@ -261,47 +265,70 @@ function inkSplat(seed: number) {
 function StampedCards() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  useGSAP(
-    () => {
-      if (reduce) {
-        gsap.set('.sa-stampcard', { borderColor: 'rgba(255,90,106,0.55)' });
-        return;
-      }
-      const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: 'center 70%', once: true } });
-      tl.from('.sa-card', { rotationY: -95, opacity: 0, transformPerspective: 900, transformOrigin: '0% 50%', stagger: 0.14, duration: 0.7, ease: 'back.out(1.3)' });
-      gsap.utils.toArray<HTMLElement>('.sa-card').forEach((card, i) => {
-        const at = 0.9 + i * 0.5;
-        tl.from(card.querySelector('.sa-stamp'), { opacity: 0, scale: 2.6, rotation: -32, ease: 'power4.in', duration: 0.28 }, at);
-        tl.from(card.querySelectorAll('.sa-drop'), { scale: 0, opacity: 0, transformOrigin: '50% 50%', stagger: 0.012, duration: 0.3, ease: 'power2.out' }, at + 0.26);
-        tl.to(card, { x: 5, yoyo: true, repeat: 3, duration: 0.04, ease: 'none' }, at + 0.26);
-        tl.to(card.querySelector('.sa-stampcard'), { borderColor: 'rgba(255,90,106,0.6)', boxShadow: '0 0 30px rgba(255,90,106,0.22), inset 0 1px 0 rgba(255,255,255,0.2)', duration: 0.3 }, at + 0.26);
-      });
-    },
-    { scope: ref, dependencies: [reduce] },
-  );
+  const inView = useInView(ref, { once: true, amount: 0.5, margin: '0px 0px -30% 0px' });
+  const on = Boolean(reduce) || inView;
+  const easeIn = [0.7, 0, 0.84, 0] as const;
   return (
     <div ref={ref} className="grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-      {S.popular.cards.map((c, idx) => (
-        <div key={c.name} className="sa-card h-full">
-          <GlassCard className="sa-stampcard flex h-full min-h-[11rem] flex-col p-4 sm:aspect-[3/4]">
-            <p className="text-base font-bold text-white sm:text-lg">{c.name}</p>
-            <div className="pointer-events-none relative my-auto flex w-full justify-center py-4">
-              <svg viewBox="0 0 140 110" className="absolute left-1/2 top-1/2 h-28 w-36 -translate-x-1/2 -translate-y-1/2 overflow-visible" aria-hidden>
-                {inkSplat(idx + 1).map((d, k) => (
-                  <circle key={k} className="sa-drop" cx={d.x} cy={d.y} r={d.r} fill="#ff5a6a" fillOpacity={d.o} />
-                ))}
-              </svg>
-              <div className="sa-stamp relative -rotate-[14deg] whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#1a0d14]/60 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] shadow-[0_0_18px_rgba(255,90,106,0.35)] sm:text-base">
-                {S.popular.stamp}
+      {S.popular.cards.map((c, idx) => {
+        const at = 0.9 + idx * 0.5;
+        return (
+          <motion.div
+            key={c.name}
+            className="relative h-full"
+            style={{ transformPerspective: 900, originX: 0 }}
+            initial={reduce ? false : { rotateY: -95, opacity: 0 }}
+            animate={on ? { rotateY: 0, opacity: 1, x: [0, 5, -5, 5, 0] } : undefined}
+            transition={{
+              rotateY: { delay: idx * 0.14, duration: 0.7, ease: [0.34, 1.56, 0.64, 1] },
+              opacity: { delay: idx * 0.14, duration: 0.4 },
+              x: { delay: at + 0.26, duration: 0.18, ease: 'linear' },
+            }}
+          >
+            <GlassCard className="flex h-full min-h-[11rem] flex-col p-4 sm:aspect-[3/4]">
+              <p className="text-base font-bold text-white sm:text-lg">{c.name}</p>
+              <div className="pointer-events-none relative my-auto flex w-full justify-center py-4">
+                <svg viewBox="0 0 140 110" className="absolute left-1/2 top-1/2 h-28 w-36 -translate-x-1/2 -translate-y-1/2 overflow-visible" aria-hidden>
+                  {inkSplat(idx + 1).map((d, k) => (
+                    <motion.circle
+                      key={k}
+                      cx={d.x}
+                      cy={d.y}
+                      r={d.r}
+                      fill="#ff5a6a"
+                      fillOpacity={d.o}
+                      style={{ transformBox: 'fill-box', originX: 0.5, originY: 0.5 }}
+                      initial={reduce ? false : { scale: 0, opacity: 0 }}
+                      animate={on ? { scale: 1, opacity: 1 } : undefined}
+                      transition={{ delay: at + 0.26 + k * 0.012, duration: 0.3, ease: 'easeOut' }}
+                    />
+                  ))}
+                </svg>
+                <motion.div
+                  className="relative whitespace-nowrap rounded-md border-[3px] border-[#ff5a6a] bg-[#1a0d14]/60 px-2.5 py-1 text-sm font-black tracking-wider text-[#ff5a6a] shadow-[0_0_18px_rgba(255,90,106,0.35)] sm:text-base"
+                  initial={reduce ? { rotate: -14 } : { opacity: 0, scale: 2.6, rotate: -32 }}
+                  animate={on ? { opacity: 1, scale: 1, rotate: -14 } : undefined}
+                  transition={{ delay: at, duration: 0.28, ease: easeIn }}
+                >
+                  {S.popular.stamp}
+                </motion.div>
               </div>
-            </div>
-            <p className="font-mono text-xs leading-snug text-gray-400">
-              <span className="block bg-gradient-to-b from-white to-[#9fc4d6] bg-clip-text text-2xl font-bold text-transparent">{c.count}</span>
-              {S.popular.unit}
-            </p>
-          </GlassCard>
-        </div>
-      ))}
+              <p className="font-mono text-xs leading-snug text-gray-400">
+                <span className="block bg-gradient-to-b from-white to-[#9fc4d6] bg-clip-text text-2xl font-bold text-transparent">{c.count}</span>
+                {S.popular.unit}
+              </p>
+            </GlassCard>
+            {/* Viền đỏ phát sáng hiện lên đúng lúc dấu dập xuống */}
+            <motion.div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-2xl border border-[#ff5a6a]/60 shadow-[0_0_30px_rgba(255,90,106,0.22)]"
+              initial={reduce ? false : { opacity: 0 }}
+              animate={on ? { opacity: 1 } : undefined}
+              transition={{ delay: at + 0.26, duration: 0.3 }}
+            />
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
