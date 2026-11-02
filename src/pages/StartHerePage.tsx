@@ -12,6 +12,8 @@ import { START_HERE } from '../content/journey';
 import { FilterScene, ScaleScene, CalendarScene } from '../game/world/StartScenes3D';
 import { funnel } from '../lib/analytics';
 import { GlassCard } from '../components/Glass';
+import ScrollDownHint from '../components/ScrollDownHint';
+import { ArrowRight, Sparkles, ClipboardCheck, Database, Check } from 'lucide-react';
 
 const S = START_HERE;
 /** Hiệu ứng chỉ chạy khi phần đó đã lên tới khoảng giữa màn hình, không chạy sớm lúc vừa ló ở mép dưới */
@@ -207,7 +209,7 @@ function Hero() {
       <div ref={statsRef} className="flex w-full justify-center">
         <FunnelStats step={step} />
       </div>
-      <p className="mt-8 animate-pulse text-xs text-gray-500">{S.hero.scroll}</p>
+      <ScrollDownHint label="Lướt xuống để xem tiếp" />
     </section>
   );
 }
@@ -349,6 +351,7 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
         <div className="mt-8">
           <Line title={S.winRate.title} body={S.winRate.body} />
         </div>
+        <ScrollDownHint label="Lướt xuống để xem tiếp" />
       </Screen>
 
       {/* 3 · Bốn trường phái bị đóng dấu */}
@@ -357,6 +360,7 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
         <div className="mt-10">
           <Line title={S.popular.title} body={S.popular.body} />
         </div>
+        <ScrollDownHint label="Lướt xuống để xem tiếp" />
       </Screen>
 
       {/* 4 · Tờ lịch */}
@@ -371,19 +375,131 @@ export default function StartHerePage({ onGo }: { onGo: (tab: string) => void })
           </span>
         </div>
         <Line title={S.calendar.title} body={S.calendar.body} />
+        <ScrollDownHint label="Lướt xuống để xem kết luận" />
       </Screen>
 
-      {/* 5 · Câu hỏi chốt */}
+      {/* 5 · Câu hỏi chốt: Ám thị định hướng bắt buộc chọn 1 trong 2 lối đi */}
       <Screen id="cta">
         <Line title={S.cta.title} body={S.cta.body} />
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <button type="button" onClick={() => go(S.cta.primary.tab)} className="sa-glass-btn rounded-xl px-7 py-4 text-base font-bold">
-            {S.cta.primary.label}
-          </button>
-          <button type="button" onClick={() => go(S.cta.secondary.tab)} className="sa-glass-ghost rounded-xl px-7 py-4 text-base font-semibold text-white">
-            {S.cta.secondary.label}
-          </button>
+
+        {/* Khối ám thị định hướng rõ ràng */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-7 flex flex-col items-center justify-center text-center"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#2BFFEA]/40 bg-[#061e30]/85 px-4 py-1.5 shadow-[0_0_20px_rgba(43,255,234,0.25)]">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2BFFEA] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2BFFEA]" />
+            </span>
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-[#2BFFEA]">
+              CHỌN 1 TRONG 2 BƯỚC ĐỂ TIẾP TỤC
+            </span>
+            <Sparkles size={13} className="text-[#2BFFEA] animate-pulse" />
+          </div>
+          <p className="mt-2 text-xs text-gray-400">
+            Bấm chọn một lối đi bên dưới để kiểm chứng phương pháp bạn đang dùng:
+          </p>
+        </motion.div>
+
+        {/* Hai cổng lựa chọn tương tác dạng Card lớn có ám thị thị giác cao */}
+        <div className="mt-6 grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Lối đi 1: Tự kiểm tra Sáu Ô (Khuyên dùng) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            onClick={() => go(S.cta.primary.tab)}
+            className="group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-[#2BFFEA] bg-[linear-gradient(145deg,rgba(14,45,66,0.95),rgba(6,22,36,0.98))] p-6 text-left shadow-[0_12px_36px_rgba(0,0,0,0.8),0_0_30px_rgba(43,255,234,0.35)] transition-all duration-300 hover:-translate-y-1 hover:border-[#2BFFEA] hover:shadow-[0_16px_46px_rgba(0,0,0,0.9),0_0_45px_rgba(43,255,234,0.55)] active:scale-[0.98]"
+          >
+            {/* Nhãn nổi bật */}
+            <div className="mb-3 flex items-center justify-between">
+              <span className="rounded-full bg-[#2BFFEA] px-2.5 py-0.5 font-mono text-[10px] font-extrabold uppercase tracking-wider text-black shadow-[0_0_10px_#2BFFEA]">
+                🔥 KHUYÊN DÙNG
+              </span>
+              <span className="font-mono text-xs font-bold text-[#2BFFEA]">Miễn phí</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2BFFEA]/15 text-[#2BFFEA] shadow-[0_0_14px_rgba(43,255,234,0.3)] transition-transform group-hover:scale-110">
+                <ClipboardCheck size={22} />
+              </div>
+              <h3 className="text-lg font-bold text-white group-hover:text-[#2BFFEA] transition-colors">
+                Tự kiểm tra 6 ô
+              </h3>
+            </div>
+
+            <p className="mt-3 text-xs leading-relaxed text-gray-300">
+              Trả lời 6 câu hỏi đời thường trong 2 phút để biết phương pháp bạn dùng đã đủ chặt chẽ để đem đi đo chưa.
+            </p>
+
+            <div className="mt-5 flex items-center gap-2 font-mono text-xs font-bold text-[#2BFFEA] transition-all group-hover:translate-x-1">
+              <span>Bắt đầu tự kiểm ngay</span>
+              <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+            </div>
+
+            {/* Vệt sáng quét qua khi hover */}
+            <div className="pointer-events-none absolute -inset-full top-0 block -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-hover:animate-[shimmer_1.5s_infinite]" />
+          </motion.div>
+
+          {/* Lối đi 2: Xem Thư viện 300 */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            onClick={() => go(S.cta.secondary.tab)}
+            className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/15 bg-[linear-gradient(145deg,rgba(11,28,43,0.85),rgba(4,12,20,0.92))] p-6 text-left shadow-[0_12px_36px_rgba(0,0,0,0.7)] transition-all duration-300 hover:-translate-y-1 hover:border-[#3df2ff]/60 hover:shadow-[0_16px_46px_rgba(0,0,0,0.85),0_0_30px_rgba(61,242,255,0.25)] active:scale-[0.98]"
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <span className="rounded-full border border-white/20 bg-white/5 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-300">
+                📊 KHO SỐ THẬT
+              </span>
+              <span className="font-mono text-xs text-gray-400">22 năm dữ liệu</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-gray-200 transition-transform group-hover:scale-110 group-hover:text-[#3df2ff]">
+                <Database size={22} />
+              </div>
+              <h3 className="text-lg font-bold text-white group-hover:text-[#3df2ff] transition-colors">
+                Xem Thư viện 300
+              </h3>
+            </div>
+
+            <p className="mt-3 text-xs leading-relaxed text-gray-400">
+              Đối chiếu phương pháp của bạn với kết quả đo lường thật của 242 chiến lược kinh điển trên dữ liệu vàng.
+            </p>
+
+            <div className="mt-5 flex items-center gap-2 font-mono text-xs font-semibold text-gray-300 transition-all group-hover:text-[#3df2ff] group-hover:translate-x-1">
+              <span>Khám phá thư viện</span>
+              <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+            </div>
+          </motion.div>
         </div>
+
+        {/* 3 Cam kết an tâm tâm lý (Reassurance badges) */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="mt-6 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-400 sm:gap-6"
+        >
+          <span className="flex items-center gap-1.5 text-gray-300">
+            <Check size={14} className="text-[#2BFFEA]" /> Hoàn toàn miễn phí
+          </span>
+          <span className="flex items-center gap-1.5 text-gray-300">
+            <Check size={14} className="text-[#2BFFEA]" /> Không cần tạo tài khoản
+          </span>
+          <span className="flex items-center gap-1.5 text-gray-300">
+            <Check size={14} className="text-[#2BFFEA]" /> Không giữ bí mật giao dịch
+          </span>
+        </motion.div>
       </Screen>
     </div>
   );

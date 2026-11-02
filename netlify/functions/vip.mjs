@@ -1,7 +1,7 @@
 /**
  * Cổng nội dung VIP — chạy trên Netlify Functions (và qua plugin dev trong vite.config.ts).
  *
- * GET /.netlify/functions/vip?action=verify            header x-passkey → { valid, role }
+ * GET /.netlify/functions/vip?action=verify            header x-passkey → { valid, role, expiry, expiresAt }
  * GET /.netlify/functions/vip?action=article&id=BRK001 header x-passkey (tuỳ chọn)
  *   → có passkey hợp lệ: bài đầy đủ · không có: chỉ phần "Tóm tắt 30 giây"
  *
@@ -18,9 +18,10 @@ const GAS_URL =
   'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec';
 const GAS_SERVER_KEY = process.env.GAS_SERVER_KEY || '';
 const ID_PATTERN = /^[A-Z]{2,6}\d{1,4}$/;
-const VERIFY_TTL_MS = 5 * 60 * 1000;
+// Lưu đệm ngắn (15 giây) để khi Leon đổi Dropdown (active/inactive/expiry) trên Google Sheet thì Web cập nhật gần như tức thì
+const VERIFY_TTL_MS = 15 * 1000;
 
-// Cache trong một instance để không gọi Apps Script mỗi lần mở bài
+// Cache trong một instance để không gọi Apps Script dồn dập khi mở nhiều bài liên tiếp
 const verifyCache = new Map();
 
 const json = (body, status = 200) =>
@@ -38,7 +39,12 @@ async function verifyPasskey(passkey) {
     const res = await fetch(`${GAS_URL}?action=verifyPasskey&passkey=${encodeURIComponent(passkey)}`);
     const data = await res.json();
     result = data.success && data.valid
-      ? { valid: true, role: data.role || 'vip' }
+      ? {
+          valid: true,
+          role: data.role || 'vip',
+          expiry: data.expiry || 'lifetime',
+          expiresAt: data.expiresAt || null,
+        }
       : { valid: false, message: data.message || 'Passkey không hợp lệ hoặc đã bị thu hồi.' };
     verifyCache.set(passkey, { result, until: Date.now() + VERIFY_TTL_MS });
   } catch {
@@ -57,10 +63,13 @@ function findPrivateDir() {
 }
 
 // Bài Admin đã sửa trong Google Sheet được ưu tiên hơn file gốc
-async function loadAdminOverride(id) {
-  if (!GAS_SERVER_KEY) return null;
+async function loadAdminOverride(id, passkey = '') {
+  if (!GAS_SERVER_KEY && !passkey) return null;
   try {
-    const res = await fetch(`${GAS_URL}?action=getArticle&id=${id}&key=${encodeURIComponent(GAS_SERVER_KEY)}`);
+    const authParam = GAS_SERVER_KEY
+      ? `key=${encodeURIComponent(GAS_SERVER_KEY)}`
+      : `passkey=${encodeURIComponent(passkey)}`;
+    const res = await fetch(`${GAS_URL}?action=getArticle&id=${encodeURIComponent(id)}&${authParam}`);
     const data = await res.json();
     return data.success && data.articleContent ? data.articleContent : null;
   } catch {
@@ -68,8 +77,8 @@ async function loadAdminOverride(id) {
   }
 }
 
-async function loadArticle(id, original = false) {
-  const override = original ? null : await loadAdminOverride(id);
+async function loadArticle(id, original = false, passkey = '') {
+  const override = original ? null : await loadAdminOverride(id, passkey);
   if (override) return override;
   const dir = findPrivateDir();
   if (!dir) return null;
@@ -114,7 +123,7 @@ export default async (req) => {
     }
 
     // original=1: Admin khôi phục bài gốc, bỏ qua bản đã sửa trong Sheet
-    const content = await loadArticle(id, Boolean(auth) && url.searchParams.get('original') === '1');
+    const content = await loadArticle(id, Boolean(auth) && url.searchParams.get('original') === '1', auth ? passkey : '');
     if (!content) return json({ id, full: false, content: '' });
     return json({ id, full: Boolean(auth), role: auth?.role, content: auth ? content : teaser(content) });
   }

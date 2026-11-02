@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { type RoadmapTopic } from './QuantRoadmapData';
+import { MathFormula } from '../MathFormula';
 import { SoundFX } from './SoundFX';
 
 export interface QuantChallengeModalProps {
@@ -151,8 +152,8 @@ export const QuantChallengeModal: React.FC<QuantChallengeModalProps> = ({
                   <div className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5" /> Công thức Cốt lõi (Mathematical Core)
                   </div>
-                  <div className="p-3 my-2 bg-black/40 rounded-xl border border-cyan-500/20 font-mono text-neon-green text-sm sm:text-base text-center overflow-x-auto">
-                    {topic.keyEquation}
+                  <div className="p-3 my-2 bg-black/40 rounded-xl border border-cyan-500/20 text-neon-green text-sm sm:text-base text-center overflow-x-auto">
+                    <MathFormula formula={topic.keyEquation} />
                   </div>
                   <p className="text-xs text-gray-300">
                     {topic.equationDescription}

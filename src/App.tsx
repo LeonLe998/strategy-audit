@@ -154,7 +154,6 @@ function getPathForRoute(tab: string, subId?: string | null): string {
 export default function App() {
   const [routeInfo, setRouteInfo] = useState<RouteInfo>(parseCurrentRoute);
   const [isCustomInstructionsOpen, setIsCustomInstructionsOpen] = useState<boolean>(false);
-  const [activeSectionIndex, setActiveSectionIndex] = useState<number>(0);
 
   const navigate = (tab: string, subId: string | null = null, replace: boolean = false) => {
     const newPath = getPathForRoute(tab, subId);
@@ -216,11 +215,8 @@ export default function App() {
   return (
     <div id="quant-app-container" className="min-h-screen bg-[#061624] text-gray-300 relative font-sans antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white dark:selection:bg-neon-green dark:selection:text-black transition-colors duration-300">
       
-      {/* Scroll-Driven Animation Engine (Progress bar, Chapter pill, 3D Game toggle) */}
-      <ScrollAnimationEngine
-        isGameMode={false}
-        onSectionChange={setActiveSectionIndex}
-      />
+      {/* Scroll-Driven Animation Engine (Progress bar, Scroll-to-top button) */}
+      <ScrollAnimationEngine isGameMode={false} />
 
       {/* Dynamic Animated Ambient Background */}
       <AmbientBackground />
@@ -253,7 +249,7 @@ export default function App() {
             {(activeTab === 'about' || activeTab === 'home') && (
               <Home
                 setActiveTab={setActiveTab}
-                        activeSectionIndex={activeSectionIndex}
+                activeSectionIndex={0}
               />
             )}
             {activeTab === 'vault' && (

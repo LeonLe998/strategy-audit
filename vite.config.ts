@@ -36,12 +36,20 @@ export default defineConfig({
     'process.env': {}
   },
   build: {
+    target: 'es2020',
+    chunkSizeWarningLimit: 650,
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
         sauo: resolve(__dirname, 'sauo/index.html')
+      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/three')) return 'vendor-three'
+          if (id.includes('node_modules/katex')) return 'vendor-katex'
+          if (id.includes('node_modules/react-markdown') || id.includes('node_modules/remark') || id.includes('node_modules/unified') || id.includes('node_modules/micromark') || id.includes('node_modules/mdast')) return 'vendor-markdown'
+        }
       }
     }
   }
 })
-

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { GlassCard } from './Glass';
+import ScrollDownHint from './ScrollDownHint';
 import { motion } from 'motion/react';
 import {
   ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown,
@@ -206,6 +207,9 @@ export default function HomeStitch({
             )
           }
         </motion.div>
+        <div className="col-span-full -mt-6">
+          <ScrollDownHint label="Lướt xuống để xem tiếp" />
+        </div>
       </section>
 
       {/* 2. FLOW DIAGRAM: HỌC -> ĐO -> THỰC HÀNH */}

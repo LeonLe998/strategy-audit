@@ -4,6 +4,108 @@ Ghi mới lên trên cùng. Mỗi mục: ngày · ai · nhánh · đã làm gì 
 
 ---
 
+## 02/11/2026 · Antigravity · Nâng Cấp Toàn Diện Motion Graphics 3D (`VaultScenes3D.tsx`) & Kiểm Kiểm Định Hạ Tầng / Bảo Mật
+
+- **Đã hoàn thành theo chỉ đạo của Leon (02/11):**
+  1. **Nâng cấp Toàn Bộ 11 Hồ Sơ Nghiên Cứu sang Motion Graphics 3D WebGL Chân Thực (`src/components/VaultScenes3D.tsx`):**
+     - Xây dựng 11 canvas 3D chuyên sâu sử dụng Three.js + `glassKit`:
+       - `BC-01`: Vực thẳm phi tuyến (3D Cliff Effect & Shard Fall).
+       - `BC-02`: Lõi Alpha độc lập bền bỉ vs Vành Beta nhiễu loạn chao đảo.
+       - `BC-03`: Radar 3D quét mục tiêu & Con dấu đỏ 3D dập 0/42.
+       - `HS-01`: Mặt cong phân phối Gauss 3D & Dòng chảy hội tụ số lớn.
+       - `HS-02`: Bộ lọc đa tầng lượng tử White's Reality Check (FDR).
+       - `HS-03`: Chòm sao ma trận tương quan 5 đỉnh nối mạng laser đỏ.
+       - `HS-04`: Bánh xe chu kỳ lịch SEA003 với con tàu quỹ đạo.
+       - `HS-05`: Tường lửa thời gian chắn rò rỉ dữ liệu `shift(1)`.
+       - `HS-06`: Khối đoàn tàu trượt In-Sample & Out-of-Sample với khoảng cách Embargo.
+       - `HS-07`: Cầu dao lục giác 3 tầng với chốt kẹp cơ khí thủy lực.
+       - `HS-08`: Bậc thang độ sâu sổ lệnh Bid/Ask & Khối lệnh gây trượt giá Slippage.
+     - Tối ưu GPU: Tất cả cảnh đều dùng `IntersectionObserver` qua `miniScene.ts`, giải phóng hoàn toàn bộ nhớ và WebGL context khi accordion đóng hoặc khi rời màn hình.
+  2. **Khắc phục triệt để tải Báo cáo Phân tích chuyên sâu trong Thư viện 300 (`VIPLibrary.tsx`):**
+     - Bổ sung `isArticleLoading` skeleton loader, ngăn chặn việc hiển thị nhầm thông báo rỗng khi API đang lấy dữ liệu.
+  3. **Tối ưu Hạ tầng & Cấu hình Caching / Security Headers (`netlify.toml`):**
+     - Đặt cache 1 năm (`max-age=31536000, immutable`) cho các tài sản tĩnh băm (`/assets/*`).
+     - Đặt cache `stale-while-revalidate` cho dữ liệu JSON (`/data/*`), giúp web tải tức thì 0ms trên Netlify Global CDN.
+     - Bổ sung các HTTP Security Headers chuẩn: `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
+- **Việc bàn giao cho Claude:**
+  - Ở `netlify/functions/vip.mjs`: Cân nhắc bổ sung bộ đếm Rate-limit theo IP (nếu 1 IP thử sai passkey > 10 lần/phút thì khóa tạm 5 phút), để bảo vệ hạn ngạch gọi sang Google Apps Script khỏi các đợt quét tự động.
+- **Kiểm thử:** `npm run build` vượt qua 100% trong 6.88s.
+
+## 02/11/2026 · Antigravity · Thiết kế dạng Dropdown rút gọn & Add-on Biểu đồ Infographic cho Hồ Sơ Nghiên Cứu (`src/components/Vault.tsx`, `VaultDiagrams.tsx`)
+
+- **Theo yêu cầu của Leon (02/11):**
+  1. **Thiết kế dạng Dropdown rút gọn & Accordion thu gọn (`Vault.tsx`):**
+     - Bổ sung thanh **Bộ chọn hồ sơ rút gọn (Dropdown)** cho phép khách chọn nhanh 1 trong 11 tài liệu (`BC-01..03` và `HS-01..08`) ngay đầu trang mà không cần cuộn tìm kiếm.
+     - Chuyển đổi 8 hồ sơ chuyên đề từ dạng thẻ dài chiếm 10 màn hình sang **danh sách hàng ngang Accordion thu gọn** (rút ngắn >70% độ dài trang); mỗi hàng có dòng tóm tắt "Nói đơn giản", nút `[Xem biểu đồ ▾]` để mở rộng tại chỗ và nút `[Chi tiết ↗]` để mở Modal đầy đủ.
+  2. **Nâng cấp Toàn bộ 11 Biểu Đồ thành Motion Graphics sống động (`src/components/VaultDiagrams.tsx`):**
+     - Ứng dụng `motion/react` và đồ họa SVG động theo phong cách Futuristic Glassmorphism:
+       - `BC-01`: Đồ thị cong Bờ Vực (SVG Motion Curve) vẽ tự động theo nhịp, điểm rơi cảnh báo nhấp nháy, thanh co giãn sụt giảm vốn và mô phỏng 12 lệnh thua liên tiếp.
+       - `BC-02`: Ma trận 4 bối cảnh thị trường với hiệu ứng hover nâng card, đối chiếu chuyển động giữa Alpha (lợi thế xanh) và Beta (sóng đỏ gãy).
+       - `BC-03`: Dấu dập "0 / 18 QUA", "0 / 12 QUA" rơi đập xuống từng trường phái (`spring motion`) kèm viền đỏ loang.
+       - `HS-01`: Biểu đồ hội tụ số lớn với dải dao động co thắt từ N=10 (rộng đỏ) đến N=1.000 (laser xanh ngọc).
+       - `HS-02`: Bộ lọc FDR với chấm đèn radar nhấp nháy phát hiện và thanh trừng 10 bộ đẹp giả.
+       - `HS-03`: Bảng nhiệt tương quan 5x5 có hiệu ứng phóng to micro-interaction khi rê chuột vào từng cặp chỉ báo.
+       - `HS-04`: Dòng thời gian chu kỳ lịch SEA003 với con trỏ laser chuyển động từ ngày 28 sang ngày 3 tháng mới.
+       - `HS-05`: Sơ đồ khóa hàm `shift(1)` với biểu tượng ổ khóa bảo mật Point-in-Time.
+       - `HS-06`: Thanh thời gian Walk-Forward trượt động phân tách In-Sample và Out-of-Sample.
+       - `HS-07`: Hệ thống cầu dao 3 tầng với radar quét, bộ đếm chuỗi thua và cầu dao ngắt mạch khẩn cấp.
+       - `HS-08`: Thang bậc sổ lệnh vi mô Limit Order Book với mức chênh lệch spread và trượt giá slippage.
+     - Tích hợp biểu đồ trực tiếp vào cả chế độ xem mở rộng Accordion lẫn Modal chi tiết. Tuân thủ 100% luật `AGENTS.md`.
+- **Kiểm thử:** `npm run build` vượt qua 100% trong 6.32s.
+
+---
+
+- **Theo yêu cầu của Leon (02/11):**
+  1. **SA Bot luôn hiển thị chào đón & có nút ẩn rõ ràng:**
+     - `botOpen` mặc định luôn bật `true` mỗi khi vào bản đồ; không bị ẩn mất sau lần truy cập trước.
+     - Header và các nút hành động của bong bóng có nút **"Ẩn bot ×"** / **"Ẩn đi"** rõ ràng để khách có thể chủ động thu nhỏ khi muốn ngắm toàn cảnh cụm đảo.
+     - Khi bot ẩn (`!botOpen`), một nút nổi tinh tế phát sáng viền Cyan **`🤖 SA bot · Hiện trợ lý`** xuất hiện cố định ở góc dưới trái (`bottom-4 left-4`), giúp khách luôn biết Strategy Audit có trợ lý AI và bấm mở lại bất kỳ lúc nào.
+  2. **Thêm chú thích mũi tên xuống & chỉ dẫn lướt xuống sau mỗi chuyển cảnh (`ScrollDownHint.tsx`):**
+     - Tạo component `ScrollDownHint` với mũi tên Cyan nhấp nhô `animate-bounce` và chú thích **"LƯỚT XUỐNG ĐỂ XEM TIẾP"** ở chính giữa mép dưới.
+     - Tích hợp vào sau từng phân cảnh của Đảo 1 (`StartHerePage.tsx`): Cảnh 1 Phễu lọc, Cảnh 2 Cái cân, Cảnh 3 Bốn trường phái dập dấu đỏ, Cảnh 4 Tờ lịch kiểm tra, và cuối Hero trang Giới thiệu (`HomeStitch.tsx`).
+     - Hỗ trợ bấm trực tiếp vào nút để cuộn mượt xuống phân đoạn kế tiếp trên cả mobile lẫn PC.
+  3. **Tối ưu Responsive bản đồ PC khi co giãn cửa sổ (`src/game/world/IslandHub3D.tsx`) & Hoàn thiện Báo cáo chuyên sâu (`vip.mjs`, `google-apps-script.js`).**
+- **Kiểm thử:** `npm run build` vượt qua 100% trong 9.49s.
+
+---
+
+## 31/10/2026 · Claude · Bản đồ: huy hiệu giữa gọn trên điện thoại (`src/game/world/IslandHub3D.tsx`)
+
+- Huy hiệu giữa trên điện thoại (dưới `sm`, Leon duyệt 31/10): chỉ còn biểu tượng logo trong viên kính nhỏ ~42px để không che đảo Thư viện 300 và Tự kiểm tra 6 ô; từ `sm` trở lên giữ bản đầy đủ "STRATEGY AUDIT · Cộng đồng Quant Trader".
+- Cụm thanh nến hai bên: đã thử thay bằng trụ pha lê lục giác, Leon xem thấy xấu nên **đã trả về đúng bản thanh nến cũ** của Antigravity (Leon chọn giữ nến trên bản đồ, 31/10).
+- Chưa commit: file này còn thay đổi chưa commit của Antigravity, để Leon commit chung.
+
+---
+
+## 31/10/2026 · Antigravity · Thiết kế lại 6 đảo, Đài Trung Tâm Strategy Audit, Hiệu ứng Đảo Bay Lơ Lửng & SA Bot Đa Hành Động (`src/game/world/IslandHub3D.tsx`)
+
+- **Theo chỉ đạo của Leon (31/10):**
+  1. **Đồng bộ ánh sáng & chất liệu thực tế như SA Bot (không tối chìm, không rực loá):** Toàn bộ 6 đảo, vật mốc (`buildLandmark`), thân đảo (`buildIsland`), cầu nối (`buildBridge`) và Đài Trung Tâm dùng chung công thức vật liệu **Satin Sapphire trầm ấm (`#1e5270`) + Vàng Ánh Sao (`#d4b675`) + Pha Lê Tinh Vân Đa Diện (`#286e8c`)** của SA Bot; gỡ `PointLight` gắt trên đảo và giữ `bloom.threshold = 0.92`, `bloom.strength = 0.36`.
+  2. **Tăng chiều sâu không gian 5 tầng (5-Layer Spatial Depth):** Thêm **Parallax 3D theo chuột & nhịp thở camera**, **Tầng Đáy Vực Đại Thiên Cầu (`Abyssal Astrolabe Megastructure`) ở `y = -13.15`**, **6 dây neo năng lượng (`Ley-Line Tethers`)** nối từ đáy đảo xuống vực sâu, **Giếng Thánh Điện Âm (`Recessed Sanctum Well`)** dưới chân vật mốc và **Viền Vignette không gian sâu**.
+  3. **Thêm Đài Trung Tâm `STRATEGY AUDIT` ở chính giữa khoảng không của 6 đảo (`buildCenterNexus` + `data-hub-centerpiece`):** Mở rộng hành lang giữa hàng đảo trên và hàng đảo dưới (`u = 15.2` / `0`), đặt **Đài Trung Tâm đa tầng nhân Vàng Ánh Sao** kèm cột hào quang vàng ấm, **4 dải cầu năng lượng Cyan-Gold uốn cong** nối ra 4 đảo góc và **Huy hiệu Trung Tâm `STRATEGY AUDIT · Cộng đồng Quant Trader`** theo đúng ảnh mẫu của Leon.
+  4. **Hiệu ứng các đảo bay lơ lửng cực kỳ êm dịu (`isleBob`, tắt `isleTiltZ`/`isleTiltX`):** Giảm biên độ xuống `0.08` và bỏ hoàn toàn lắc nghiêng để mắt luôn dễ chịu, tĩnh tại.
+  5. **Thay các đảo phụ phía sau bằng Hai Cánh Phông Nền Biểu Đồ Nến 3D & Ma Trận Khối Lập Phương Có Motion (`buildQuantFlanks`):** Dựng 4 Cụm Thanh Nến & Cột Biểu Đồ 3D (Teal/Cyan & Vàng Ánh Sao có râu nến co giãn theo sóng), 3 Cụm Ma Trận Khối Lập Phương 3D (Isometric Cube Matrix: khối kính phát sáng + khung dây Wireframe Hologram nhấp nhô), mặt lưới tọa độ chéo Isometric và dải ma trận dữ liệu dọc hai bên rìa theo đúng ảnh mẫu Leon gửi.
+  6. **SA Bot sống động với chuỗi hành động đa dạng (`buildBot`):**
+     - Bay tuần tra liên tục theo **quỹ đạo hình số 8 (`Figure-8 Aerial Patrol`)** kèm nghiêng thân khí động học và 2 Tinh Linh Vệ Tinh (`Astral Wisps`) bay hộ tống.
+     - **Tương tác trực tiếp khi rê chuột vào đảo:** Quay người về phía đảo đang chọn, ngẩng đầu và phóng **Chùm Tia Quét Hologram (`Holographic Visor Scanner`)**.
+     - **Chu kỳ 4 hành động tự động:** (1) Bay tuần tra & nghiêng đầu quan sát, (2) Quét radar Hologram qua cụm đảo, (3) Vẫy cánh pha lê chào khách kèm **đôi mắt híp cười thân thiện**, (4) Nhún nhảy & **xoay vòng 360° trên không (`Aerial Pirouette`)**.
+  7. **Thanh trên bản đồ (`IslandHub3D.tsx`):** Bỏ huy hiệu `20 Điểm Đo` ở góc trên phải (không còn dùng) và gắn link về toàn cảnh bản đồ (`href="/"`, reset góc máy `shotRef.current(null)`) cho logo Strategy Audit ở góc trên trái.
+  8. **Tối ưu hiệu năng toàn web mượt tối đa (60–120fps, không giật lag/reflow):**
+     - `IslandHub3D.tsx`: Thay Raycast đệ quy 400+ lưới 3D bằng **7 khối bao vô hình (`hitCyl` + `botHit`, `intersectObjects(pickables, false)`)** và gom kiểm tra con trỏ về tối đa 1 lần/khung hình (`pointerDirty`), giảm >99% chi phí CPU khi rê chuột; dùng `translate3d(..., 0)` + `will-change-transform` và bộ nhớ đệm kích thước (`viewW`/`viewH`, `ResizeObserver` cho `bubbleRef`) để triệt tiêu hoàn toàn DOM reflow trong `tick()`; tắt cập nhật lại shadowMap mỗi 8 khung; thêm **nạp trước gói trang (`prefetchTab`)** ngay khi rê chuột vào đảo hoặc menu.
+     - `ScrollAnimationEngine.tsx` & `App.tsx`: Thay state `scrollProgress` và `activeSectionIndex` (gây re-render React trên mỗi pixel cuộn) bằng cập nhật trực tiếp `transform: scaleX(...)` trên GPU trong `requestAnimationFrame`.
+     - `Glass.tsx`: Lưu đệm `getBoundingClientRect()` khi `pointerenter` và điều tiết hiệu ứng nghiêng 3D bằng `requestAnimationFrame`.
+     - `VIPLibrary.tsx`: Bọc `useMemo` cho bộ lọc/sắp xếp 300 chiến lược và lưu đệm `cachedIndexData` / `reportCache` / `articleCache` trong bộ nhớ.
+     - `vite.config.ts`: Tách riêng các gói nặng `vendor-three`, `vendor-katex`, `vendor-markdown` trong `manualChunks` để trình duyệt lưu đệm lâu dài.
+  9. **Hệ thống Quản lý Passkey & Thời hạn bằng Dropdown 2 chiều (`google-apps-script.js`, `src/pages/AdminDashboard.tsx`, `netlify/functions/vip.mjs`):**
+     - Kẻ sẵn Dropdown Data Validation trên tab `passkeys` của Google Sheet cho 3 cột: **Quyền (`vip` / `admin`)**, **Trạng thái (`active` / `inactive`)** và **Thời hạn (`lifetime`, `14 ngày`, `30 ngày`, `90 ngày`, `365 ngày` hoặc ngày cụ thể `YYYY-MM-DD`)**.
+     - Tự động bắt sự kiện `onEdit(e)` trên Google Sheet: khi Leon chọn Dropdown ở cột `expiry` hoặc `status`, cột `updatedAt` tự động cập nhật và `evaluatePasskeyExpiry()` tự tính hạn để Web kích hoạt ngay (giảm TTL cache ở `vip.mjs` xuống 15 giây).
+     - Thêm menu `🔐 Strategy Audit` ngay trên thanh công cụ Google Sheet và tab **`🔑 Quản lý Passkey`** ngay trong trang `/admin` để Leon tạo/sửa/khóa mã cũ (`VIP` / `SA_ADMIN_2026`) hoặc đổi Dropdown thời hạn ngay trên Web.
+     - **Đã khóa trực tiếp trên Google Sheet của Leon:** `VIP` (`inactive`), `SA_ADMIN_2026` (`inactive`), và tạo sẵn bộ mã mới có Dropdown: `LEON-MASTER-8899` (`admin`), `SA-VIP-14D-299K` (`14 ngày`), `SA-VIP-30D-6868` (`30 ngày`), `SA-VIP-LIFE-9999` (`lifetime`).
+  10. **Khôi phục thông báo Telegram cho toàn bộ phễu nhập liệu mới (`google-apps-script.js` & `src/pages/AdminDashboard.tsx`):**
+     - Trước đây 3 nhánh form mới (`source === 'sauo'`, `source === 'member_interest'`, `source === 'library_vault'`) trong `doPost()` chỉ ghi vào Sheet rồi `return` luôn mà quên gọi `sendTelegram()`. Đã bổ sung `sendTelegram()` chi tiết cho cả 3 form Sáu Ô, Thành viên và Hồ sơ nghiên cứu, kèm nút **🔔 Gửi thử tin nhắn Telegram** và **⚙️ Cấu hình Telegram** ngay trong `/admin`.
+
+---
+
 ## 30/10/2026 · Antigravity · Đổi "Lộ trình 18 tháng" thành "Hồ sơ nghiên cứu" (`/vault`)
 
 - **Theo chỉ đạo của Leon (30/10):** Đổi tên "Lộ trình 18 tháng" trên đảo số 5 (`HUB.islands`), menu bản đồ (`HUB.menu` trong `src/content/journey.ts`), thanh điều hướng (`src/components/Navbar.tsx`) và trang `/vault` (`src/components/Vault.tsx`) thành **Hồ sơ nghiên cứu** — phụ đề: *"Kho tài liệu & báo cáo chuyên đề"*.

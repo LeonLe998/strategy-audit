@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Star,
@@ -9,6 +9,9 @@ import remarkGfm from 'remark-gfm';
 
 const VIP_API = '/.netlify/functions/vip';
 const PASSKEY_STORAGE = 'quant_vip_passkey';
+let cachedIndexData: any | null = null;
+const reportCache = new Map<string, any>();
+const articleCache = new Map<string, { content: string; full: boolean }>();
 
 interface VIPLibraryProps {
   setActiveTab: (tab: string) => void;
@@ -108,9 +111,10 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const [indexData, setIndexData] = useState<any | null>(null);
+  const [indexData, setIndexData] = useState<any | null>(() => cachedIndexData);
   const [articleContent, setArticleContent] = useState<string>('');
   const [articleFull, setArticleFull] = useState<boolean>(false);
+  const [isArticleLoading, setIsArticleLoading] = useState<boolean>(false);
   
   const [filterHo, setFilterHo] = useState<string>('All');
   const [filterVerdict, setFilterVerdict] = useState<string>('All');
@@ -129,8 +133,17 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
     }
   };
 
-  // Bài phân tích luôn đi qua function: có passkey hợp lệ mới nhận bản đầy đủ
+  // Bài phân tích luôn đi qua function: có passkey hợp lệ mới nhận bản đầy đủ (có cache bộ nhớ cho phản hồi tức thì)
   const fetchArticle = async (id: string, key: string = storedPasskey()) => {
+    setIsArticleLoading(true);
+    const cacheKey = `${id}::${key ? 'vip' : 'pub'}`;
+    const cached = articleCache.get(cacheKey);
+    if (cached) {
+      setArticleContent(cached.content);
+      setArticleFull(cached.full);
+      setIsArticleLoading(false);
+      return;
+    }
     try {
       const res = await fetch(`${VIP_API}?action=article&id=${encodeURIComponent(id)}`, {
         headers: key ? { 'x-passkey': key } : {}
@@ -142,12 +155,16 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
         setIsAuthenticated(false);
         return fetchArticle(id, '');
       }
-      setArticleContent(data.content || '');
-      setArticleFull(Boolean(data.full));
+      const entry = { content: data.content || '', full: Boolean(data.full) };
+      articleCache.set(cacheKey, entry);
+      setArticleContent(entry.content);
+      setArticleFull(entry.full);
     } catch (err) {
       console.error(err);
       setArticleContent('');
       setArticleFull(false);
+    } finally {
+      setIsArticleLoading(false);
     }
   };
 
@@ -157,9 +174,13 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
     localStorage.removeItem('quant_admin_strategies');
     if (storedPasskey()) setIsAuthenticated(true);
 
+    if (cachedIndexData) return;
     fetch('/data/thuvien_data/thu_vien_index.json')
       .then(res => res.json())
-      .then(data => setIndexData(data))
+      .then(data => {
+        cachedIndexData = data;
+        setIndexData(data);
+      })
       .catch(err => console.error(err));
   }, []);
 
@@ -204,14 +225,20 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
       }
     }
 
-    fetch(`/data/thuvien_data/reports_json/${targetId}.json`)
-      .then(res => res.json())
-      .then(data => {
-        setSelectedReport(data);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    const cachedRep = reportCache.get(targetId);
+    if (cachedRep) {
+      setSelectedReport(cachedRep);
+    } else {
+      fetch(`/data/thuvien_data/reports_json/${targetId}.json`)
+        .then(res => res.json())
+        .then(data => {
+          reportCache.set(targetId, data);
+          setSelectedReport(data);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
 
     setArticleContent('');
     setArticleFull(false);
@@ -265,22 +292,27 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
 
   const getArticleDisplayContent = () => (selectedReport ? articleContent : '');
 
-  let filteredList = indexData?.danh_sach || [];
-  if (filterHo !== 'All') filteredList = filteredList.filter((s: any) => s.ho === filterHo);
-  if (filterVerdict !== 'All') filteredList = filteredList.filter((s: any) => s.verdict === filterVerdict);
-  if (searchQuery) {
-    const lowerQ = searchQuery.toLowerCase();
-    filteredList = filteredList.filter((s: any) => s.ten.toLowerCase().includes(lowerQ) || s.id.toLowerCase().includes(lowerQ));
-  }
-  
-  filteredList.sort((a: any, b: any) => {
-    const orderA = VERDICT_ORDER[a.verdict] || 99;
-    const orderB = VERDICT_ORDER[b.verdict] || 99;
-    if (orderA !== orderB) return orderA - orderB;
-    return (a.xep_hang || 999) - (b.xep_hang || 999);
-  });
+  const filteredList = useMemo(() => {
+    let list: any[] = indexData?.danh_sach ? [...indexData.danh_sach] : [];
+    if (filterHo !== 'All') list = list.filter((s: any) => s.ho === filterHo);
+    if (filterVerdict !== 'All') list = list.filter((s: any) => s.verdict === filterVerdict);
+    if (searchQuery) {
+      const lowerQ = searchQuery.toLowerCase();
+      list = list.filter((s: any) => s.ten.toLowerCase().includes(lowerQ) || s.id.toLowerCase().includes(lowerQ));
+    }
+    list.sort((a: any, b: any) => {
+      const orderA = VERDICT_ORDER[a.verdict] || 99;
+      const orderB = VERDICT_ORDER[b.verdict] || 99;
+      if (orderA !== orderB) return orderA - orderB;
+      return (a.xep_hang || 999) - (b.xep_hang || 999);
+    });
+    return list;
+  }, [indexData, filterHo, filterVerdict, searchQuery]);
 
-  const hoOptions = Array.from(new Set((indexData?.danh_sach || []).map((s: any) => s.ho)));
+  const hoOptions = useMemo(
+    () => Array.from(new Set((indexData?.danh_sach || []).map((s: any) => s.ho))),
+    [indexData],
+  );
   const totalPages = Math.max(1, Math.ceil(filteredList.length / pageSize));
   const safePage = Math.min(currentPage, totalPages);
   const pageItems = filteredList.slice((safePage - 1) * pageSize, safePage * pageSize);
@@ -590,7 +622,14 @@ export default function VIPLibrary({ initialStrategyId, onStrategyChange }: VIPL
                     </div>
                   )}
 
-                  {articleFull ? (
+                  {isArticleLoading ? (
+                    <div className="py-12 text-center space-y-4 bg-[#131722]/50 rounded-2xl border border-white/5">
+                      <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-[#2BFFEA] border-t-transparent shadow-[0_0_16px_rgba(43,255,234,0.3)]" />
+                      <p className="font-mono text-xs text-[#2BFFEA] animate-pulse">
+                        Đang nạp hồ sơ & giải phẫu chuyên sâu...
+                      </p>
+                    </div>
+                  ) : articleFull ? (
                     getArticleDisplayContent() ? (
                       <div className="prose prose-invert prose-neon max-w-none prose-h2:text-white prose-h2:border-b prose-h2:border-[#1F2937] prose-h2:pb-2 prose-h3:text-[#FFD700] prose-a:text-[#1D9E75] hover:prose-a:text-[#FFD700] prose-blockquote:border-l-[#1D9E75] prose-blockquote:bg-[#131722] prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg prose-blockquote:font-mono prose-blockquote:text-sm prose-blockquote:text-gray-300">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>

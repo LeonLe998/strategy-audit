@@ -1,13 +1,13 @@
 /**
  * Scroll Animation Engine
  * Controls:
- * - Bioluminescent scroll progress bar
+ * - Bioluminescent scroll progress bar (GPU-composited scaleX, zero React re-renders during scroll)
  * - Active chapter scrollytelling sync with Three.js 3D camera
  * - Nút cuộn lên đầu (thanh CHƯƠNG cũ đã bỏ 30/10: không còn mục nào để nhảy tới)
  * - Toggle to enter Fullscreen 3D Game Mode
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Gamepad2, ArrowUp, FileCode } from 'lucide-react';
 
 export interface ScrollAnimationEngineProps {
@@ -33,39 +33,56 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
   onSectionChange,
   onOpenCustomInstructions
 }) => {
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const barRef = useRef<HTMLDivElement>(null);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
 
   useEffect(() => {
-    const handleScroll = () => {
+    let rafId = 0;
+    let ticking = false;
+    let lastIdx = -1;
+
+    const updateScroll = () => {
+      ticking = false;
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight <= 0) return;
-
       const currentScroll = window.scrollY;
-      const progress = Math.min(Math.max(currentScroll / totalHeight, 0), 1);
-      setScrollProgress(progress);
-      setShowScrollTop(currentScroll > 400);
+      const progress = totalHeight > 0 ? Math.min(Math.max(currentScroll / totalHeight, 0), 1) : 0;
 
-      // Determine active chapter by section offset
-      let currentIndex = 0;
-      CHAPTERS.forEach((chap, idx) => {
-        const el = document.getElementById(chap.id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.45) {
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${progress})`;
+      }
+
+      const shouldShowTop = currentScroll > 400;
+      setShowScrollTop((prev) => (prev !== shouldShowTop ? shouldShowTop : prev));
+
+      if (onSectionChange) {
+        let currentIndex = 0;
+        const threshold = window.innerHeight * 0.45;
+        for (let idx = 0; idx < CHAPTERS.length; idx++) {
+          const el = document.getElementById(CHAPTERS[idx].id);
+          if (el && el.getBoundingClientRect().top <= threshold) {
             currentIndex = idx;
           }
         }
-      });
+        if (currentIndex !== lastIdx) {
+          lastIdx = currentIndex;
+          onSectionChange(currentIndex);
+        }
+      }
+    };
 
-      if (onSectionChange) {
-        onSectionChange(currentIndex);
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        rafId = requestAnimationFrame(updateScroll);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    updateScroll();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(rafId);
+    };
   }, [onSectionChange]);
 
   const scrollToTop = () => {
@@ -76,11 +93,12 @@ export const ScrollAnimationEngine: React.FC<ScrollAnimationEngineProps> = ({
 
   return (
     <>
-      {/* Top Fixed Scroll Progress Bar */}
+      {/* Top Fixed Scroll Progress Bar (GPU-composited scaleX) */}
       <div className="fixed top-0 left-0 w-full h-[3px] z-[60] bg-transparent pointer-events-none">
         <div
-          className="h-full bg-gradient-to-r from-neon-green via-cyan-400 to-violet-500 transition-all duration-150 shadow-[0_0_8px_#00ffa3]"
-          style={{ width: `${scrollProgress * 100}%` }}
+          ref={barRef}
+          className="h-full w-full origin-left bg-gradient-to-r from-neon-green via-cyan-400 to-violet-500 shadow-[0_0_8px_#00ffa3] will-change-transform"
+          style={{ transform: 'scaleX(0)' }}
         />
       </div>
 

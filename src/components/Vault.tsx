@@ -10,8 +10,9 @@ import {
   BookOpen,
   CheckCircle2,
   FolderOpen,
-  Award,
   ChevronRight,
+  ChevronDown,
+  ListFilter,
   ShieldCheck,
   ArrowRight,
   ExternalLink,
@@ -24,9 +25,10 @@ import {
 } from 'lucide-react';
 import { GlassCard } from './Glass';
 import { MathFormula } from './MathFormula';
+import VaultDiagram from './VaultDiagrams';
 import { track } from '../analytics';
 
-const VAULT_LEADS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbyH6xzJc9J4Dj8fKJi-Rp91tfeS0tZbLtjz0m26bON4kjLKFnMLjS8btAxo66CoPDCGbA/exec';
+import { getGasApiUrl } from '../config';
 
 interface VaultProps {
   setActiveTab: (tab: string) => void;
@@ -291,6 +293,8 @@ const PLAIN: Record<string, string> = {
 export default function Vault({ initialDocId, onDocChange }: VaultProps) {
   const [activeTrack, setActiveTrack] = useState<'all' | 'briefings' | 'math' | 'systems'>('all');
   const [selectedTopic, setSelectedTopic] = useState<ArchiveTopic | null>(null);
+  const [expandedTopicId, setExpandedTopicId] = useState<string | null>(null);
+  const [quickSelectId, setQuickSelectId] = useState<string>('');
 
   // Form Lead unlock state
   const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
@@ -380,14 +384,15 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
 
     setIsLoading(true);
 
-    if (VAULT_LEADS_WEBHOOK && !VAULT_LEADS_WEBHOOK.startsWith('__')) {
+    const vaultWebhook = getGasApiUrl();
+    if (vaultWebhook && !vaultWebhook.startsWith('__')) {
       try {
-        await fetch(VAULT_LEADS_WEBHOOK, {
+        await fetch(vaultWebhook, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
-            source: 'library_vault_research_archive',
+            source: 'library_vault',
             name: name.trim(),
             phone: phone.trim(),
             email: email.trim(),
@@ -522,6 +527,70 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
           </div>
         </GlassCard>
 
+        {/* Quick Dropdown Selector for instant compact navigation */}
+        <div className="sa-glass p-4 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border border-[#2BFFEA]/30 bg-[linear-gradient(145deg,rgba(14,45,66,0.85),rgba(6,19,32,0.92))] shadow-[0_0_24px_rgba(43,255,234,0.15)]">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl bg-[#2BFFEA]/15 border border-[#2BFFEA]/40 flex items-center justify-center text-[#2BFFEA] shrink-0">
+              <ListFilter size={18} />
+            </div>
+            <div>
+              <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#2BFFEA]">
+                BỘ CHỌN HỒ SƠ RÚT GỌN (DROPDOWN)
+              </div>
+              <div className="text-xs text-gray-300">
+                Chọn nhanh bất kỳ báo cáo hoặc hồ sơ để mở tóm tắt & biểu đồ trực quan:
+              </div>
+            </div>
+          </div>
+
+          <div className="relative min-w-[280px] sm:min-w-[340px]">
+            <select
+              value={quickSelectId}
+              onChange={(e) => {
+                const id = e.target.value;
+                setQuickSelectId(id);
+                if (!id) return;
+                const isBriefing = coreBriefings.some((b) => b.id === id);
+                if (isBriefing) {
+                  setActiveTrack('briefings');
+                  setActiveBriefingId(id);
+                } else {
+                  const topic = ARCHIVE_TOPICS.find((t) => t.id === id);
+                  if (topic) {
+                    setActiveTrack(topic.track);
+                    setExpandedTopicId(id);
+                    setSelectedTopic(topic);
+                  }
+                }
+              }}
+              className="w-full rounded-xl bg-[#040e18] border border-[#2BFFEA]/50 px-3.5 py-2.5 text-xs font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_0_16px_rgba(43,255,234,0.2)] focus:outline-none focus:border-[#2BFFEA] cursor-pointer"
+            >
+              <option value="">▼ -- Bấm để chọn nhanh 1 trong 11 tài liệu --</option>
+              <optgroup label="3 Báo Cáo Chuyên Đề Cốt Lõi">
+                {coreBriefings.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.code} · {b.title}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Xác Suất & Thống Kê">
+                {ARCHIVE_TOPICS.filter((t) => t.track === 'math').map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.docCode} · {t.title}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Dữ Liệu & Khung Kiểm Định">
+                {ARCHIVE_TOPICS.filter((t) => t.track === 'systems').map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.docCode} · {t.title}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
         {/* Category Filter Tabs */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -649,6 +718,9 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
                         </button>
                       </div>
 
+                      {/* Biểu đồ / Infographic trực quan cho Báo cáo chuyên đề */}
+                      <VaultDiagram id={b.id} className="my-2" />
+
                       <div className="space-y-4 text-xs sm:text-sm text-gray-200 leading-relaxed">
                         <div className="sa-glass p-4 rounded-2xl text-white font-medium">
                           {b.content.intro}
@@ -695,104 +767,129 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
               </div>
             </div>
 
-            {filteredTopics.map((topic) => (
-              <GlassCard
-                key={topic.id}
-                tilt={false}
-                className="p-6 space-y-5"
-              >
-                {/* Topic Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="px-2.5 py-2 rounded-xl bg-[#2BFFEA]/10 border border-[#2BFFEA]/30 flex items-center justify-center font-mono font-bold text-[#2BFFEA] text-xs shrink-0">
-                      {topic.docCode}
-                    </span>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                          {topic.categoryLabel}
-                        </span>
-                      </div>
-                      <h3 className="text-base sm:text-xl font-bold text-white tracking-tight mt-0.5">
-                        {topic.title}
-                      </h3>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setSelectedTopic(topic)}
-                    className="sa-glass-ghost px-4 py-2 rounded-xl text-cyan-300 text-xs font-semibold flex items-center gap-1.5 self-start sm:self-auto"
+            <div className="space-y-3">
+              {filteredTopics.map((topic) => {
+                const isExpanded = expandedTopicId === topic.id;
+                return (
+                  <GlassCard
+                    key={topic.id}
+                    tilt={false}
+                    className="p-4 sm:p-5 space-y-3 transition-all duration-200 hover:border-[#9ff6ff]/40"
                   >
-                    Mở hồ sơ chi tiết <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                    {/* Collapsed Header Bar */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <span className="px-2.5 py-1.5 rounded-xl bg-[#2BFFEA]/10 border border-[#2BFFEA]/30 flex items-center justify-center font-mono font-bold text-[#2BFFEA] text-xs shrink-0">
+                          {topic.docCode}
+                        </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                              {topic.categoryLabel}
+                            </span>
+                          </div>
+                          <h3 className="text-sm sm:text-base font-bold text-white tracking-tight mt-0.5">
+                            {topic.title}
+                          </h3>
+                        </div>
+                      </div>
 
-                {PLAIN[topic.id] && (
-                  <p className="rounded-xl border-l-2 border-[#2BFFEA] bg-[#2BFFEA]/[0.06] px-3 py-2 text-xs sm:text-sm leading-relaxed text-gray-100">
-                    <b className="text-[#2BFFEA]">Nói đơn giản: </b>
-                    {PLAIN[topic.id]}
-                  </p>
-                )}
-
-                {/* Subtitle & Key Equation */}
-                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                  {topic.subtitle}
-                </p>
-
-                <div className="sa-glass p-4 rounded-2xl space-y-2">
-                  <div className="text-[11px] font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" /> Biểu thức & Quy luật cốt lõi
-                  </div>
-                  <div className="p-3 rounded-xl bg-black/40 text-[#2BFFEA] text-xs sm:text-sm text-center border border-cyan-500/10 overflow-x-auto">
-                    <MathFormula formula={topic.keyEquation} />
-                  </div>
-                  <p className="text-xs text-gray-400">
-                    {topic.equationNote}
-                  </p>
-                </div>
-
-                {/* 2-Column: Core Concepts & Strategy Audit Bridge */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <div className="sa-glass p-4 rounded-2xl space-y-2">
-                    <div className="font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5 text-cyan-400" /> Nội dung trọng tâm
+                      <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedTopicId(isExpanded ? null : topic.id)}
+                          className="sa-glass-ghost px-3.5 py-1.5 rounded-xl text-cyan-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        >
+                          <span>{isExpanded ? 'Thu gọn' : 'Xem biểu đồ'}</span>
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-white' : ''}`} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedTopic(topic)}
+                          className="sa-glass-btn px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1"
+                        >
+                          <span>Chi tiết</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-                    <ul className="space-y-1.5 text-gray-300">
-                      {topic.coreConcepts.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <span className="text-[#2BFFEA] mt-0.5">•</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
 
-                  <div className="p-4 rounded-2xl bg-[linear-gradient(150deg,rgba(78,222,163,0.16),rgba(78,222,163,0.04))] border border-emerald-400/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] space-y-2">
-                    <div className="font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Ứng dụng tại Strategy Audit ("Đo trước khi tin")
-                    </div>
-                    <p className="text-gray-300 leading-relaxed">
-                      {topic.auditBridge}
-                    </p>
-                  </div>
-                </div>
+                    {PLAIN[topic.id] && (
+                      <p className="rounded-xl border-l-2 border-[#2BFFEA] bg-[#2BFFEA]/[0.05] px-3 py-1.5 text-xs leading-relaxed text-gray-200">
+                        <b className="text-[#2BFFEA]">Nói đơn giản: </b>
+                        {PLAIN[topic.id]}
+                      </p>
+                    )}
 
-                {/* Recommended Books & Practice Note Footer */}
-                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs border-t border-white/10">
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <BookOpen className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span>
-                      Tài liệu tham khảo: <b className="text-white">{topic.books[0]?.name}</b> — {topic.books[0]?.author}
-                    </span>
-                  </div>
+                    {/* Inline Accordion Expansion with Diagram & Summary */}
+                    {isExpanded && (
+                      <div className="pt-3 border-t border-white/10 space-y-4 animate-in fade-in duration-200">
+                        {/* Infographic Biểu đồ trực quan */}
+                        <VaultDiagram id={topic.id} />
 
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <Award className="w-3.5 h-3.5 text-[#2BFFEA] shrink-0" />
-                    <span>Thực hành kiểm chứng: <b className="text-[#2BFFEA] font-mono">{topic.practiceNote}</b></span>
-                  </div>
-                </div>
-              </GlassCard>
-            ))}
+                        {/* Subtitle & Key Equation */}
+                        <p className="text-xs text-gray-300 leading-relaxed">
+                          {topic.subtitle}
+                        </p>
+
+                        <div className="sa-glass p-3.5 rounded-2xl space-y-2">
+                          <div className="text-[11px] font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" /> Biểu thức & Quy luật cốt lõi
+                          </div>
+                          <div className="p-3 rounded-xl bg-black/40 text-[#2BFFEA] text-xs sm:text-sm text-center border border-cyan-500/10 overflow-x-auto">
+                            <MathFormula formula={topic.keyEquation} />
+                          </div>
+                          <p className="text-xs text-gray-400">
+                            {topic.equationNote}
+                          </p>
+                        </div>
+
+                        {/* 2-Column: Core Concepts & Strategy Audit Bridge */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                          <div className="sa-glass p-3.5 rounded-2xl space-y-2">
+                            <div className="font-bold text-white uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
+                              <BookOpen className="w-3.5 h-3.5 text-cyan-400" /> Nội dung trọng tâm
+                            </div>
+                            <ul className="space-y-1.5 text-gray-300 text-[11px]">
+                              {topic.coreConcepts.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <span className="text-[#2BFFEA] mt-0.5">•</span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <div className="p-3.5 rounded-2xl bg-[linear-gradient(150deg,rgba(78,222,163,0.16),rgba(78,222,163,0.04))] border border-emerald-400/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] space-y-1.5">
+                            <div className="font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5 text-[11px]">
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Ứng dụng tại Strategy Audit ("Đo trước khi tin")
+                            </div>
+                            <p className="text-gray-300 leading-relaxed text-[11px]">
+                              {topic.auditBridge}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Footer button */}
+                        <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+                          <span className="text-gray-400 text-[11px]">
+                            Tài liệu: <b className="text-white">{topic.books[0]?.name}</b>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedTopic(topic)}
+                            className="sa-glass-btn px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                          >
+                            <span>Xem toàn bộ tài liệu & mã code</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </GlassCard>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -837,6 +934,9 @@ export default function Vault({ initialDocId, onDocChange }: VaultProps) {
                       {PLAIN[selectedTopic.id]}
                     </p>
                   )}
+
+                  {/* Biểu đồ / Infographic trực quan */}
+                  <VaultDiagram id={selectedTopic.id} className="my-2" />
 
                   {/* Equation Block */}
                   <div className="sa-glass p-4 rounded-2xl space-y-2">

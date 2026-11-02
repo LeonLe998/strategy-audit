@@ -17,6 +17,7 @@ import {
   createVolatilitySurface,
   type Procedural3DObject
 } from './Game3D/ProceduralModels';
+import { MathFormula } from './MathFormula';
 
 interface DataScienceSkillItem {
   id: string;
@@ -426,9 +427,9 @@ export const DataScienceHub: React.FC = () => {
               <span className="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4" /> Chi tiết Kỹ năng Toán học & Khoa học Dữ liệu
               </span>
-              <span className="text-[10px] font-mono text-neon-green bg-black/40 px-2.5 py-0.5 rounded border border-neon-green/30">
-                Formula: {selectedSkill.mathFormula}
-              </span>
+              <div className="text-[11px] text-neon-green bg-black/40 px-3 py-1 rounded border border-neon-green/30">
+                <MathFormula formula={selectedSkill.mathFormula} />
+              </div>
             </div>
 
             <div className="text-sm font-bold text-white">{selectedSkill.name}</div>

@@ -124,10 +124,10 @@ export const GameHUD: React.FC<GameHUDProps> = ({
             <button
               onClick={() => setShowRoadmapPanel(prev => !prev)}
               className="px-3 py-2 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-bold text-xs flex items-center gap-1.5 hover:bg-cyan-500/30 transition-all pointer-events-auto shadow-[0_0_12px_rgba(0,217,255,0.2)]"
-              title="Mở Bản đồ Lộ trình Quant 18 Tháng"
+              title="Mở Hồ Sơ Nghiên Cứu"
             >
               <Compass className="w-4 h-4 text-cyan-400" />
-              <span className="hidden sm:inline">18-Month Roadmap</span>
+              <span className="hidden sm:inline">Hồ Sơ Nghiên Cứu</span>
             </button>
 
             <button
@@ -206,14 +206,14 @@ export const GameHUD: React.FC<GameHUDProps> = ({
         </div>
       </div>
 
-      {/* Floating 18-Month Roadmap Drawer */}
+      {/* Floating Research Archive Drawer */}
       {showRoadmapPanel && (
         <div className="absolute top-20 right-4 sm:right-6 w-80 sm:w-96 max-h-[75vh] bg-[#07131e]/95 backdrop-blur-xl border border-cyan-500/30 rounded-3xl p-4 shadow-2xl overflow-y-auto pointer-events-auto space-y-3 custom-scrollbar z-40">
           <div className="flex items-center justify-between border-b border-[#1b2f3f] pb-3">
             <div className="flex items-center gap-2">
               <Compass className="w-4 h-4 text-cyan-400" />
               <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-                Lộ trình 18 Tháng (Base Roadmap)
+                Hồ Sơ Nghiên Cứu & Tài Liệu
               </h4>
             </div>
             <button
